@@ -1,0 +1,3756 @@
+{
+  "schema": "ca-tariff-parse/parsed-schedule/v1",
+  "parser_version": "0.1.0",
+  "disclaimer": "This output is a representation of a published document, not a calculation of what any customer owes. It is not rate advice and not a bill estimate. Values are reproduced from the cited source and may be superseded, prorated, surcharged or adjusted by other schedules and rules. Verify against the publisher before relying on anything here. This project is not affiliated with, endorsed by, or approved by any utility.",
+  "source": {
+    "document_id": "smud-r",
+    "sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+    "page_count": 4,
+    "byte_size": 209810,
+    "filename": "1-R.pdf",
+    "publisher": "Sacramento Municipal Utility District",
+    "retrieved_from": "https://www.smud.org/-/media/Documents/Rate-Information/Rates/1-R.ashx",
+    "retrieved_at": "2026-08-17",
+    "synthetic": false
+  },
+  "identity": {
+    "schedule_code": {
+      "value": "R",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 1,
+        "sheet": "R-1",
+        "section": "front",
+        "line": 2,
+        "end_line": null,
+        "snippet": "Rate Schedule R",
+        "locator": "smud-r p.1 sheet R-1 front L2"
+      }
+    },
+    "title": {
+      "value": "Residential Service",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 1,
+        "sheet": "R-1",
+        "section": "front",
+        "line": 1,
+        "end_line": null,
+        "snippet": "Residential Service",
+        "locator": "smud-r p.1 sheet R-1 front L1"
+      }
+    },
+    "resolution": {
+      "value": "25-06-15",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 1,
+        "sheet": "R-1",
+        "section": "front",
+        "line": 35,
+        "end_line": null,
+        "snippet": "Resolution No. 25-06-15 adopted June 19, 2025 Effective: June 20, 2025",
+        "locator": "smud-r p.1 sheet R-1 front L35"
+      }
+    },
+    "adopted": {
+      "value": "June 19, 2025",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 1,
+        "sheet": "R-1",
+        "section": "front",
+        "line": 35,
+        "end_line": null,
+        "snippet": "Resolution No. 25-06-15 adopted June 19, 2025 Effective: June 20, 2025",
+        "locator": "smud-r p.1 sheet R-1 front L35"
+      }
+    },
+    "effective": {
+      "value": "June 20, 2025",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 1,
+        "sheet": "R-1",
+        "section": "front",
+        "line": 35,
+        "end_line": null,
+        "snippet": "Resolution No. 25-06-15 adopted June 19, 2025 Effective: June 20, 2025",
+        "locator": "smud-r p.1 sheet R-1 front L35"
+      }
+    },
+    "sheets": [
+      {
+        "value": "R-1",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "front",
+          "line": 34,
+          "end_line": null,
+          "snippet": "SACRAMENTO MUNICIPAL UTILITY DISTRICT Sheet No. R-1",
+          "locator": "smud-r p.1 sheet R-1 front L34"
+        }
+      },
+      {
+        "value": "R-2",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "front",
+          "line": 37,
+          "end_line": null,
+          "snippet": "SACRAMENTO MUNICIPAL UTILITY DISTRICT Sheet No. R-2",
+          "locator": "smud-r p.2 sheet R-2 front L37"
+        }
+      },
+      {
+        "value": "R-3",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "front",
+          "line": 38,
+          "end_line": null,
+          "snippet": "SACRAMENTO MUNICIPAL UTILITY DISTRICT Sheet No. R-3",
+          "locator": "smud-r p.3 sheet R-3 front L38"
+        }
+      },
+      {
+        "value": "R-4",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 4,
+          "sheet": "R-4",
+          "section": "front",
+          "line": 18,
+          "end_line": null,
+          "snippet": "SACRAMENTO MUNICIPAL UTILITY DISTRICT Sheet No. R-4",
+          "locator": "smud-r p.4 sheet R-4 front L18"
+        }
+      }
+    ]
+  },
+  "applicability": [
+    {
+      "text": {
+        "value": "This Rate Schedule R applies to single- and three-phase service for the following types of residential premises:",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I",
+          "line": 4,
+          "end_line": null,
+          "snippet": "This Rate Schedule R applies to single- and three-phase service for the following types of residential premises:",
+          "locator": "smud-r p.1 sheet R-1 I L4"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "Individually metered residences including single-family homes, duplexes, apartments, and condominiums; and",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I",
+          "line": 5,
+          "end_line": null,
+          "snippet": "1. Individually metered residences including single-family homes, duplexes, apartments, and condominiums; and",
+          "locator": "smud-r p.1 sheet R-1 I L5"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "General farm service where the meter also serves the residence or additional meters on a farm where the electricity consumed is solely for domestic purposes; and",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I",
+          "line": 6,
+          "end_line": 7,
+          "snippet": "2. General farm service where the meter also serves the residence or additional meters on a farm where the electricity consumed is solely for domestic purposes; and",
+          "locator": "smud-r p.1 sheet R-1 I L6-7"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "Master-metered service to a qualifying multifamily accommodation or mobile home park that is submetered to all single-family units or individual mobile homes.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I",
+          "line": 8,
+          "end_line": 9,
+          "snippet": "3. Master-metered service to a qualifying multifamily accommodation or mobile home park that is submetered to all single-family units or individual mobile homes.",
+          "locator": "smud-r p.1 sheet R-1 I L8-9"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "For the purposes of this schedule a \"month\" is considered to be a single billing period of 27 to 34 days.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I",
+          "line": 10,
+          "end_line": null,
+          "snippet": "For the purposes of this schedule a \"month\" is considered to be a single billing period of 27 to 34 days.",
+          "locator": "smud-r p.1 sheet R-1 I L10"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "The Fixed Rate is the alternative rate to SMUD's Time-of-Day (TOD) (5-8 p.m.) Rate (rate category RT02) under Rate Schedule R-TOD.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I.A",
+          "line": 12,
+          "end_line": 13,
+          "snippet": "1. The Fixed Rate is the alternative rate to SMUD's Time-of-Day (TOD) (5-8 p.m.) Rate (rate category RT02) under Rate Schedule R-TOD.",
+          "locator": "smud-r p.1 sheet R-1 I.A L12-13"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "The Fixed Rate is required for customers serviced with analog meters and digital non-communicating meters.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I.A",
+          "line": 14,
+          "end_line": null,
+          "snippet": "2. The Fixed Rate is required for customers serviced with analog meters and digital non-communicating meters.",
+          "locator": "smud-r p.1 sheet R-1 I.A L14"
+        }
+      },
+      "disposition": "required"
+    },
+    {
+      "text": {
+        "value": "Customers who qualify for Rate Schedule NEM1 and have an eligible renewable electrical generation facility that was approved for installation prior to January 1, 2018 are eligible to enroll in the Fixed Rate and may remain on the Fixed Rate after December 31, 2022.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I.A",
+          "line": 15,
+          "end_line": 17,
+          "snippet": "3. Customers who qualify for Rate Schedule NEM1 and have an eligible renewable electrical generation facility that was approved for installation prior to January 1, 2018 are eligible to enroll in the Fixed Rate and may remain on the Fixed Rate after December 31, 2022.",
+          "locator": "smud-r p.1 sheet R-1 I.A L15-17"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "Customers who have an eligible renewable electrical generation facility under Rate Schedule NEM1 that was approved for installation on or after January 1, 2018 are not eligible to enroll in the Fixed Rate.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I.A",
+          "line": 18,
+          "end_line": 19,
+          "snippet": "4. Customers who have an eligible renewable electrical generation facility under Rate Schedule NEM1 that was approved for installation on or after January 1, 2018 are not eligible to enroll in the Fixed Rate.",
+          "locator": "smud-r p.1 sheet R-1 I.A L18-19"
+        }
+      },
+      "disposition": "excluded"
+    },
+    {
+      "text": {
+        "value": "Customers who have an eligible renewable electrical generation facility under Rate Schedule SSR are not eligible to enroll in the Fixed Rate.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I.A",
+          "line": 20,
+          "end_line": 21,
+          "snippet": "5. Customers who have an eligible renewable electrical generation facility under Rate Schedule SSR are not eligible to enroll in the Fixed Rate.",
+          "locator": "smud-r p.1 sheet R-1 I.A L20-21"
+        }
+      },
+      "disposition": "excluded"
+    },
+    {
+      "text": {
+        "value": "Customers who have a storage facility without an associated eligible generating facility are not eligible to enroll in the Fixed Rate.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I.A",
+          "line": 22,
+          "end_line": 23,
+          "snippet": "6. Customers who have a storage facility without an associated eligible generating facility are not eligible to enroll in the Fixed Rate.",
+          "locator": "smud-r p.1 sheet R-1 I.A L22-23"
+        }
+      },
+      "disposition": "excluded"
+    },
+    {
+      "text": {
+        "value": "Customers who have master meters, including those enrolled on the RSMM rate category, are not eligible to enroll in the Fixed Rate.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I.A",
+          "line": 24,
+          "end_line": 25,
+          "snippet": "7. Customers who have master meters, including those enrolled on the RSMM rate category, are not eligible to enroll in the Fixed Rate.",
+          "locator": "smud-r p.1 sheet R-1 I.A L24-25"
+        }
+      },
+      "disposition": "excluded"
+    },
+    {
+      "text": {
+        "value": "This rate is closed to new customers unless SMUD determines that it is not reasonable or feasible to provide service and meter the individual units directly.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I.C",
+          "line": 27,
+          "end_line": 28,
+          "snippet": "1. This rate is closed to new customers unless SMUD determines that it is not reasonable or feasible to provide service and meter the individual units directly.",
+          "locator": "smud-r p.1 sheet R-1 I.C L27-28"
+        }
+      },
+      "disposition": "excluded"
+    },
+    {
+      "text": {
+        "value": "The master-metered customer's electricity consumption will be billed using the total kWh usage of the master-meter divided by the number of occupied single-family accommodations. The billing calculation will include applicable discounts to all kWh Usage Charges and System Infrastructure Fixed Charge (SIFC) for qualifying energy assistance and medical equipment discount program participants. The customer must advise SMUD within 15 days following any change in the number of occupied single-family accommodations wired for electric service.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 1,
+          "sheet": "R-1",
+          "section": "I.C",
+          "line": 29,
+          "end_line": 33,
+          "snippet": "2. The master-metered customer's electricity consumption will be billed using the total kWh usage of the master-meter divided by the number of occupied single-family accommodations. The billing calculation will include applicable discounts to all kWh Usage Charges and System Infrastructure Fixed Charge (SIFC) for qualifying energy assistance and medical equipment discount program participants. The customer must advise SMUD within 15 days following any change in the number of occupied single-family accommodations wired for electric service.",
+          "locator": "smud-r p.1 sheet R-1 I.C L29-33"
+        }
+      },
+      "disposition": "required"
+    }
+  ],
+  "charges": [
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month per meter",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 9,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+          "locator": "smud-r p.2 sheet R-2 II.A L9"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "26.20",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 9,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.A L9"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month per meter",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 9,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.A L9"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "May 1, 2025",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.A L6"
+        }
+      },
+      "rate_category": {
+        "value": "RF01",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Fixed Rate (RF01)",
+          "locator": "smud-r p.2 sheet R-2 II.A L7"
+        }
+      },
+      "season": {
+        "value": "Non-Summer Season (October - May)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Non-Summer Season (October - May)",
+          "locator": "smud-r p.2 sheet R-2 II.A L8"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month per meter",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 9,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+          "locator": "smud-r p.2 sheet R-2 II.A L9"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "27.00",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 9,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.A L9"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month per meter",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 9,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.A L9"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2026",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.A L6"
+        }
+      },
+      "rate_category": {
+        "value": "RF01",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Fixed Rate (RF01)",
+          "locator": "smud-r p.2 sheet R-2 II.A L7"
+        }
+      },
+      "season": {
+        "value": "Non-Summer Season (October - May)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Non-Summer Season (October - May)",
+          "locator": "smud-r p.2 sheet R-2 II.A L8"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month per meter",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 9,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+          "locator": "smud-r p.2 sheet R-2 II.A L9"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "27.80",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 9,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.A L9"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month per meter",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 9,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.A L9"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2027",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.A L6"
+        }
+      },
+      "rate_category": {
+        "value": "RF01",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Fixed Rate (RF01)",
+          "locator": "smud-r p.2 sheet R-2 II.A L7"
+        }
+      },
+      "season": {
+        "value": "Non-Summer Season (October - May)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Non-Summer Season (October - May)",
+          "locator": "smud-r p.2 sheet R-2 II.A L8"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "All kWh usage per month $/kWh",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 11,
+          "end_line": null,
+          "snippet": "All kWh usage per month $/kWh $0.1331 $0.1371 $0.1412",
+          "locator": "smud-r p.2 sheet R-2 II.A L11"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1331",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 11,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1331 $0.1371 $0.1412",
+            "locator": "smud-r p.2 sheet R-2 II.A L11"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kWh",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 11,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1331 $0.1371 $0.1412",
+            "locator": "smud-r p.2 sheet R-2 II.A L11"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "May 1, 2025",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.A L6"
+        }
+      },
+      "rate_category": {
+        "value": "RF01",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Fixed Rate (RF01)",
+          "locator": "smud-r p.2 sheet R-2 II.A L7"
+        }
+      },
+      "season": {
+        "value": "Non-Summer Season (October - May)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Non-Summer Season (October - May)",
+          "locator": "smud-r p.2 sheet R-2 II.A L8"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "All kWh usage per month $/kWh",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 11,
+          "end_line": null,
+          "snippet": "All kWh usage per month $/kWh $0.1331 $0.1371 $0.1412",
+          "locator": "smud-r p.2 sheet R-2 II.A L11"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1371",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 11,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1331 $0.1371 $0.1412",
+            "locator": "smud-r p.2 sheet R-2 II.A L11"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kWh",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 11,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1331 $0.1371 $0.1412",
+            "locator": "smud-r p.2 sheet R-2 II.A L11"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2026",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.A L6"
+        }
+      },
+      "rate_category": {
+        "value": "RF01",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Fixed Rate (RF01)",
+          "locator": "smud-r p.2 sheet R-2 II.A L7"
+        }
+      },
+      "season": {
+        "value": "Non-Summer Season (October - May)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Non-Summer Season (October - May)",
+          "locator": "smud-r p.2 sheet R-2 II.A L8"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "All kWh usage per month $/kWh",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 11,
+          "end_line": null,
+          "snippet": "All kWh usage per month $/kWh $0.1331 $0.1371 $0.1412",
+          "locator": "smud-r p.2 sheet R-2 II.A L11"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1412",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 11,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1331 $0.1371 $0.1412",
+            "locator": "smud-r p.2 sheet R-2 II.A L11"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kWh",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 11,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1331 $0.1371 $0.1412",
+            "locator": "smud-r p.2 sheet R-2 II.A L11"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2027",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.A L6"
+        }
+      },
+      "rate_category": {
+        "value": "RF01",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Fixed Rate (RF01)",
+          "locator": "smud-r p.2 sheet R-2 II.A L7"
+        }
+      },
+      "season": {
+        "value": "Non-Summer Season (October - May)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Non-Summer Season (October - May)",
+          "locator": "smud-r p.2 sheet R-2 II.A L8"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month per meter",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 13,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+          "locator": "smud-r p.2 sheet R-2 II.A L13"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "26.20",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 13,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.A L13"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month per meter",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 13,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.A L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "May 1, 2025",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.A L6"
+        }
+      },
+      "rate_category": {
+        "value": "RF01",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Fixed Rate (RF01)",
+          "locator": "smud-r p.2 sheet R-2 II.A L7"
+        }
+      },
+      "season": {
+        "value": "Summer Season (June - September)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Summer Season (June - September)",
+          "locator": "smud-r p.2 sheet R-2 II.A L12"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month per meter",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 13,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+          "locator": "smud-r p.2 sheet R-2 II.A L13"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "27.00",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 13,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.A L13"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month per meter",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 13,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.A L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2026",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.A L6"
+        }
+      },
+      "rate_category": {
+        "value": "RF01",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Fixed Rate (RF01)",
+          "locator": "smud-r p.2 sheet R-2 II.A L7"
+        }
+      },
+      "season": {
+        "value": "Summer Season (June - September)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Summer Season (June - September)",
+          "locator": "smud-r p.2 sheet R-2 II.A L12"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month per meter",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 13,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+          "locator": "smud-r p.2 sheet R-2 II.A L13"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "27.80",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 13,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.A L13"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month per meter",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 13,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per meter $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.A L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2027",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.A L6"
+        }
+      },
+      "rate_category": {
+        "value": "RF01",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Fixed Rate (RF01)",
+          "locator": "smud-r p.2 sheet R-2 II.A L7"
+        }
+      },
+      "season": {
+        "value": "Summer Season (June - September)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Summer Season (June - September)",
+          "locator": "smud-r p.2 sheet R-2 II.A L12"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "All kWh usage per month $/kWh",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 15,
+          "end_line": null,
+          "snippet": "All kWh usage per month $/kWh $0.2126 $0.2189 $0.2255",
+          "locator": "smud-r p.2 sheet R-2 II.A L15"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.2126",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 15,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.2126 $0.2189 $0.2255",
+            "locator": "smud-r p.2 sheet R-2 II.A L15"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kWh",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 15,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.2126 $0.2189 $0.2255",
+            "locator": "smud-r p.2 sheet R-2 II.A L15"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "May 1, 2025",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.A L6"
+        }
+      },
+      "rate_category": {
+        "value": "RF01",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Fixed Rate (RF01)",
+          "locator": "smud-r p.2 sheet R-2 II.A L7"
+        }
+      },
+      "season": {
+        "value": "Summer Season (June - September)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Summer Season (June - September)",
+          "locator": "smud-r p.2 sheet R-2 II.A L12"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "All kWh usage per month $/kWh",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 15,
+          "end_line": null,
+          "snippet": "All kWh usage per month $/kWh $0.2126 $0.2189 $0.2255",
+          "locator": "smud-r p.2 sheet R-2 II.A L15"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.2189",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 15,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.2126 $0.2189 $0.2255",
+            "locator": "smud-r p.2 sheet R-2 II.A L15"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kWh",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 15,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.2126 $0.2189 $0.2255",
+            "locator": "smud-r p.2 sheet R-2 II.A L15"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2026",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.A L6"
+        }
+      },
+      "rate_category": {
+        "value": "RF01",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Fixed Rate (RF01)",
+          "locator": "smud-r p.2 sheet R-2 II.A L7"
+        }
+      },
+      "season": {
+        "value": "Summer Season (June - September)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Summer Season (June - September)",
+          "locator": "smud-r p.2 sheet R-2 II.A L12"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "All kWh usage per month $/kWh",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 15,
+          "end_line": null,
+          "snippet": "All kWh usage per month $/kWh $0.2126 $0.2189 $0.2255",
+          "locator": "smud-r p.2 sheet R-2 II.A L15"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.2255",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 15,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.2126 $0.2189 $0.2255",
+            "locator": "smud-r p.2 sheet R-2 II.A L15"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kWh",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.A",
+            "line": 15,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.2126 $0.2189 $0.2255",
+            "locator": "smud-r p.2 sheet R-2 II.A L15"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2027",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.A L6"
+        }
+      },
+      "rate_category": {
+        "value": "RF01",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Fixed Rate (RF01)",
+          "locator": "smud-r p.2 sheet R-2 II.A L7"
+        }
+      },
+      "season": {
+        "value": "Summer Season (June - September)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.A",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Summer Season (June - September)",
+          "locator": "smud-r p.2 sheet R-2 II.A L12"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month per unit",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 21,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+          "locator": "smud-r p.2 sheet R-2 II.B L21"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "26.20",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 21,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.B L21"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month per unit",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 21,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.B L21"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "May 1, 2025",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 18,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.B L18"
+        }
+      },
+      "rate_category": {
+        "value": "RSMM",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "B. Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+          "locator": "smud-r p.2 sheet R-2 II.B L16"
+        }
+      },
+      "season": {
+        "value": "Non-Summer Season (October - May)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 20,
+          "end_line": null,
+          "snippet": "Non-Summer Season (October - May)",
+          "locator": "smud-r p.2 sheet R-2 II.B L20"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month per unit",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 21,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+          "locator": "smud-r p.2 sheet R-2 II.B L21"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "27.00",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 21,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.B L21"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month per unit",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 21,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.B L21"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2026",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 18,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.B L18"
+        }
+      },
+      "rate_category": {
+        "value": "RSMM",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "B. Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+          "locator": "smud-r p.2 sheet R-2 II.B L16"
+        }
+      },
+      "season": {
+        "value": "Non-Summer Season (October - May)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 20,
+          "end_line": null,
+          "snippet": "Non-Summer Season (October - May)",
+          "locator": "smud-r p.2 sheet R-2 II.B L20"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month per unit",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 21,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+          "locator": "smud-r p.2 sheet R-2 II.B L21"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "27.80",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 21,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.B L21"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month per unit",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 21,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.B L21"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2027",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 18,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.B L18"
+        }
+      },
+      "rate_category": {
+        "value": "RSMM",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "B. Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+          "locator": "smud-r p.2 sheet R-2 II.B L16"
+        }
+      },
+      "season": {
+        "value": "Non-Summer Season (October - May)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 20,
+          "end_line": null,
+          "snippet": "Non-Summer Season (October - May)",
+          "locator": "smud-r p.2 sheet R-2 II.B L20"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "All kWh usage per month $/kWh",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 23,
+          "end_line": null,
+          "snippet": "All kWh usage per month $/kWh $0.1476 $0.1520 $0.1566",
+          "locator": "smud-r p.2 sheet R-2 II.B L23"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1476",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 23,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1476 $0.1520 $0.1566",
+            "locator": "smud-r p.2 sheet R-2 II.B L23"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kWh",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 23,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1476 $0.1520 $0.1566",
+            "locator": "smud-r p.2 sheet R-2 II.B L23"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "May 1, 2025",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 18,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.B L18"
+        }
+      },
+      "rate_category": {
+        "value": "RSMM",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "B. Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+          "locator": "smud-r p.2 sheet R-2 II.B L16"
+        }
+      },
+      "season": {
+        "value": "Non-Summer Season (October - May)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 20,
+          "end_line": null,
+          "snippet": "Non-Summer Season (October - May)",
+          "locator": "smud-r p.2 sheet R-2 II.B L20"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "All kWh usage per month $/kWh",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 23,
+          "end_line": null,
+          "snippet": "All kWh usage per month $/kWh $0.1476 $0.1520 $0.1566",
+          "locator": "smud-r p.2 sheet R-2 II.B L23"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1520",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 23,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1476 $0.1520 $0.1566",
+            "locator": "smud-r p.2 sheet R-2 II.B L23"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kWh",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 23,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1476 $0.1520 $0.1566",
+            "locator": "smud-r p.2 sheet R-2 II.B L23"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2026",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 18,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.B L18"
+        }
+      },
+      "rate_category": {
+        "value": "RSMM",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "B. Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+          "locator": "smud-r p.2 sheet R-2 II.B L16"
+        }
+      },
+      "season": {
+        "value": "Non-Summer Season (October - May)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 20,
+          "end_line": null,
+          "snippet": "Non-Summer Season (October - May)",
+          "locator": "smud-r p.2 sheet R-2 II.B L20"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "All kWh usage per month $/kWh",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 23,
+          "end_line": null,
+          "snippet": "All kWh usage per month $/kWh $0.1476 $0.1520 $0.1566",
+          "locator": "smud-r p.2 sheet R-2 II.B L23"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1566",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 23,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1476 $0.1520 $0.1566",
+            "locator": "smud-r p.2 sheet R-2 II.B L23"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kWh",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 23,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1476 $0.1520 $0.1566",
+            "locator": "smud-r p.2 sheet R-2 II.B L23"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2027",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 18,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.B L18"
+        }
+      },
+      "rate_category": {
+        "value": "RSMM",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "B. Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+          "locator": "smud-r p.2 sheet R-2 II.B L16"
+        }
+      },
+      "season": {
+        "value": "Non-Summer Season (October - May)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 20,
+          "end_line": null,
+          "snippet": "Non-Summer Season (October - May)",
+          "locator": "smud-r p.2 sheet R-2 II.B L20"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month per unit",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 25,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+          "locator": "smud-r p.2 sheet R-2 II.B L25"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "26.20",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 25,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.B L25"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month per unit",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 25,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.B L25"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "May 1, 2025",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 18,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.B L18"
+        }
+      },
+      "rate_category": {
+        "value": "RSMM",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "B. Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+          "locator": "smud-r p.2 sheet R-2 II.B L16"
+        }
+      },
+      "season": {
+        "value": "Summer Season (June - September)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 24,
+          "end_line": null,
+          "snippet": "Summer Season (June - September)",
+          "locator": "smud-r p.2 sheet R-2 II.B L24"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month per unit",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 25,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+          "locator": "smud-r p.2 sheet R-2 II.B L25"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "27.00",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 25,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.B L25"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month per unit",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 25,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.B L25"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2026",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 18,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.B L18"
+        }
+      },
+      "rate_category": {
+        "value": "RSMM",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "B. Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+          "locator": "smud-r p.2 sheet R-2 II.B L16"
+        }
+      },
+      "season": {
+        "value": "Summer Season (June - September)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 24,
+          "end_line": null,
+          "snippet": "Summer Season (June - September)",
+          "locator": "smud-r p.2 sheet R-2 II.B L24"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month per unit",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 25,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+          "locator": "smud-r p.2 sheet R-2 II.B L25"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "27.80",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 25,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.B L25"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month per unit",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 25,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month per unit $26.20 $27.00 $27.80",
+            "locator": "smud-r p.2 sheet R-2 II.B L25"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2027",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 18,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.B L18"
+        }
+      },
+      "rate_category": {
+        "value": "RSMM",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "B. Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+          "locator": "smud-r p.2 sheet R-2 II.B L16"
+        }
+      },
+      "season": {
+        "value": "Summer Season (June - September)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 24,
+          "end_line": null,
+          "snippet": "Summer Season (June - September)",
+          "locator": "smud-r p.2 sheet R-2 II.B L24"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "All kWh usage per month $/kWh",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 27,
+          "end_line": null,
+          "snippet": "All kWh usage per month $/kWh $0.1690 $0.1740 $0.1792",
+          "locator": "smud-r p.2 sheet R-2 II.B L27"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1690",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 27,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1690 $0.1740 $0.1792",
+            "locator": "smud-r p.2 sheet R-2 II.B L27"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kWh",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 27,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1690 $0.1740 $0.1792",
+            "locator": "smud-r p.2 sheet R-2 II.B L27"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "May 1, 2025",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 18,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.B L18"
+        }
+      },
+      "rate_category": {
+        "value": "RSMM",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "B. Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+          "locator": "smud-r p.2 sheet R-2 II.B L16"
+        }
+      },
+      "season": {
+        "value": "Summer Season (June - September)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 24,
+          "end_line": null,
+          "snippet": "Summer Season (June - September)",
+          "locator": "smud-r p.2 sheet R-2 II.B L24"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "All kWh usage per month $/kWh",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 27,
+          "end_line": null,
+          "snippet": "All kWh usage per month $/kWh $0.1690 $0.1740 $0.1792",
+          "locator": "smud-r p.2 sheet R-2 II.B L27"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1740",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 27,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1690 $0.1740 $0.1792",
+            "locator": "smud-r p.2 sheet R-2 II.B L27"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kWh",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 27,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1690 $0.1740 $0.1792",
+            "locator": "smud-r p.2 sheet R-2 II.B L27"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2026",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 18,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.B L18"
+        }
+      },
+      "rate_category": {
+        "value": "RSMM",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "B. Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+          "locator": "smud-r p.2 sheet R-2 II.B L16"
+        }
+      },
+      "season": {
+        "value": "Summer Season (June - September)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 24,
+          "end_line": null,
+          "snippet": "Summer Season (June - September)",
+          "locator": "smud-r p.2 sheet R-2 II.B L24"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "All kWh usage per month $/kWh",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 27,
+          "end_line": null,
+          "snippet": "All kWh usage per month $/kWh $0.1690 $0.1740 $0.1792",
+          "locator": "smud-r p.2 sheet R-2 II.B L27"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1792",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 27,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1690 $0.1740 $0.1792",
+            "locator": "smud-r p.2 sheet R-2 II.B L27"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kWh",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 2,
+            "sheet": "R-2",
+            "section": "II.B",
+            "line": 27,
+            "end_line": null,
+            "snippet": "All kWh usage per month $/kWh $0.1690 $0.1740 $0.1792",
+            "locator": "smud-r p.2 sheet R-2 II.B L27"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2027",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 18,
+          "end_line": null,
+          "snippet": "May 1, 2025 January 1, 2026 January 1, 2027",
+          "locator": "smud-r p.2 sheet R-2 II.B L18"
+        }
+      },
+      "rate_category": {
+        "value": "RSMM",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "B. Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+          "locator": "smud-r p.2 sheet R-2 II.B L16"
+        }
+      },
+      "season": {
+        "value": "Summer Season (June - September)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "II.B",
+          "line": 24,
+          "end_line": null,
+          "snippet": "Summer Season (June - September)",
+          "locator": "smud-r p.2 sheet R-2 II.B L24"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Standby Service Charge - January 1 through December 31",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.E",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Standby Service Charge - January 1 through December 31",
+          "locator": "smud-r p.3 sheet R-3 IV.E L9"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "8.597",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 3,
+            "sheet": "R-3",
+            "section": "IV.E",
+            "line": 11,
+            "end_line": null,
+            "snippet": "Effective May 1, 2025 $8.597",
+            "locator": "smud-r p.3 sheet R-3 IV.E L11"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kW of Contract Capacity per month",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 3,
+            "sheet": "R-3",
+            "section": "IV.E",
+            "line": 10,
+            "end_line": null,
+            "snippet": "($/kW of Contract Capacity per month)",
+            "locator": "smud-r p.3 sheet R-3 IV.E L10"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "May 1, 2025",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.E",
+          "line": 11,
+          "end_line": null,
+          "snippet": "Effective May 1, 2025 $8.597",
+          "locator": "smud-r p.3 sheet R-3 IV.E L11"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Standby Service Charge - January 1 through December 31",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.E",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Standby Service Charge - January 1 through December 31",
+          "locator": "smud-r p.3 sheet R-3 IV.E L9"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "8.855",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 3,
+            "sheet": "R-3",
+            "section": "IV.E",
+            "line": 12,
+            "end_line": null,
+            "snippet": "Effective January 1, 2026 $8.855",
+            "locator": "smud-r p.3 sheet R-3 IV.E L12"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kW of Contract Capacity per month",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 3,
+            "sheet": "R-3",
+            "section": "IV.E",
+            "line": 10,
+            "end_line": null,
+            "snippet": "($/kW of Contract Capacity per month)",
+            "locator": "smud-r p.3 sheet R-3 IV.E L10"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2026",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.E",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Effective January 1, 2026 $8.855",
+          "locator": "smud-r p.3 sheet R-3 IV.E L12"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Standby Service Charge - January 1 through December 31",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.E",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Standby Service Charge - January 1 through December 31",
+          "locator": "smud-r p.3 sheet R-3 IV.E L9"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "9.121",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 3,
+            "sheet": "R-3",
+            "section": "IV.E",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Effective January 1, 2027 $9.121",
+            "locator": "smud-r p.3 sheet R-3 IV.E L13"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$/kW of Contract Capacity per month",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 3,
+            "sheet": "R-3",
+            "section": "IV.E",
+            "line": 10,
+            "end_line": null,
+            "snippet": "($/kW of Contract Capacity per month)",
+            "locator": "smud-r p.3 sheet R-3 IV.E L10"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2027",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.E",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Effective January 1, 2027 $9.121",
+          "locator": "smud-r p.3 sheet R-3 IV.E L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Three-Phase Service - January 1 through December 31",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.J",
+          "line": 33,
+          "end_line": null,
+          "snippet": "Three-Phase Service - January 1 through December 31",
+          "locator": "smud-r p.3 sheet R-3 IV.J L33"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "56.25",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 3,
+            "sheet": "R-3",
+            "section": "IV.J",
+            "line": 35,
+            "end_line": null,
+            "snippet": "Effective May 1, 2025 $56.25",
+            "locator": "smud-r p.3 sheet R-3 IV.J L35"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "Special Facilities fee per month",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 3,
+            "sheet": "R-3",
+            "section": "IV.J",
+            "line": 34,
+            "end_line": null,
+            "snippet": "(Special Facilities fee per month)",
+            "locator": "smud-r p.3 sheet R-3 IV.J L34"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "May 1, 2025",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.J",
+          "line": 35,
+          "end_line": null,
+          "snippet": "Effective May 1, 2025 $56.25",
+          "locator": "smud-r p.3 sheet R-3 IV.J L35"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Three-Phase Service - January 1 through December 31",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.J",
+          "line": 33,
+          "end_line": null,
+          "snippet": "Three-Phase Service - January 1 through December 31",
+          "locator": "smud-r p.3 sheet R-3 IV.J L33"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "57.95",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 3,
+            "sheet": "R-3",
+            "section": "IV.J",
+            "line": 36,
+            "end_line": null,
+            "snippet": "Effective January 1, 2026 $57.95",
+            "locator": "smud-r p.3 sheet R-3 IV.J L36"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "Special Facilities fee per month",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 3,
+            "sheet": "R-3",
+            "section": "IV.J",
+            "line": 34,
+            "end_line": null,
+            "snippet": "(Special Facilities fee per month)",
+            "locator": "smud-r p.3 sheet R-3 IV.J L34"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2026",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.J",
+          "line": 36,
+          "end_line": null,
+          "snippet": "Effective January 1, 2026 $57.95",
+          "locator": "smud-r p.3 sheet R-3 IV.J L36"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Three-Phase Service - January 1 through December 31",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.J",
+          "line": 33,
+          "end_line": null,
+          "snippet": "Three-Phase Service - January 1 through December 31",
+          "locator": "smud-r p.3 sheet R-3 IV.J L33"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "59.70",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 3,
+            "sheet": "R-3",
+            "section": "IV.J",
+            "line": 37,
+            "end_line": null,
+            "snippet": "Effective January 1, 2027 $59.70",
+            "locator": "smud-r p.3 sheet R-3 IV.J L37"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "Special Facilities fee per month",
+          "provenance": {
+            "document_id": "smud-r",
+            "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+            "page": 3,
+            "sheet": "R-3",
+            "section": "IV.J",
+            "line": 34,
+            "end_line": null,
+            "snippet": "(Special Facilities fee per month)",
+            "locator": "smud-r p.3 sheet R-3 IV.J L34"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "January 1, 2027",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.J",
+          "line": 37,
+          "end_line": null,
+          "snippet": "Effective January 1, 2027 $59.70",
+          "locator": "smud-r p.3 sheet R-3 IV.J L37"
+        }
+      }
+    }
+  ],
+  "tou_windows": [],
+  "holidays": [],
+  "cross_references": [
+    {
+      "target": {
+        "value": "HGA",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "III.A",
+          "line": 30,
+          "end_line": null,
+          "snippet": "A. Hydro Generation Adjustment (HGA). Refer to Rate Schedule HGA.",
+          "locator": "smud-r p.2 sheet R-2 III.A L30"
+        }
+      },
+      "context": {
+        "value": "A. Hydro Generation Adjustment (HGA). Refer to Rate Schedule HGA.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "III.A",
+          "line": 30,
+          "end_line": null,
+          "snippet": "A. Hydro Generation Adjustment (HGA). Refer to Rate Schedule HGA.",
+          "locator": "smud-r p.2 sheet R-2 III.A L30"
+        }
+      }
+    },
+    {
+      "target": {
+        "value": "EAPR",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "IV.A",
+          "line": 32,
+          "end_line": null,
+          "snippet": "A. Energy Assistance Program Rate. Refer to Rate Schedule EAPR.",
+          "locator": "smud-r p.2 sheet R-2 IV.A L32"
+        }
+      },
+      "context": {
+        "value": "A. Energy Assistance Program Rate. Refer to Rate Schedule EAPR.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "IV.A",
+          "line": 32,
+          "end_line": null,
+          "snippet": "A. Energy Assistance Program Rate. Refer to Rate Schedule EAPR.",
+          "locator": "smud-r p.2 sheet R-2 IV.A L32"
+        }
+      }
+    },
+    {
+      "target": {
+        "value": "MED",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "IV.B",
+          "line": 33,
+          "end_line": null,
+          "snippet": "B. Medical Equipment Discount Program. Refer to Rate Schedule MED.",
+          "locator": "smud-r p.2 sheet R-2 IV.B L33"
+        }
+      },
+      "context": {
+        "value": "B. Medical Equipment Discount Program. Refer to Rate Schedule MED.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "IV.B",
+          "line": 33,
+          "end_line": null,
+          "snippet": "B. Medical Equipment Discount Program. Refer to Rate Schedule MED.",
+          "locator": "smud-r p.2 sheet R-2 IV.B L33"
+        }
+      }
+    },
+    {
+      "target": {
+        "value": "MED",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "IV.C",
+          "line": 34,
+          "end_line": null,
+          "snippet": "C. Joint Participation in Medical Equipment Discount and Energy Assistance Programs. Refer to Rate Schedule MED.",
+          "locator": "smud-r p.2 sheet R-2 IV.C L34"
+        }
+      },
+      "context": {
+        "value": "C. Joint Participation in Medical Equipment Discount and Energy Assistance Programs. Refer to Rate Schedule MED.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "IV.C",
+          "line": 34,
+          "end_line": null,
+          "snippet": "C. Joint Participation in Medical Equipment Discount and Energy Assistance Programs. Refer to Rate Schedule MED.",
+          "locator": "smud-r p.2 sheet R-2 IV.C L34"
+        }
+      }
+    },
+    {
+      "target": {
+        "value": "R-TOD",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "IV.D",
+          "line": 35,
+          "end_line": null,
+          "snippet": "D. Time-of-Day Rate. Refer to Rate Schedule R-TOD.",
+          "locator": "smud-r p.2 sheet R-2 IV.D L35"
+        }
+      },
+      "context": {
+        "value": "D. Time-of-Day Rate. Refer to Rate Schedule R-TOD.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 2,
+          "sheet": "R-2",
+          "section": "IV.D",
+          "line": 35,
+          "end_line": null,
+          "snippet": "D. Time-of-Day Rate. Refer to Rate Schedule R-TOD.",
+          "locator": "smud-r p.2 sheet R-2 IV.D L35"
+        }
+      }
+    },
+    {
+      "target": {
+        "value": "NEM1",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.F",
+          "line": 19,
+          "end_line": null,
+          "snippet": "F. Customer Energy Generation Option. Refer to Rate Schedule NEM1.",
+          "locator": "smud-r p.3 sheet R-3 IV.F L19"
+        }
+      },
+      "context": {
+        "value": "F. Customer Energy Generation Option. Refer to Rate Schedule NEM1.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.F",
+          "line": 19,
+          "end_line": null,
+          "snippet": "F. Customer Energy Generation Option. Refer to Rate Schedule NEM1.",
+          "locator": "smud-r p.3 sheet R-3 IV.F L19"
+        }
+      }
+    },
+    {
+      "target": {
+        "value": "R-TOD",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.I",
+          "line": 29,
+          "end_line": null,
+          "snippet": "I. Plug-In Electric Vehicle (PEV) Option. Refer to Rate Schedule R-TOD.",
+          "locator": "smud-r p.3 sheet R-3 IV.I L29"
+        }
+      },
+      "context": {
+        "value": "I. Plug-In Electric Vehicle (PEV) Option. Refer to Rate Schedule R-TOD.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 3,
+          "sheet": "R-3",
+          "section": "IV.I",
+          "line": 29,
+          "end_line": null,
+          "snippet": "I. Plug-In Electric Vehicle (PEV) Option. Refer to Rate Schedule R-TOD.",
+          "locator": "smud-r p.3 sheet R-3 IV.I L29"
+        }
+      }
+    }
+  ],
+  "notes": [
+    {
+      "value": "Master Metered Multifamily and Mobile Home Park Billing (Closed)",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 2,
+        "sheet": "R-2",
+        "section": "II.B",
+        "line": 19,
+        "end_line": null,
+        "snippet": "Master Metered Multifamily and Mobile Home Park Billing (Closed)",
+        "locator": "smud-r p.2 sheet R-2 II.B L19"
+      }
+    },
+    {
+      "value": "Refer to the following rate schedule for details on electricity usage surcharges that apply to all kWh.",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 2,
+        "sheet": "R-2",
+        "section": "III",
+        "line": 29,
+        "end_line": null,
+        "snippet": "Refer to the following rate schedule for details on electricity usage surcharges that apply to all kWh.",
+        "locator": "smud-r p.2 sheet R-2 III L29"
+      }
+    },
+    {
+      "value": "Standby Service applies when all of the following conditions are met:",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.E",
+        "line": 3,
+        "end_line": null,
+        "snippet": "Standby Service applies when all of the following conditions are met:",
+        "locator": "smud-r p.3 sheet R-3 IV.E L3"
+      }
+    },
+    {
+      "value": "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.E",
+        "line": 4,
+        "end_line": null,
+        "snippet": "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
+        "locator": "smud-r p.3 sheet R-3 IV.E L4"
+      }
+    },
+    {
+      "value": "2. The generator(s) have a combined nameplate rating of less than 100 kW; and",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.E",
+        "line": 5,
+        "end_line": null,
+        "snippet": "2. The generator(s) have a combined nameplate rating of less than 100 kW; and",
+        "locator": "smud-r p.3 sheet R-3 IV.E L5"
+      }
+    },
+    {
+      "value": "3. The generator(s) are connected to SMUD's electrical system; and",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.E",
+        "line": 6,
+        "end_line": null,
+        "snippet": "3. The generator(s) are connected to SMUD's electrical system; and",
+        "locator": "smud-r p.3 sheet R-3 IV.E L6"
+      }
+    },
+    {
+      "value": "4. SMUD is required to have resources available to provide supplemental service, backup electricity and/or to supply",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.E",
+        "line": 7,
+        "end_line": null,
+        "snippet": "4. SMUD is required to have resources available to provide supplemental service, backup electricity and/or to supply",
+        "locator": "smud-r p.3 sheet R-3 IV.E L7"
+      }
+    },
+    {
+      "value": "electricity during generator(s) maintenance service.",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.E",
+        "line": 8,
+        "end_line": null,
+        "snippet": "electricity during generator(s) maintenance service.",
+        "locator": "smud-r p.3 sheet R-3 IV.E L8"
+      }
+    },
+    {
+      "value": "In addition to the Standby Service Charge, SMUD will continue to bill for all applicable charges under this rate schedule.",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.E",
+        "line": 14,
+        "end_line": null,
+        "snippet": "In addition to the Standby Service Charge, SMUD will continue to bill for all applicable charges under this rate schedule.",
+        "locator": "smud-r p.3 sheet R-3 IV.E L14"
+      }
+    },
+    {
+      "value": "The Standby Charge will be waived only for qualifying renewable generation under Rate Schedules NEM1 and SSR. The",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.E",
+        "line": 15,
+        "end_line": null,
+        "snippet": "The Standby Charge will be waived only for qualifying renewable generation under Rate Schedules NEM1 and SSR. The",
+        "locator": "smud-r p.3 sheet R-3 IV.E L15"
+      }
+    },
+    {
+      "value": "Standby Service Charge applies to customers who install, interconnect, and operate their own electrical generation facility",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.E",
+        "line": 16,
+        "end_line": null,
+        "snippet": "Standby Service Charge applies to customers who install, interconnect, and operate their own electrical generation facility",
+        "locator": "smud-r p.3 sheet R-3 IV.E L16"
+      }
+    },
+    {
+      "value": "and equipment to self-supply all their own power needs as a microgrid service, where SMUD provides only backup",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.E",
+        "line": 17,
+        "end_line": null,
+        "snippet": "and equipment to self-supply all their own power needs as a microgrid service, where SMUD provides only backup",
+        "locator": "smud-r p.3 sheet R-3 IV.E L17"
+      }
+    },
+    {
+      "value": "electricity.",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.E",
+        "line": 18,
+        "end_line": null,
+        "snippet": "electricity.",
+        "locator": "smud-r p.3 sheet R-3 IV.E L18"
+      }
+    },
+    {
+      "value": "SMUD offers optional programs that allow customers to receive renewable energy for an additional charge, detailed on",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.G",
+        "line": 21,
+        "end_line": null,
+        "snippet": "SMUD offers optional programs that allow customers to receive renewable energy for an additional charge, detailed on",
+        "locator": "smud-r p.3 sheet R-3 IV.G L21"
+      }
+    },
+    {
+      "value": "www.smud.org.",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.G",
+        "line": 22,
+        "end_line": null,
+        "snippet": "www.smud.org.",
+        "locator": "smud-r p.3 sheet R-3 IV.G L22"
+      }
+    },
+    {
+      "value": "For customers who purchase and install additional equipment and software identified by SMUD meter specialists as necessary for",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.H",
+        "line": 24,
+        "end_line": null,
+        "snippet": "For customers who purchase and install additional equipment and software identified by SMUD meter specialists as necessary for",
+        "locator": "smud-r p.3 sheet R-3 IV.H L24"
+      }
+    },
+    {
+      "value": "load data collection and transfer to electronic media outside SMUD, SMUD will charge a monthly service fee to cover",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.H",
+        "line": 25,
+        "end_line": null,
+        "snippet": "load data collection and transfer to electronic media outside SMUD, SMUD will charge a monthly service fee to cover",
+        "locator": "smud-r p.3 sheet R-3 IV.H L25"
+      }
+    },
+    {
+      "value": "maintenance, software support and licensing fees. Payment for this nonstandard equipment and service will be made through",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.H",
+        "line": 26,
+        "end_line": null,
+        "snippet": "maintenance, software support and licensing fees. Payment for this nonstandard equipment and service will be made through",
+        "locator": "smud-r p.3 sheet R-3 IV.H L26"
+      }
+    },
+    {
+      "value": "provisions in Rule and Regulation 2, Section IV. Special Facilities. The fee schedule is available at SMUD's website,",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.H",
+        "line": 27,
+        "end_line": null,
+        "snippet": "provisions in Rule and Regulation 2, Section IV. Special Facilities. The fee schedule is available at SMUD's website,",
+        "locator": "smud-r p.3 sheet R-3 IV.H L27"
+      }
+    },
+    {
+      "value": "www.smud.org.",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.H",
+        "line": 28,
+        "end_line": null,
+        "snippet": "www.smud.org.",
+        "locator": "smud-r p.3 sheet R-3 IV.H L28"
+      }
+    },
+    {
+      "value": "This option is open to customers located in areas where three-phase service is available. A Special Facilities fee may be charged",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.J",
+        "line": 31,
+        "end_line": null,
+        "snippet": "This option is open to customers located in areas where three-phase service is available. A Special Facilities fee may be charged",
+        "locator": "smud-r p.3 sheet R-3 IV.J L31"
+      }
+    },
+    {
+      "value": "to cover the additional costs for providing this service. This charge is in addition to the SIFC.",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 3,
+        "sheet": "R-3",
+        "section": "IV.J",
+        "line": 32,
+        "end_line": null,
+        "snippet": "to cover the additional costs for providing this service. This charge is in addition to the SIFC.",
+        "locator": "smud-r p.3 sheet R-3 IV.J L32"
+      }
+    },
+    {
+      "value": "KWh usage may be prorated for nonstandard billing periods, when billing period spans a price change, and/or when the billing",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 4,
+        "end_line": null,
+        "snippet": "KWh usage may be prorated for nonstandard billing periods, when billing period spans a price change, and/or when the billing",
+        "locator": "smud-r p.4 sheet R-4 V L4"
+      }
+    },
+    {
+      "value": "period spans more than one season. The monthly SIFC will be prorated when the bill period is shorter than 27 days. The",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 5,
+        "end_line": null,
+        "snippet": "period spans more than one season. The monthly SIFC will be prorated when the bill period is shorter than 27 days. The",
+        "locator": "smud-r p.4 sheet R-4 V L5"
+      }
+    },
+    {
+      "value": "following table shows the basis for the proration in these circumstances. The monthly System Infrastructure Fixed Charge is",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 6,
+        "end_line": null,
+        "snippet": "following table shows the basis for the proration in these circumstances. The monthly System Infrastructure Fixed Charge is",
+        "locator": "smud-r p.4 sheet R-4 V L6"
+      }
+    },
+    {
+      "value": "determined by the billing period end date.",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 7,
+        "end_line": null,
+        "snippet": "determined by the billing period end date.",
+        "locator": "smud-r p.4 sheet R-4 V L7"
+      }
+    },
+    {
+      "value": "Billing Circumstance Basis for Proration",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 8,
+        "end_line": null,
+        "snippet": "Billing Circumstance Basis for Proration",
+        "locator": "smud-r p.4 sheet R-4 V L8"
+      }
+    },
+    {
+      "value": "Bill period is shorter than 27 days (SIFC",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 9,
+        "end_line": null,
+        "snippet": "Bill period is shorter than 27 days (SIFC",
+        "locator": "smud-r p.4 sheet R-4 V L9"
+      }
+    },
+    {
+      "value": "and kWh) Relationship between the length of the billing period and 30 days.",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 10,
+        "end_line": null,
+        "snippet": "and kWh) Relationship between the length of the billing period and 30 days.",
+        "locator": "smud-r p.4 sheet R-4 V L10"
+      }
+    },
+    {
+      "value": "Bill period is longer than 34 days (kWh)",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 11,
+        "end_line": null,
+        "snippet": "Bill period is longer than 34 days (kWh)",
+        "locator": "smud-r p.4 sheet R-4 V L11"
+      }
+    },
+    {
+      "value": "Relationship between the length of the billing period and the",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 12,
+        "end_line": null,
+        "snippet": "Relationship between the length of the billing period and the",
+        "locator": "smud-r p.4 sheet R-4 V L12"
+      }
+    },
+    {
+      "value": "Seasons overlap and price changes within",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 13,
+        "end_line": null,
+        "snippet": "Seasons overlap and price changes within",
+        "locator": "smud-r p.4 sheet R-4 V L13"
+      }
+    },
+    {
+      "value": "number of days that fall within the respective season or pricing",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 14,
+        "end_line": null,
+        "snippet": "number of days that fall within the respective season or pricing",
+        "locator": "smud-r p.4 sheet R-4 V L14"
+      }
+    },
+    {
+      "value": "bill period",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 15,
+        "end_line": null,
+        "snippet": "bill period",
+        "locator": "smud-r p.4 sheet R-4 V L15"
+      }
+    },
+    {
+      "value": "periods.",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 16,
+        "end_line": null,
+        "snippet": "periods.",
+        "locator": "smud-r p.4 sheet R-4 V L16"
+      }
+    },
+    {
+      "value": "(End)",
+      "provenance": {
+        "document_id": "smud-r",
+        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+        "page": 4,
+        "sheet": "R-4",
+        "section": "V",
+        "line": 17,
+        "end_line": null,
+        "snippet": "(End)",
+        "locator": "smud-r p.4 sheet R-4 V L17"
+      }
+    }
+  ],
+  "unparsed": [
+    {
+      "section": "II.B",
+      "heading": "Master-Metered Multifamily Accommodation and Mobile Home Park Billing (Rate Category RSMM) Closed",
+      "page": 2,
+      "sheet": "R-2",
+      "first_line": 19,
+      "last_line": 19,
+      "line_count": 1,
+      "reason": "1 of 12 lines in a recognized section matched no rule",
+      "sample": [
+        "Master Metered Multifamily and Mobile Home Park Billing (Closed)"
+      ]
+    },
+    {
+      "section": "III",
+      "heading": "Electricity Usage Surcharges",
+      "page": 2,
+      "sheet": "R-2",
+      "first_line": 29,
+      "last_line": 29,
+      "line_count": 1,
+      "reason": "1 of 2 lines in a recognized section matched no rule",
+      "sample": [
+        "Refer to the following rate schedule for details on electricity usage surcharges that apply to all kWh."
+      ]
+    },
+    {
+      "section": "IV.E",
+      "heading": "Standby Service Option",
+      "page": 3,
+      "sheet": "R-3",
+      "first_line": 3,
+      "last_line": 18,
+      "line_count": 11,
+      "reason": "11 of 17 lines in a recognized section matched no rule",
+      "sample": [
+        "Standby Service applies when all of the following conditions are met:",
+        "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
+        "2. The generator(s) have a combined nameplate rating of less than 100 kW; and",
+        "3. The generator(s) are connected to SMUD's electrical system; and"
+      ]
+    },
+    {
+      "section": "IV.G",
+      "heading": "SMUD Renewable Energy Option",
+      "page": 3,
+      "sheet": "R-3",
+      "first_line": 21,
+      "last_line": 22,
+      "line_count": 2,
+      "reason": "2 of 3 lines in a recognized section matched no rule",
+      "sample": [
+        "SMUD offers optional programs that allow customers to receive renewable energy for an additional charge, detailed on",
+        "www.smud.org."
+      ]
+    },
+    {
+      "section": "IV.H",
+      "heading": "Special Metering Charge",
+      "page": 3,
+      "sheet": "R-3",
+      "first_line": 24,
+      "last_line": 28,
+      "line_count": 5,
+      "reason": "5 of 6 lines in a recognized section matched no rule",
+      "sample": [
+        "For customers who purchase and install additional equipment and software identified by SMUD meter specialists as necessary for",
+        "load data collection and transfer to electronic media outside SMUD, SMUD will charge a monthly service fee to cover",
+        "maintenance, software support and licensing fees. Payment for this nonstandard equipment and service will be made through",
+        "provisions in Rule and Regulation 2, Section IV. Special Facilities. The fee schedule is available at SMUD's website,"
+      ]
+    },
+    {
+      "section": "IV.J",
+      "heading": "Residential Three-Phase Service Option",
+      "page": 3,
+      "sheet": "R-3",
+      "first_line": 31,
+      "last_line": 32,
+      "line_count": 2,
+      "reason": "2 of 8 lines in a recognized section matched no rule",
+      "sample": [
+        "This option is open to customers located in areas where three-phase service is available. A Special Facilities fee may be charged",
+        "to cover the additional costs for providing this service. This charge is in addition to the SIFC."
+      ]
+    },
+    {
+      "section": "V",
+      "heading": "Billing",
+      "page": 4,
+      "sheet": "R-4",
+      "first_line": 4,
+      "last_line": 17,
+      "line_count": 14,
+      "reason": "14 of 15 lines in a recognized section matched no rule",
+      "sample": [
+        "KWh usage may be prorated for nonstandard billing periods, when billing period spans a price change, and/or when the billing",
+        "period spans more than one season. The monthly SIFC will be prorated when the bill period is shorter than 27 days. The",
+        "following table shows the basis for the proration in these circumstances. The monthly System Infrastructure Fixed Charge is",
+        "determined by the billing period end date."
+      ]
+    }
+  ],
+  "coverage": {
+    "content_lines": 115,
+    "recognized_lines": 79,
+    "unrecognized_lines": 36,
+    "boilerplate_lines": 16,
+    "sections_total": 20,
+    "sections_recognized": 13,
+    "sections_unrecognized": 7,
+    "line_ratio": 0.686957,
+    "section_ratio": 0.65,
+    "fully_recognized": false
+  }
+}

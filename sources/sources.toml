@@ -1,0 +1,37 @@
+# Published rate schedules this project knows how to parse.
+#
+# The documents themselves are not redistributed from this repository. What is
+# committed is this manifest: publisher, URL, retrieval date and the SHA-256 of
+# the exact bytes that were read. Run `ca-tariff-parse fetch` to download them,
+# and `ca-tariff-parse verify-source` to confirm you hold the same bytes.
+#
+# A publisher may revise a schedule at the same URL. When the digest stops
+# matching, that is a signal to review the change deliberately, not to relax
+# the check.
+#
+# Listing a document here is a statement about where it came from. It is not a
+# claim of permission, endorsement, or any relationship with the publisher.
+
+[[document]]
+id = "smud-r-tod"
+schedule = "R-TOD"
+title = "Residential Time-of-Day Service"
+publisher = "Sacramento Municipal Utility District"
+url = "https://www.smud.org/-/media/Documents/Rate-Information/Rates/1-R-TOD.ashx"
+filename = "1-R-TOD.pdf"
+sha256 = "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd"
+retrieved_at = "2026-08-17"
+pages = 5
+bytes = 220148
+
+[[document]]
+id = "smud-r"
+schedule = "R"
+title = "Residential Service"
+publisher = "Sacramento Municipal Utility District"
+url = "https://www.smud.org/-/media/Documents/Rate-Information/Rates/1-R.ashx"
+filename = "1-R.pdf"
+sha256 = "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b"
+retrieved_at = "2026-08-17"
+pages = 4
+bytes = 209810

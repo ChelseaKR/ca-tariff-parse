@@ -1,0 +1,21 @@
+# Source documents are fetched, not committed. See docs/adr/0003.
+sources/*.pdf
+requirements.audit.txt
+
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+.DS_Store

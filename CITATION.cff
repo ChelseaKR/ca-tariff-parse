@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: If you reference this software, please cite it as below.
+title: "ca-tariff-parse: deterministic, fully cited parsing of published California electricity rate schedules"
+abstract: >-
+  A command line parser that turns published California electricity rate
+  schedules into machine-readable structured data. Every emitted value carries
+  provenance back to a specific document, page, sheet, section and line, and
+  content the parser does not understand is reported rather than dropped. The
+  output represents a document and is not a bill estimate or rate advice.
+authors:
+  - family-names: Kelly-Reif
+    given-names: Chelsea
+    alias: ChelseaKR
+repository-code: "https://github.com/ChelseaKR/ca-tariff-parse"
+license: Apache-2.0
+type: software
+keywords:
+  - tariff
+  - electricity
+  - rate schedule
+  - provenance
+  - civic technology
+  - California

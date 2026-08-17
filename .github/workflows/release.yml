@@ -1,0 +1,143 @@
+# Signed-tag release, dispatched from main, with verification and publication
+# held by two separate jobs.
+#
+# The shape matters. Repository code runs only in the read-only job. The job
+# that holds `contents: write` never checks the repository out, so nothing from
+# the tag can execute with a writable token. It re-reads the tag object from
+# the API and refuses to publish unless it is byte for byte the object the
+# verification job approved.
+#
+# One-time setup before the first release: set the repository variable
+# RELEASE_SIGNERS to the allowed-signers line for the SSH key used to sign
+# release tags, in the form `<principal> <keytype> <key>`. Until it is set this
+# workflow fails closed rather than publishing an unverified tag.
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing signed release tag (vX.Y.Z)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  UV_VERSION: "0.12.1"
+
+jobs:
+  verify:
+    name: Verify the signed tag against trusted main
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      tag: ${{ steps.identity.outputs.tag }}
+      tag_object_sha: ${{ steps.identity.outputs.tag_object_sha }}
+      source_commit: ${{ steps.identity.outputs.source_commit }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+          enable-cache: false
+
+      - name: Establish tag identity from trusted main
+        id: identity
+        env:
+          TAG: ${{ inputs.tag }}
+          RELEASE_SIGNERS: ${{ vars.RELEASE_SIGNERS }}
+        run: |
+          set -euo pipefail
+
+          # The workflow itself must have been dispatched from main.
+          test "${GITHUB_REF}" = refs/heads/main
+          test "$(git rev-parse origin/main)" = "${GITHUB_SHA}"
+
+          # A release tag is a SemVer tag and nothing else.
+          printf '%s\n' "${TAG}" \
+            | grep -Eq '^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
+          git show-ref --verify --quiet "refs/tags/${TAG}"
+
+          # An annotated, signed tag object, not a lightweight ref.
+          test "$(git cat-file -t "refs/tags/${TAG}")" = tag
+
+          # The tagged commit must already be on main. A tag pointing at code
+          # that never landed cannot be released.
+          git merge-base --is-ancestor "${TAG}^{commit}" origin/main
+
+          if [ -z "${RELEASE_SIGNERS:-}" ]; then
+            echo "RELEASE_SIGNERS is not set; refusing to publish an unverified tag" >&2
+            exit 1
+          fi
+          printf '%s\n' "${RELEASE_SIGNERS}" > "${RUNNER_TEMP}/allowed-signers"
+          git config gpg.format ssh
+          git config gpg.ssh.allowedSignersFile "${RUNNER_TEMP}/allowed-signers"
+          git verify-tag "${TAG}"
+
+          {
+            printf 'tag=%s\n' "${TAG}"
+            printf 'tag_object_sha=%s\n' "$(git rev-parse "refs/tags/${TAG}")"
+            printf 'source_commit=%s\n' "$(git rev-parse "${TAG}^{commit}")"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Re-run the full gate at the tagged commit
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          git checkout --detach "${TAG}^{commit}"
+          make verify
+
+      - name: Confirm the version and changelog agree with the tag
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          version="${TAG#v}"
+          project_version="$(uv run python -c 'import tomllib,pathlib; print(tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"])')"
+          test "${project_version}" = "${version}"
+          grep -q "${version}" CHANGELOG.md
+
+  publish:
+    name: Publish the release
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Recheck the tag object and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.verify.outputs.tag }}
+          TAG_OBJECT_SHA: ${{ needs.verify.outputs.tag_object_sha }}
+        run: |
+          set -euo pipefail
+
+          # This job never checks the repository out. Re-read the tag object
+          # from the API and refuse to publish anything the verification job
+          # did not approve, in case the ref moved in between.
+          remote_object="$(gh api "repos/${GH_REPO}/git/ref/tags/${TAG}" --jq '.object.sha')"
+          if [ "${remote_object}" != "${TAG_OBJECT_SHA}" ]; then
+            echo "tag ${TAG} moved since verification; refusing to publish" >&2
+            exit 1
+          fi
+
+          gh release create "${TAG}" \
+            --title "${TAG}" \
+            --notes "See CHANGELOG.md for the changes in ${TAG}." \
+            --verify-tag \
+            --draft

@@ -1,0 +1,266 @@
+
+                                                            Example Service (SYNTHETIC)
+                                                            Rate Schedule SYN-1
+
+
+         I. Applicability
+               This SYNTHETIC Rate Schedule SYN-1 applies to example premises only.
+                  1. Example customers with an example meter installed are eligible.
+                  2. Example customers without an example meter are not eligible.
+
+               A. Example Rate (rate category SYN01)
+                  1. This is a SYNTHETIC rate that exists only to exercise the parser.
+                  2. No customer is billed under it and no utility publishes it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         EXAMPLE MUNICIPAL UTILITY (SYNTHETIC)                        Sheet No. SYN-1-1
+         Resolution No. SYN-00-00 adopted January 1, 2026 Effective: February 1, 2026
+
+
+                                                            Example Service (SYNTHETIC)
+                                                            Rate Schedule SYN-1
+
+
+         II. Example Firm Service Rates
+               A. Example Rate
+
+                                                          Effective as of  Effective as of
+                                                          May 1, 2026      January 1, 2027
+               Example Rate (SYN01)
+               Example Season (March - April)
+                    Fixed Charge per month per meter        $11.00            $12.00
+                    Electricity Usage Charge
+                         Peak $/kWh                         $1.1000           $1.2000
+                         Off-Peak $/kWh                       n/a             $0.5000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         EXAMPLE MUNICIPAL UTILITY (SYNTHETIC)                        Sheet No. SYN-1-2
+         Resolution No. SYN-00-00 adopted January 1, 2026 Effective: February 1, 2026
+
+
+                                                            Example Service (SYNTHETIC)
+                                                            Rate Schedule SYN-1
+
+
+         III. Example Options
+               A. Example Surcharge. Refer to Rate Schedule SYN-HGA.
+
+               B. Example Standby Option
+                    Example Standby Charge - January 1 through December 31
+                    ($/kW of Example Capacity per month)
+                          Effective May 1, 2026           $1.234
+                          Effective January 1, 2027       $2.345
+
+               C. Example Vehicle Credit (rate category SYN01)
+                    Credit applies to all example usage charges from midnight to 6:00 a.m. daily.
+                          Example Vehicle Credit            -$0.0100/kWh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         EXAMPLE MUNICIPAL UTILITY (SYNTHETIC)                        Sheet No. SYN-1-3
+         Resolution No. SYN-00-00 adopted January 1, 2026 Effective: February 1, 2026
+
+
+                                                            Example Service (SYNTHETIC)
+                                                            Rate Schedule SYN-1
+
+
+         IV. Example Billing Periods
+               A. Example Time-of-Day Billing Periods
+
+                                    Peak              Weekdays between 5:00 p.m. and 8:00 p.m.
+        Example Summer
+                                    Mid-Peak          Weekdays between noon and midnight except during the Peak hours.
+        (Mar 1 - Apr 30)
+                                    Off-Peak          All other hours, including weekends and holidays.
+        Example Winter              Peak              Weekdays between 5:00 p.m. and 8:00 p.m.
+        (May 1 - Feb 28)            Off-Peak          All other hours, including weekends and holidays.
+
+               Off-Peak pricing shall apply during the following holidays:
+
+                    Holiday                         Month             Date
+                    Example New Year Day            January           1
+                    Example Spring Day              March             Third Monday
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         EXAMPLE MUNICIPAL UTILITY (SYNTHETIC)                        Sheet No. SYN-1-4
+         Resolution No. SYN-00-00 adopted January 1, 2026 Effective: February 1, 2026
+
+
+                                                            Example Service (SYNTHETIC)
+                                                            Rate Schedule SYN-1
+
+
+         V. Example Unrecognized Part
+               This SYNTHETIC part is deliberately written in a shape no recognizer
+               understands, so that a document containing it cannot parse to the same
+               output as one the parser fully understands.
+               Example Mystery Quantity: seventeen furlongs per fortnight.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         EXAMPLE MUNICIPAL UTILITY (SYNTHETIC)                        Sheet No. SYN-1-5
+         Resolution No. SYN-00-00 adopted January 1, 2026 Effective: February 1, 2026
+
+
