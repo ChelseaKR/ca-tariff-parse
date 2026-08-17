@@ -1,0 +1,157 @@
+
+                                        Revised Example Sheet No. SYN-2-1
+                                        Cancelling Revised Example Sheet No. SYN-2-0
+
+
+          EXAMPLE SERVICE (SYNTHETIC) SHEET 1
+
+         APPLICABILITY:  This SYNTHETIC schedule applies to example premises
+                         only. Example customers with an example meter
+                         installed are eligible for service under it.
+
+                         Example customers without an example meter are not
+                         eligible for service under it.
+
+         RATES:          Example rates are stated below.
+
+                         Example Energy Rates ($ per kWh)
+                             Example Tier 1 Usage             $1.1000
+                             Example Tier 2 Usage             $1.2000
+                             Example Adjustment             ($0.0500)
+
+                         Example Unpriced Heading:
+                             Example Refused Row One          $9.9999
+                             Example Refused Row Two          $8.8888
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         EXAMPLE UTILITY (SYNTHETIC)            Sheet No. SYN-2-1
+         Resolution No. SYN-00-00 adopted January 1, 2026 Effective: February 1, 2026
+
+                                        Revised Example Sheet No. SYN-2-2
+                                        Cancelling Revised Example Sheet No. SYN-2-0
+
+
+          EXAMPLE SERVICE (SYNTHETIC) SHEET 2
+
+         SPECIAL         Example two-column rates are stated below.
+         CONDITIONS:
+
+                         Example Two-Column Rates ($ per kWh) EX-A        EX-B
+                             Example Peak Usage              $2.0000     $3.0000
+                             Example Off-Peak Usage          $2.5000     $3.5000
+
+                         Example Single Rates ($ per kWh)
+                             Example Single One              $4.0000
+                             Example Single Two              $4.5000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         EXAMPLE UTILITY (SYNTHETIC)            Sheet No. SYN-2-2
+         Resolution No. SYN-00-00 adopted January 1, 2026 Effective: February 1, 2026
+
+                                        Revised Example Sheet No. SYN-2-3
+
+
+
+          EXAMPLE SERVICE (SYNTHETIC) SHEET 3
+
+         SPECIAL         Example conditions continued from the sheet before.
+         CONDITIONS:
+         (Cont'd.)
+
+                         Example Vintage Rate
+                         (per kWh)
+                             Example 2024 Vintage             $5.0000
+                             Example 2025 Vintage             $5.2500
+                             Example 2026 Vintage           ($5.5000)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         EXAMPLE UTILITY (SYNTHETIC)            Sheet No. SYN-2-3
+         Resolution No. SYN-00-00 adopted January 1, 2026 Effective: March 1, 2026
+

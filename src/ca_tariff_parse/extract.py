@@ -23,6 +23,8 @@ from dataclasses import dataclass
 from itertools import pairwise
 from pathlib import Path
 
+from .profiles import DEFAULT, DocumentProfile
+
 #: Nominal width of one character cell in a monospace fixture, in points.
 MONO_CHAR_WIDTH = 6.0
 #: Nominal height of one text line in a monospace fixture, in points.
@@ -139,35 +141,37 @@ class LayoutDoc:
 
 
 _SHEET_RE = re.compile(r"Sheet\s*No\.?\s*([A-Za-z0-9][A-Za-z0-9\-]*)", re.IGNORECASE)
-#: A supersession header. A sheet that replaces an earlier one prints both
-#: numbers, as in "Revised Cal. P.U.C. Sheet No. 61362-E" over "Cancelling
-#: Revised Cal. P.U.C. Sheet No. 61247-E". The cancelled number names the sheet
-#: this page is *not*, so citing it would point every value on the page at a
-#: superseded document.
-CANCELS_RE = re.compile(r"\bcancel", re.IGNORECASE)
 
 
-def sheet_numbers(line: Line) -> list[str]:
-    """Sheet numbers this line asserts, ignoring any it cancels.
+def sheet_numbers(line: Line, profile: DocumentProfile) -> list[str]:
+    """Sheet numbers this line asserts as its own.
 
-    Returns an empty list for a line that only names a cancelled sheet, so a
-    caller never records a superseded sheet number as this page's own.
+    A sheet that replaces an earlier one prints both numbers, as in "Revised
+    Cal. P.U.C. Sheet No. 61362-E" over "Cancelling Revised Cal. P.U.C. Sheet
+    No. 61247-E". The cancelled number names the sheet this page is *not*, so
+    citing it would point every value on the page at a superseded document.
+
+    Which word announces that is the publisher's filing convention and comes
+    from the profile. Returns an empty list for a line the profile says
+    announces a supersession, so a caller never records a superseded sheet
+    number as this page's own.
     """
-    if CANCELS_RE.search(line.text):
+    if profile.cancels(line.text):
         return []
     return _SHEET_RE.findall(line.text)
 
 
-def _detect_sheet(lines: list[Line]) -> str | None:
+def _detect_sheet(lines: list[Line], profile: DocumentProfile) -> str | None:
     """Read the sheet number off the page furniture, if the document has one.
 
     Two publishers put the number in different places and one of them prints
     two of them, so the rule is to collect every number the page asserts as its
     own and to use it only when they agree. Disagreement means the page does
     not state a single sheet number, and none is recorded rather than one of
-    them being picked.
+    them being picked. A page printing a supersession its profile cannot read
+    therefore loses its sheet number rather than naming the wrong one.
     """
-    found = [number for line in lines if line.furniture for number in sheet_numbers(line)]
+    found = [number for line in lines if line.furniture for number in sheet_numbers(line, profile)]
     if not found or len(set(found)) != 1:
         return None
     return found[0]
@@ -233,6 +237,7 @@ def cluster_lines(words: list[tuple[float, Word]]) -> list[tuple[float, tuple[Wo
 
 def _build_pages(
     per_page: list[tuple[float, list[tuple[float, tuple[Word, ...]]]]],
+    profile: DocumentProfile,
 ) -> tuple[Page, ...]:
     pages: list[Page] = []
     for page_no, (height, raw) in enumerate(per_page, start=1):
@@ -248,13 +253,15 @@ def _build_pages(
                 number=page_no,
                 height=height,
                 lines=lines,
-                sheet=_detect_sheet(list(lines)),
+                sheet=_detect_sheet(list(lines), profile),
             )
         )
     return tuple(pages)
 
 
-def layout_from_pdf(path: Path, document_id: str | None = None) -> LayoutDoc:
+def layout_from_pdf(
+    path: Path, document_id: str | None = None, *, profile: DocumentProfile = DEFAULT
+) -> LayoutDoc:
     """Read a published PDF into the layout model.
 
     Import of ``pdfplumber`` is deferred so that fixture based tests, and the
@@ -287,7 +294,7 @@ def layout_from_pdf(path: Path, document_id: str | None = None) -> LayoutDoc:
         sha256=digest,
         filename=path.name,
         byte_size=len(data),
-        pages=_build_pages(per_page),
+        pages=_build_pages(per_page, profile),
         synthetic=False,
     )
 
@@ -298,6 +305,7 @@ def layout_from_monospace(
     *,
     synthetic: bool = True,
     filename: str = "<inline>",
+    profile: DocumentProfile = DEFAULT,
 ) -> LayoutDoc:
     """Read a monospace text fixture into the layout model.
 
@@ -337,15 +345,17 @@ def layout_from_monospace(
         sha256=digest,
         filename=filename,
         byte_size=len(data),
-        pages=_build_pages(per_page),
+        pages=_build_pages(per_page, profile),
         synthetic=synthetic,
     )
 
 
-def layout_from_path(path: Path, document_id: str | None = None) -> LayoutDoc:
+def layout_from_path(
+    path: Path, document_id: str | None = None, *, profile: DocumentProfile = DEFAULT
+) -> LayoutDoc:
     """Dispatch on file extension: ``.pdf`` to the PDF reader, otherwise text."""
     if path.suffix.lower() == ".pdf":
-        return layout_from_pdf(path, document_id=document_id)
+        return layout_from_pdf(path, document_id=document_id, profile=profile)
     text = path.read_text(encoding="utf-8")
     synthetic = "SYNTHETIC" in text.upper() or "synthetic" in path.name.lower()
     return layout_from_monospace(
@@ -353,4 +363,5 @@ def layout_from_path(path: Path, document_id: str | None = None) -> LayoutDoc:
         document_id=document_id or path.stem,
         synthetic=synthetic,
         filename=path.name,
+        profile=profile,
     )

@@ -15,6 +15,7 @@ from __future__ import annotations
 import re
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
+from itertools import pairwise
 
 from ..extract import LayoutDoc, Line, Word, normalize
 from ..model import (
@@ -26,14 +27,42 @@ from ..model import (
     Provenance,
     TouWindow,
 )
+from ..profiles import DocumentProfile
 from ..segment import Section
 
 LineKey = tuple[int, int]
 
 #: Matches a currency amount, optionally negative, as printed in a tariff table.
 MONEY_RE = re.compile(r"\A(?P<sign>-?)\$(?P<num>\d{1,3}(?:,\d{3})*(?:\.\d+)?|\d+(?:\.\d+)?)\Z")
+#: The same amount wrapped in accounting brackets, as in ``($0.08140)``. What
+#: the brackets mean is the publisher's convention rather than anything the
+#: page states, so this is only read when a profile says the publisher uses it.
+BRACKET_MONEY_RE = re.compile(
+    r"\A\(\$(?P<num>\d{1,3}(?:,\d{3})*(?:\.\d+)?|\d+(?:\.\d+)?)\)\Z",
+)
 #: Matches a cell the publisher marked as not applicable.
 NA_RE = re.compile(r"\A(n/a|na|--|—)\Z", re.IGNORECASE)
+
+
+def read_amount(token: str, profile: DocumentProfile) -> str | None:
+    """The signed decimal a token states, or ``None`` when it states none.
+
+    The returned string is the printed decimal with its sign, never a float:
+    an exact printed price must not be rounded on the way through.
+
+    A bracketed amount is read as a negative only for a publisher whose profile
+    says brackets are how it writes one. For any other document ``($0.08140)``
+    is not an amount, which makes the caller refuse the row rather than publish
+    a credit as though it were a charge.
+    """
+    plain = MONEY_RE.match(token)
+    if plain:
+        return f"{plain.group('sign')}{plain.group('num')}"
+    if not profile.bracket_negative_amounts:
+        return None
+    bracketed = BRACKET_MONEY_RE.match(token)
+    return f"-{bracketed.group('num')}" if bracketed else None
+
 
 #: Time-of-use period names as the published schedules write them, longest
 #: first so that "Off-Peak Saver" is never truncated to "Off-Peak". These are
@@ -217,6 +246,45 @@ def assign(word: Word, columns: Sequence[Column]) -> Column | None:
     return best
 
 
+#: Multiple of a section's own median line gap that separates one paragraph
+#: from the next. A tolerance, not a position: it says how much clearer than
+#: ordinary leading a break has to be, and the leading itself is measured on
+#: the page.
+PARAGRAPH_SEPARATION = 1.4
+
+
+def _paragraphs_by_spacing(lines: list[Line]) -> list[list[Line]]:
+    """Group lines into paragraphs using the section's own line spacing.
+
+    Under a keyword outline the body sits in one column with no hanging indent,
+    so the left edge says nothing about where one paragraph ends. What the
+    publisher does set is the vertical space: a paragraph break is a wider gap
+    than the leading inside a paragraph. Reading the break off that spacing is
+    the same rule the footer band already uses.
+
+    Merging the paragraphs instead would be worse than untidy. Each carries a
+    coarse eligibility label, and one paragraph saying who is excluded folded
+    into another saying who is included produces a label that is true of
+    neither.
+    """
+    if len(lines) < 2:
+        return [list(lines)]
+    gaps = sorted(
+        later.top - earlier.top for earlier, later in pairwise(lines) if later.page == earlier.page
+    )
+    median = gaps[len(gaps) // 2] if gaps else 0.0
+    groups: list[list[Line]] = [[lines[0]]]
+    for earlier, later in pairwise(lines):
+        broken = (
+            later.page != earlier.page or later.top - earlier.top > median * PARAGRAPH_SEPARATION
+        )
+        if broken:
+            groups.append([later])
+        else:
+            groups[-1].append(later)
+    return groups
+
+
 def paragraphs(section: Section, *, skip_heading: bool = True) -> list[list[Line]]:
     """Group a section's content lines into logical paragraphs.
 
@@ -225,10 +293,14 @@ def paragraphs(section: Section, *, skip_heading: bool = True) -> list[list[Line
     to rebuild the paragraph structure without guessing.
     """
     lines = section.content_lines
-    if skip_heading and lines and section.level > 0:
+    if skip_heading and lines and section.level > 0 and not section.heading_inline:
+        # An inline heading shares its line with the body of the part, so
+        # dropping that line would drop text the document put there.
         lines = lines[1:]
     if not lines:
         return []
+    if section.heading_inline:
+        return _paragraphs_by_spacing(lines)
 
     starts = [line for line in lines if not _looks_like_continuation(line, lines)]
     base = min((line.indent for line in starts), default=lines[0].indent)

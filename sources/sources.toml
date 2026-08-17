@@ -62,13 +62,21 @@ bytes = 203785
 
 # A second publisher, added to find out how much of this parser is general and
 # how much was four documents' worth of one publisher's typesetting. The answer
-# is in docs/adr/0005. These three parse at 0% and their unparsed report is the
-# output. Retrieval checked https://www.pge.com/robots.txt first, which
+# is in docs/adr/0005, and the document profile it called for is implemented in
+# docs/adr/0006. Retrieval checked https://www.pge.com/robots.txt first, which
 # disallows only /mobile/ and /mobile_jbri/ for a general client and publishes
 # a sitemap of the tariff book.
+#
+# `profile` names the document profile these sheets are read with. It supplies
+# only what the document cannot state about itself: that the outline is a
+# keyword column, that a negative is written in accounting brackets, and which
+# word announces a superseded sheet. Everything else is still read off the
+# page. A document naming no profile gets the default, under which a bracketed
+# amount is refused and a page asserting two sheet numbers records neither.
 
 [[document]]
 id = "pge-e-1"
+profile = "pge-tariff-book"
 schedule = "E-1"
 title = "Residential Services"
 publisher = "Pacific Gas and Electric Company"
@@ -81,6 +89,7 @@ bytes = 656128
 
 [[document]]
 id = "pge-e-tou-c"
+profile = "pge-tariff-book"
 schedule = "E-TOU-C"
 title = "Residential Time-of-Use (Peak Pricing 4 - 9 p.m. Every Day)"
 publisher = "Pacific Gas and Electric Company"
@@ -93,6 +102,7 @@ bytes = 932456
 
 [[document]]
 id = "pge-b-1"
+profile = "pge-tariff-book"
 schedule = "B-1"
 title = "Small General Service"
 publisher = "Pacific Gas and Electric Company"

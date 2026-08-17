@@ -112,8 +112,8 @@ output as one it fully understands, and there is a test that proves it.
 ## Coverage today
 
 Seven published schedules from two publishers are in the manifest. None of them
-parses completely, three of them do not parse at all, and the figure for each
-is an output of the tool rather than a claim made here.
+parses completely, and the figure for each is an output of the tool rather than
+a claim made here.
 
 | Schedule | Publisher | Lines recognized | Charges | Windows | Holidays |
 | --- | --- | --- | --- | --- | --- |
@@ -121,52 +121,74 @@ is an output of the tool rather than a claim made here.
 | R, residential | SMUD | 79/115 (68.7%) | 30 | 0 | 0 |
 | CI-TOD1, commercial and industrial time-of-day | SMUD | 121/201 (60.2%) | 78 | 5 | 11 |
 | SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 |
-| E-1, residential | PG&E | 0/269 (0.0%) | 0 | 0 | 0 |
-| E-TOU-C, residential time-of-use | PG&E | 0/425 (0.0%) | 0 | 0 | 0 |
-| B-1, small general service | PG&E | 0/507 (0.0%) | 0 | 0 | 0 |
+| E-1, residential | PG&E | 42/269 (15.6%) | 26 | 0 | 0 |
+| E-TOU-C, residential time-of-use | PG&E | 18/425 (4.2%) | 3 | 0 | 0 |
+| B-1, small general service | PG&E | 106/507 (20.9%) | 18 | 0 | 0 |
 
 `make coverage-real` reproduces the table from the fetched documents.
 
-### What a second publisher cost
+### The document profile
 
-The three zeroes are the honest result of asking whether this parser
-generalises. It does not. The full account is in
-[ADR 0005](docs/adr/0005-a-second-publisher-needs-a-document-profile.md); the
-short version is that three quarters of the collapse is one assumption. This
-parser recovers a document's outline from statute-style numbering, roman
-numerals over capital letters, and cites every value to the part it came from.
-The second publisher has no numbered outline: it sets a keyword in a narrow
-left-hand column with the text beside it, so a line reads `APPLICABILITY: This
-schedule is applicable to ...`. With no outline the whole document lands in one
-section and no recognizer has anything to key on.
+The three PG&E figures were 0% until a **document profile** was added. A
+profile is selected per manifest entry and carries only what a document cannot
+state about itself. There are three fields, and a document naming no profile
+gets a default in which all three are the refusing value.
 
-What turned out to be general is the machinery that made the failure legible
-rather than dangerous: the positional layout model, the citation and audit
-rules, the coverage accounting, and above all the refusals. Even before the
-fixes below, two of the three documents emitted not one value: a rate table
-whose shape is not recognised produces nothing rather than something plausible.
-What turned out to be specific to the first
-publisher is every recognizer's claim: the rate table keys on the literal words
-`Effective as of`, the identity reader on `Rate Schedule <code>` and a
-resolution number, cross references on `Refer to Rate Schedule X`. A second
-publisher writes all of those differently and gets nothing.
+| Field | Why the document cannot say it |
+| --- | --- |
+| `outline` | A numbered outline announces itself: `I.` over `A.` is a part and a subsection whatever the document is about. A keyword outline announces nothing. A word set in a column of its own with text beside it is a heading in one house style, a table's first column in another, and a wide margin with a hanging indent in a third, and the page looks the same in all three. This parser meets the other two inside the first publisher's own tables. |
+| `bracket_negative_amounts` | `($0.08140)` is a negative to a publisher who uses accounting brackets. Reading it as positive publishes a charge where a credit was published; refusing it withholds a real price. The page offers no third reading, so the parser has to be told before it can do either. |
+| `supersession_word` | A sheet prints its own number over the number it replaces, and which one is withdrawn is carried by a filing word rather than by anything structural on the page. |
 
-One thing did produce output, and it was wrong: two time-of-use windows under a
-season called `PERIOD`, which is the window table's own column heading and not
-a season at all. That, a citation naming a sheet the publisher had cancelled,
-and a body line silently swallowed by a fixed footer band are fixed here,
-because each is wrong for any publisher. The publisher-specific gaps are left
-open on purpose. Closing them with a second branch beside the first is how a
-parser becomes a pile of special cases, so ADR 0005 designs a per-document
-profile instead and does not implement it against a single second example.
+Nothing else is in it, and in particular no coordinate. ADR 0005 expected the
+profile to state the width of the keyword column; across three schedules that
+column starts anywhere from 72 to 101 points and the body beside it anywhere
+from 133 to 172, so a single number cannot separate them and the column is read
+from the page instead.
+
+What that bought, and what it did not, is in
+[ADR 0006](docs/adr/0006-the-document-profile-holds-three-things.md). The short
+version is that the outline is worth most of the coverage, the bracket notation
+is worth the prices that would otherwise have been refused or reversed, and the
+new prices are dated sheet by sheet, because these sheets are filed one at a
+time and the sheets of one schedule take effect on different days.
 
 Coverage of the four SMUD schedules did not move and their golden output is
-byte for byte unchanged.
+byte for byte unchanged. That is the test that this is a seam rather than a
+second branch: the first publisher takes the default for all three fields.
 
-What is left unaccounted for on those four is largely genuine narrative:
-proration wording, critical peak pricing terms, service voltage definitions,
-metering conditions. Three specific things are structured and still refused, on
-purpose:
+### What is still refused on the second publisher
+
+Most of it, and each refusal is a case where a value could otherwise be wrong.
+
+- **A page that sets amounts in more than one column.** A row carrying one
+  amount in a two column table has to say which column it sits in, and a block
+  that states no columns cannot. This is why the commercial schedule's own rate
+  sheets contribute nothing at all: they price two rate options side by side.
+- **A block whose heading states no unit**, because a number with no unit says
+  nothing about what it prices.
+- **A row carrying a cell the publisher marked with dashes**, which prices a
+  column the block does not name.
+- **The identity fields, the cross-reference wording and the credit form.**
+  Each is a statement about how one publisher writes, not a thing a document
+  cannot state about itself, so none of them belongs in a profile. Closing them
+  means finding the shape, not adding a field.
+
+### What a second publisher cost
+
+Two of the three PG&E schedules once emitted no value at all, and the third
+emitted two time-of-use windows under a season the publisher never wrote. The
+full account of that first pass is in
+[ADR 0005](docs/adr/0005-a-second-publisher-needs-a-document-profile.md). What
+turned out to be general was the machinery that made the failure legible rather
+than dangerous: the positional layout model, the citation and audit rules, the
+coverage accounting, and above all the refusals. A rate table whose shape is
+not recognised produces nothing rather than something plausible.
+
+What is left unaccounted for on the four SMUD schedules is largely genuine
+narrative: proration wording, critical peak pricing terms, service voltage
+definitions, metering conditions. Three specific things are structured and
+still refused, on purpose:
 
 - **A price stated inside a sentence.** SSR gives its export compensation rate
   as "The Export Compensation Rate effective June 1, 2026 will be $0.0960 per
@@ -220,32 +242,40 @@ publisher that disallows the path is not fetched from at all.
 | `verify-source` | Check local documents against the manifest digests |
 
 `parse` and `coverage` accept `--id <manifest-id>`, which verifies the file
-against the pinned digest before parsing and records the publisher and
-retrieval date in the output. They also accept `--min-coverage`, which exits
-non-zero when too little of the document was understood.
+against the pinned digest before parsing, records the publisher and retrieval
+date in the output, and reads the document with the profile its manifest entry
+names. They also accept `--min-coverage`, which exits non-zero when too little
+of the document was understood, and `--profile`, which names a document profile
+for a file that is not in the manifest.
 
 ## How it works
 
 1. **Extract.** `pdfplumber` gives the position of every word. Positions are
    kept, because which price belongs to which effective date is carried
    entirely by horizontal alignment.
-2. **Segment.** Lines are grouped into the document's own numbered outline
-   (roman parts, lettered subsections), so every value can cite a section and
-   an unrecognised part can be named rather than lost.
+2. **Segment.** Lines are grouped into the document's own outline, so every
+   value can cite a part and an unrecognised part can be named rather than
+   lost. Two outlines are known: statute-style numbering (roman parts, lettered
+   subsections) and a keyword set in a column with the body beside it. Which
+   one a document uses comes from its profile, because the page does not say.
 3. **Recognize.** Small independent recognizers each claim a section shape and
    report exactly which lines they consumed.
 4. **Account.** Any line no recognizer consumed becomes an `unparsed` entry and
    a verbatim note.
 5. **Audit.** The provenance walk runs before anything is written.
 
-Tests run against a clearly labelled synthetic fixture, so the suite works
-offline and without redistributing a publisher's document. The golden output of
-the four schedules that parse is committed under `tests/golden/`, so a parser
-change that would alter a published price shows up as a reviewable diff. No
-golden file is committed for the three that parse at 0%: nothing is recognized,
-so the whole document text would sit in `notes` and committing that would
-republish the document. Those three are covered by tests asserting the refusal
-instead.
+Tests run against clearly labelled synthetic fixtures, so the suite works
+offline and without redistributing a publisher's document. One fixture is
+written in a keyword outline with accounting-bracket negatives and a
+supersession header, so the profile is exercised in CI too, and parsing it
+without a profile has to refuse all three.
+
+The golden output of the four SMUD schedules is committed under
+`tests/golden/`, so a parser change that would alter a published price shows up
+as a reviewable diff. No golden file is committed for the three PG&E schedules:
+most of each document is still carried verbatim in `notes`, and committing that
+would republish it. Those three are covered instead by a spot check of six
+prices quoted from the sheets with their unit, effective date and heading.
 
 ## Standards Conformance
 

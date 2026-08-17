@@ -100,3 +100,33 @@ def test_parsing_with_an_id_rejects_a_document_whose_bytes_do_not_match(
     code = main(["parse", str(complete_fixture), "--id", "smud-r-tod"])
     assert code == EXIT_ERROR
     assert "does not match the manifest" in capsys.readouterr().err
+
+
+def test_parse_reads_an_unregistered_document_with_a_named_profile(
+    keyword_fixture: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A profile can be named on the command line for a file not in the manifest."""
+    assert main(["parse", str(keyword_fixture), "--profile", "pge-tariff-book"]) == EXIT_OK
+    payload = json.loads(capsys.readouterr().out)
+    sections = {charge["price"]["amount"]["provenance"]["section"] for charge in payload["charges"]}
+    assert sections == {"RATES", "SPECIALCONDITIONS"}
+    assert any(charge["price"]["amount"]["value"].startswith("-") for charge in payload["charges"])
+
+
+def test_parse_without_a_profile_refuses_what_that_profile_would_have_read(
+    keyword_fixture: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert main(["parse", str(keyword_fixture)]) == EXIT_OK
+    payload = json.loads(capsys.readouterr().out)
+    assert not any(
+        charge["price"]["amount"]["value"].startswith("-") for charge in payload["charges"]
+    )
+    assert {
+        charge["price"]["amount"]["provenance"]["section"] for charge in payload["charges"]
+    } == {"preamble"}
+
+
+def test_an_unknown_profile_is_rejected_by_the_command_line(keyword_fixture: Path) -> None:
+    """A misspelled profile is an error, never a silent fall back to the default."""
+    with pytest.raises(SystemExit):
+        main(["parse", str(keyword_fixture), "--profile", "no-such-publisher"])

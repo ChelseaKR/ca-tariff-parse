@@ -57,11 +57,28 @@ Then **read every changed price** in the diff before committing. A golden
 update is the moment a parser bug becomes a published wrong number, so it gets
 reviewed line by line rather than accepted wholesale.
 
+## Adding or changing a document profile
+
+`src/ca_tariff_parse/profiles.py` holds the per-document profiles, and a
+manifest entry names one with a `profile` key. A profile may only carry
+something a document genuinely cannot state about itself. Before adding a
+field, write the paragraph that says why the page does not answer the question,
+and if you cannot write it, the answer belongs in a recognizer reading the
+document instead.
+
+In particular a profile holds no coordinate. A position in a profile is the
+mistake ADR 0004 removed from the recognizers, put back one layer up. See ADR
+0006 for what that cost when it was tried.
+
+Every field needs a refusing default, so that a document naming no profile is
+refused rather than guessed at, and a test that proves the refusal.
+
 ## Adding a source document
 
 Add an entry to `sources/sources.toml` with the publisher, URL, retrieval date,
-page count, byte size and SHA-256. Fetch politely: check `robots.txt`, take
-what you need, and cache it. Do not crawl a publisher's site.
+page count, byte size and SHA-256, plus a `profile` if the publisher needs one.
+Fetch politely: check `robots.txt`, take what you need, and cache it. Do not
+crawl a publisher's site.
 
 Listing a document is a statement about where it came from. It is not a claim
 of permission or endorsement, and nothing in this project may imply

@@ -72,6 +72,8 @@ def parse(section: Section, citer: Citer) -> Emission:
         emission.take(*group)
 
     # The heading itself is part of the section and is accounted for here.
-    if section.content_lines and section.level > 0:
+    # A heading set inline shares its line with the body, and that line is
+    # taken above as part of the paragraph it opens rather than for free.
+    if section.content_lines and section.level > 0 and not section.heading_inline:
         emission.take(section.content_lines[0])
     return emission

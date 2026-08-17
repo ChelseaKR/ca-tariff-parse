@@ -14,6 +14,7 @@ from pathlib import Path
 
 from .model import DISCLAIMER, ParsedSchedule
 from .parser import PARSER_VERSION, parse_manifest_document, parse_path
+from .profiles import UnknownProfileError, names, resolve
 from .sources import (
     DEFAULT_MANIFEST,
     SourceError,
@@ -31,10 +32,12 @@ EXIT_COVERAGE = 2
 def _load(args: argparse.Namespace) -> ParsedSchedule:
     path = Path(args.document)
     if args.id:
+        # The manifest entry names the profile, so a registered document is
+        # always read with the one it was pinned against.
         entry = find(load_manifest(Path(args.manifest)), args.id)
         verify(entry, path)
         return parse_manifest_document(entry, path)
-    return parse_path(path)
+    return parse_path(path, profile=resolve(args.profile))
 
 
 def _cmd_parse(args: argparse.Namespace) -> int:
@@ -163,6 +166,15 @@ def build_parser() -> argparse.ArgumentParser:
             type=float,
             help="exit non-zero if the recognized line ratio falls below this (0 to 1)",
         )
+        target.add_argument(
+            "--profile",
+            choices=names(),
+            help=(
+                "document profile for a file that is not in the manifest. A profile "
+                "supplies only what a document cannot state about itself. Registered "
+                "documents take theirs from the manifest and ignore this."
+            ),
+        )
 
     p_parse = subparsers.add_parser("parse", help="parse a schedule to JSON")
     add_document(p_parse)
@@ -201,7 +213,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         result: int = args.func(args)
-    except SourceError as error:
+    except (SourceError, UnknownProfileError) as error:
         sys.stderr.write(f"error: {error}\n")
         return EXIT_ERROR
     return result

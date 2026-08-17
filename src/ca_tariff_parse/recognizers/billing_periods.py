@@ -399,6 +399,10 @@ def _parse_holidays(lines: list[Line], section: Section, citer: Citer, emission:
 
 def _body(section: Section, windows: list[Line]) -> list[Line]:
     """The window table without the heading line that opens its section."""
+    if section.heading_inline:
+        # The heading shares its line with the body, so there is no heading
+        # line to drop.
+        return windows
     return windows[1:] if section.level > 0 and windows else windows
 
 
@@ -422,7 +426,7 @@ def parse(section: Section, citer: Citer) -> Emission:
     windows, holidays, intro = _split_tables(section)
 
     body = _body(section, windows)
-    if section.level > 0 and windows:
+    if section.level > 0 and windows and not section.heading_inline:
         emission.take(windows[0])
 
     _parse_windows(body, section, citer, emission)

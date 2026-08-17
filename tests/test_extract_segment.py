@@ -175,11 +175,14 @@ def _page(rows: dict[int, str]) -> str:
     return "\n".join(rows.get(index, "") for index in range(max(rows) + 1)) + "\n"
 
 
-def test_a_cancelled_sheet_number_is_never_cited_as_the_page_its_own() -> None:
+def test_a_page_that_might_be_two_sheets_is_cited_as_neither() -> None:
     """A supersession header names the sheet this page replaces, not this one.
 
-    Citing it would point every value on the page at a document the publisher
-    has withdrawn.
+    Citing the withdrawn number would point every value on the page at a
+    document the publisher has retired. Which word announces the withdrawal is
+    the publisher's filing convention and comes from the document profile, so
+    with no profile neither number is recorded. Reading it with one is covered
+    in ``test_profile.py``.
     """
     doc = layout_from_monospace(
         _page(
@@ -191,7 +194,7 @@ def test_a_cancelled_sheet_number_is_never_cited_as_the_page_its_own() -> None:
         ),
         "syn-cancel",
     )
-    assert doc.pages[0].sheet == "SYN-9-2"
+    assert doc.pages[0].sheet is None
 
 
 def test_no_sheet_is_recorded_when_a_page_asserts_two_different_ones() -> None:

@@ -253,6 +253,6 @@ def parse(section: Section, citer: Citer) -> Emission:
         if parsed is not None:
             emission.extend(parsed)
 
-    if emission and section.level > 0 and lines:
+    if emission and section.level > 0 and lines and not section.heading_inline:
         emission.take(lines[0])
     return emission

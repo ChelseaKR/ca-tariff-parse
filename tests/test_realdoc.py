@@ -7,10 +7,12 @@ parsing them, with every value carrying its citation. Comparing against the
 golden file is how a change in the parser that would alter a published price
 gets caught.
 
-A second publisher's schedules are here too, and they parse at 0%. No golden
-file is committed for those, because nothing is recognized and the whole
-document text would sit in ``notes``. What is asserted for them is the refusal:
-no charge, no window, no holiday, and every content line reported.
+A second publisher's schedules are here too. They are read through a document
+profile and parse in part. No golden file is committed for those, because most
+of each document still sits verbatim in ``notes`` and committing that would
+republish it. What is committed instead is a spot check: a handful of prices
+quoted from the sheets, so that a parser change altering one of them fails
+here rather than passing quietly.
 
 Run ``make fetch`` first to exercise these.
 """
@@ -36,10 +38,9 @@ CASES = [
     ("smud-ci-tod1", "CI-TOD1.pdf"),
     ("smud-ssr", "01_SSR.pdf"),
 ]
-#: A second publisher, whose schedules this parser does not structure at all.
-#: No golden file is committed for them: nothing is recognized, so the whole
-#: document text would be carried verbatim in ``notes`` and committing that
-#: would republish the document. What is asserted instead is the refusal.
+#: A second publisher, read through the ``pge-tariff-book`` profile. No golden
+#: file is committed for these: most of each document is still carried verbatim
+#: in ``notes`` and committing that would republish it.
 SECOND_PUBLISHER_CASES = [
     ("pge-e-1", "ELEC_SCHEDS_E-1.pdf"),
     ("pge-e-tou-c", "ELEC_SCHEDS_E-TOU-C.pdf"),
@@ -135,42 +136,155 @@ def test_second_publisher_document_matches_the_manifest_digest(
     assert verify(entry, path) == entry.sha256
 
 
-@pytest.mark.parametrize(("document_id", "filename"), SECOND_PUBLISHER_CASES)
-def test_a_second_publisher_is_refused_rather_than_guessed_at(
-    document_id: str, filename: str
-) -> None:
-    """Nothing is emitted from a document whose structure is not understood.
-
-    These schedules carry no numbered outline, so the segmenter finds one
-    section and the recognizers have nothing to key on. The honest result is
-    zero coverage and an unparsed report naming the whole document. What must
-    never happen is a value: a price, a window or a holiday read out of a
-    document the parser cannot follow would be a plausible looking number with
-    a citation that makes it look checked.
-    """
+def _parse(document_id: str, filename: str):
     path = _require(document_id, filename)
     entry = find(load_manifest(MANIFEST), document_id)
-    parsed = parse_manifest_document(entry, path)
+    return parse_manifest_document(entry, path)
 
-    assert parsed.charges == ()
+
+@pytest.mark.parametrize(("document_id", "filename"), SECOND_PUBLISHER_CASES)
+def test_a_second_publisher_is_accounted_for_line_by_line(document_id: str, filename: str) -> None:
+    """Partly structured, and every line of the rest reported.
+
+    Reading a second publisher at all depends on a document profile. What must
+    not change is the accounting: no window or holiday is claimed from a shape
+    the parser cannot follow, and every content line is either consumed by a
+    recognizer or carried verbatim with its location.
+    """
+    parsed = _parse(document_id, filename)
+
     assert parsed.tou_windows == ()
     assert parsed.holidays == ()
-    assert parsed.coverage.line_ratio == 0.0
+    assert 0.0 < parsed.coverage.line_ratio < 1.0
     assert parsed.coverage.fully_recognized is False
-    # Nothing is dropped: every content line is reported and carried verbatim.
-    assert len(parsed.notes) == parsed.coverage.content_lines
-    assert sum(item.line_count for item in parsed.unparsed) == parsed.coverage.content_lines
+    unread = parsed.coverage.content_lines - parsed.coverage.recognized_lines
+    assert len(parsed.notes) == unread
+    assert sum(item.line_count for item in parsed.unparsed) == unread
+
+
+#: Prices quoted from the second publisher's sheets, each with the unit and the
+#: effective date the sheet states, checked against the PDF by hand. These
+#: stand in for a golden file, which cannot be committed without republishing
+#: the document.
+SPOT_CHECKS = [
+    (
+        "pge-e-1",
+        "ELEC_SCHEDS_E-1.pdf",
+        "Tier 1 Usage (0% - 100% of Baseline)",
+        "0.32561",
+        "$ per kWh",
+        "June 1, 2026",
+        "Total Energy Rates",
+    ),
+    (
+        "pge-e-1",
+        "ELEC_SCHEDS_E-1.pdf",
+        "Income Tier 3",
+        "0.79343",
+        "$ per customer per day",
+        "June 1, 2026",
+        "Base Services Charge Rates",
+    ),
+    (
+        "pge-e-1",
+        "ELEC_SCHEDS_E-1.pdf",
+        "Generation:",
+        "0.12855",
+        "$ per kWh",
+        "March 1, 2026",
+        "Energy Rates by Component",
+    ),
+    # An accounting-bracket negative, which is only readable through a profile.
+    (
+        "pge-e-1",
+        "ELEC_SCHEDS_E-1.pdf",
+        "2026 Vintage",
+        "-0.01011",
+        "per kWh",
+        "March 1, 2026",
+        "Vintage Power Charge Indifference Adjustment Rate",
+    ),
+    (
+        "pge-e-tou-c",
+        "ELEC_SCHEDS_E-TOU-C.pdf",
+        "2009 Vintage",
+        "0.02973",
+        "per kWh",
+        "March 1, 2026",
+        "Vintage Power Charge Indifference Adjustment Rate",
+    ),
+    (
+        "pge-b-1",
+        "ELEC_SCHEDS_B-1.pdf",
+        "2025 Vintage",
+        "-0.00990",
+        "per kWh",
+        "January 1, 2026",
+        "Vintaged Power Charge Indifference Adjustment Rate",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    ("document_id", "filename", "label", "amount", "unit", "effective", "group"), SPOT_CHECKS
+)
+def test_a_quoted_price_is_still_read_exactly_as_published(
+    document_id: str,
+    filename: str,
+    label: str,
+    amount: str,
+    unit: str,
+    effective: str,
+    group: str,
+) -> None:
+    parsed = _parse(document_id, filename)
+    matching = [charge for charge in parsed.charges if charge.label.value == label]
+    assert len(matching) == 1, f"{label} appears {len(matching)} times in {document_id}"
+    charge = matching[0]
+    assert charge.price.amount.value == amount
+    assert charge.price.unit.value == unit
+    assert charge.effective_from.value == effective
+    assert charge.group is not None
+    assert charge.group.value == group
+    # The citation has to lead back to the printed line.
+    assert amount.lstrip("-") in charge.price.amount.provenance.snippet
+
+
+def test_the_sheets_of_one_schedule_are_dated_one_by_one() -> None:
+    """Sheet 1 of E-1 takes effect three months after the sheets behind it.
+
+    Dating every price to the document rather than to its own sheet would file
+    most of this schedule under a day it did not take effect.
+    """
+    parsed = _parse("pge-e-1", "ELEC_SCHEDS_E-1.pdf")
+    by_page = {
+        charge.price.amount.provenance.page: charge.effective_from.value
+        for charge in parsed.charges
+    }
+    assert by_page[1] == "June 1, 2026"
+    assert by_page[2] == "March 1, 2026"
+
+
+def test_a_two_column_sheet_yields_no_price_at_all() -> None:
+    """B-1 prices two rate options side by side and names neither in the block.
+
+    Every price on those sheets is refused rather than attributed to a column
+    the block does not state. The eighteen it does emit all come from the
+    single column table on the billing sheet.
+    """
+    parsed = _parse("pge-b-1", "ELEC_SCHEDS_B-1.pdf")
+    assert {charge.price.amount.provenance.page for charge in parsed.charges} == {6}
+    assert all(charge.price.unit.value == "per kWh" for charge in parsed.charges)
 
 
 def test_no_citation_names_a_sheet_the_publisher_cancelled() -> None:
     """Each page prints its own sheet number over the one it supersedes.
 
     Reading the second of the two made every citation on the page point at a
-    withdrawn document.
+    withdrawn document. Which word announces the supersession comes from the
+    manifest's profile.
     """
-    path = _require("pge-e-1", "ELEC_SCHEDS_E-1.pdf")
-    entry = find(load_manifest(MANIFEST), "pge-e-1")
-    parsed = parse_manifest_document(entry, path)
+    parsed = _parse("pge-e-1", "ELEC_SCHEDS_E-1.pdf")
     sheets = [sheet.value for sheet in parsed.identity.sheets]
     assert sheets == ["61362-E", "61097-E", "61098-E", "61099-E", "61100-E", "61101-E", "61102-E"]
     assert "61247-E" not in sheets

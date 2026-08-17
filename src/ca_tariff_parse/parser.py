@@ -13,11 +13,13 @@ from pathlib import Path
 from .audit import assert_fully_cited
 from .extract import LayoutDoc, layout_from_path
 from .model import (
+    Cited,
     Coverage,
     ParsedSchedule,
     SourceDocument,
     UnparsedSection,
 )
+from .profiles import DEFAULT, DocumentProfile, resolve
 from .recognizers import (
     applicability,
     billing_periods,
@@ -26,6 +28,7 @@ from .recognizers import (
     dated_charge,
     header,
     rate_table,
+    sheet_rates,
 )
 from .recognizers.base import Citer, Emission
 from .segment import Section, segment
@@ -44,16 +47,24 @@ def _reason(consumed: int, total: int) -> str:
     return f"{total - consumed} of {total} lines in a recognized section matched no rule"
 
 
-def _run_recognizers(sections: list[Section], citer: Citer, effective: object) -> Emission:
+def _run_recognizers(
+    sections: list[Section],
+    citer: Citer,
+    effective: Cited[str] | None,
+    profile: DocumentProfile,
+    effective_by_page: dict[int, Cited[str]],
+) -> Emission:
     headings = {section.section_id: section.heading for section in sections if section.level == 1}
     combined = Emission()
     for section in sections:
         if rate_table.claims(section):
             combined.extend(rate_table.parse(section, citer))
+        if sheet_rates.claims(section, profile):
+            combined.extend(sheet_rates.parse(section, citer, profile, effective_by_page))
         if dated_charge.claims(section):
             combined.extend(dated_charge.parse(section, citer))
         if credit.claims(section):
-            combined.extend(credit.parse(section, citer, effective))  # type: ignore[arg-type]
+            combined.extend(credit.parse(section, citer, effective))
         if billing_periods.claims(section):
             combined.extend(billing_periods.parse(section, citer))
         if cross_reference.claims(section):
@@ -63,21 +74,34 @@ def _run_recognizers(sections: list[Section], citer: Citer, effective: object) -
     return combined
 
 
-def parse_document(doc: LayoutDoc, *, source: SourceDocument | None = None) -> ParsedSchedule:
+def parse_document(
+    doc: LayoutDoc,
+    *,
+    source: SourceDocument | None = None,
+    profile: DocumentProfile = DEFAULT,
+) -> ParsedSchedule:
     """Parse a layout document into a fully cited schedule."""
     citer = Citer(doc)
-    segmented = segment(doc)
+    segmented = segment(doc, profile)
 
-    identity, front_consumed = header.parse_identity(doc, citer)
-    emission = _run_recognizers(segmented.sections, citer, identity.effective)
+    identity, front_consumed = header.parse_identity(doc, citer, profile)
+    emission = _run_recognizers(
+        segmented.sections,
+        citer,
+        identity.effective,
+        profile,
+        header.sheet_effective_dates(doc, citer),
+    )
     emission.consumed |= front_consumed
 
     # Segmentation itself understands a heading: it is what produced the
     # section id every citation in that section points at. Counting it as
     # unrecognised would make the coverage figure measure the outline rather
     # than the body, which is the part a reader actually needs accounted for.
+    # A heading set inline gets no such credit: the same line carries the body
+    # of the part, and crediting it would count text nobody has read.
     for section in segmented.sections:
-        if section.level > 0 and section.content_lines:
+        if section.level > 0 and section.content_lines and not section.heading_inline:
             emission.take(section.content_lines[0])
 
     unparsed: list[UnparsedSection] = []
@@ -153,10 +177,15 @@ def parse_document(doc: LayoutDoc, *, source: SourceDocument | None = None) -> P
 
 
 def parse_path(
-    path: Path, *, document_id: str | None = None, source: SourceDocument | None = None
+    path: Path,
+    *,
+    document_id: str | None = None,
+    source: SourceDocument | None = None,
+    profile: DocumentProfile = DEFAULT,
 ) -> ParsedSchedule:
     """Parse a PDF or monospace text fixture from disk."""
-    return parse_document(layout_from_path(path, document_id=document_id), source=source)
+    doc = layout_from_path(path, document_id=document_id, profile=profile)
+    return parse_document(doc, source=source, profile=profile)
 
 
 def parse_manifest_document(entry: SourceEntry, path: Path) -> ParsedSchedule:
@@ -168,7 +197,8 @@ def parse_manifest_document(entry: SourceEntry, path: Path) -> ParsedSchedule:
     used by both the command line and the golden-output tests, so the two
     cannot drift apart.
     """
-    doc = layout_from_path(path, document_id=entry.id)
+    profile = resolve(entry.profile)
+    doc = layout_from_path(path, document_id=entry.id, profile=profile)
     source = SourceDocument(
         document_id=entry.id,
         sha256=doc.sha256,
@@ -180,4 +210,4 @@ def parse_manifest_document(entry: SourceEntry, path: Path) -> ParsedSchedule:
         retrieved_at=entry.retrieved_at,
         synthetic=False,
     )
-    return parse_document(doc, source=source)
+    return parse_document(doc, source=source, profile=profile)

@@ -46,6 +46,10 @@ class SourceEntry:
     retrieved_at: str
     pages: int
     bytes: int
+    profile: str | None = None
+    """Name of the document profile this publisher's sheets need, or ``None``
+    for the default. A profile carries only what a document cannot state about
+    itself; see :mod:`ca_tariff_parse.profiles`."""
 
     def path(self, root: Path) -> Path:
         return root / self.filename

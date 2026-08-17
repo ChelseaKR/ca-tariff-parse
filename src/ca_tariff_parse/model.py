@@ -178,6 +178,11 @@ class Charge:
     across several categories at once, for example a service voltage level.
     Carried verbatim from the heading, and absent when the block prices a
     single amount per effective date."""
+    group: Cited[str] | None = None
+    """The heading of the block of rows this price was read from, when the
+    document prices a run of rows under one heading that also states their
+    unit. Carried verbatim. Without it a row labelled "Income Tier 1" would not
+    say which of a sheet's several tables it came from."""
 
     def to_json(self) -> dict[str, object]:
         out: dict[str, object] = {
@@ -186,7 +191,7 @@ class Charge:
             "price": self.price.to_json(),
             "effective_from": self.effective_from.to_json(),
         }
-        for name in ("rate_category", "season", "tou_period", "applies_to"):
+        for name in ("rate_category", "season", "tou_period", "applies_to", "group"):
             value: Cited[str] | None = getattr(self, name)
             if value is not None:
                 out[name] = value.to_json()

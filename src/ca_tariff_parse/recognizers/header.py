@@ -6,6 +6,7 @@ import re
 
 from ..extract import LayoutDoc, sheet_numbers
 from ..model import Cited, ScheduleIdentity
+from ..profiles import DEFAULT, DocumentProfile
 from .base import Citer, LineKey
 
 FRONT = "front"
@@ -23,8 +24,50 @@ RESOLUTION_RE = re.compile(
 )
 SHEET_RE = re.compile(r"Sheet\s*No\.?\s*(?P<sheet>[A-Za-z0-9][A-Za-z0-9\-]*)", re.IGNORECASE)
 
+_MONTH_NAME = (
+    r"(?:January|February|March|April|May|June|July|August|September|October|November|December)"
+)
+#: The date a sheet says it takes effect, as its own footer prints it. One
+#: publisher files sheet by sheet, so the sheets of a single schedule take
+#: effect on different days: on one schedule here, sheet 1 is effective June 1
+#: and sheets 2 to 7 are effective March 1. Dating a price to the document
+#: rather than to its sheet would file three quarters of that schedule under a
+#: day it did not take effect.
+#:
+#: The match is anchored at the end of the line so that a footer also carrying
+#: "Submitted June 1, 2026" cannot be read as the effective date.
+SHEET_EFFECTIVE_RE = re.compile(
+    rf"\bEffective:?\s+(?P<when>{_MONTH_NAME}\s+\d{{1,2}},\s+\d{{4}})\s*\Z",
+)
 
-def parse_identity(doc: LayoutDoc, citer: Citer) -> tuple[ScheduleIdentity, set[LineKey]]:
+
+def sheet_effective_dates(doc: LayoutDoc, citer: Citer) -> dict[int, Cited[str]]:
+    """The effective date each page's own furniture states, by page number.
+
+    A page whose furniture states no date, or states two that disagree, is
+    absent from the result, and a recognizer that needs a date for that page
+    emits nothing rather than borrowing a neighbouring sheet's.
+    """
+    found: dict[int, list[Cited[str]]] = {}
+    for page in doc.pages:
+        for line in page.lines:
+            if not line.furniture:
+                continue
+            match = SHEET_EFFECTIVE_RE.search(line.text)
+            if match:
+                found.setdefault(page.number, []).append(
+                    citer.text(line, FRONT, match.group("when").strip())
+                )
+    return {
+        number: dates[0]
+        for number, dates in found.items()
+        if len({date.value for date in dates}) == 1
+    }
+
+
+def parse_identity(
+    doc: LayoutDoc, citer: Citer, profile: DocumentProfile = DEFAULT
+) -> tuple[ScheduleIdentity, set[LineKey]]:
     """Extract title, schedule code, resolution and effective date.
 
     Nothing here is inferred. If the document does not print a field, the field
@@ -72,7 +115,9 @@ def parse_identity(doc: LayoutDoc, citer: Citer) -> tuple[ScheduleIdentity, set[
             # accounted for even though nothing is read from it.
             if SHEET_RE.search(text):
                 consumed.add((line.page, line.index))
-                sheets.extend(citer.text(line, FRONT, number) for number in sheet_numbers(line))
+                sheets.extend(
+                    citer.text(line, FRONT, number) for number in sheet_numbers(line, profile)
+                )
 
     identity = ScheduleIdentity(
         schedule_code=schedule_code,

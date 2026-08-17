@@ -80,6 +80,6 @@ def parse(section: Section, citer: Citer, effective: Cited[str] | None) -> Emiss
         )
         emission.take(line)
 
-    if section.level > 0 and lines:
+    if section.level > 0 and lines and not section.heading_inline:
         emission.take(lines[0])
     return emission

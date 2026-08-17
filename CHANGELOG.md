@@ -41,11 +41,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   when one charge is priced across several categories at once.
 - `make coverage-real`, reporting parse coverage of every fetched document.
 - Three schedules from a second publisher in the manifest, added to find out
-  how much of this parser is general. They parse at 0%, that figure is
-  published in the README beside the four that parse, and the account of what
-  is general and what was one publisher's house style is in ADR 0005. No golden
-  file is committed for them: nothing is recognized, so the whole document text
-  would sit in `notes` and committing that would republish the document.
+  how much of this parser is general. The account of what is general and what
+  was one publisher's house style is in ADR 0005. No golden file is committed
+  for them: most of each document is still carried verbatim in `notes` and
+  committing that would republish the document. Six prices quoted from those
+  sheets, with their unit, effective date and block heading, are asserted
+  instead, so a change that alters one of them fails rather than passing.
+- A per-document **profile**, selected by a `profile` key on a manifest entry
+  and carrying only what a document cannot state about itself: whether the
+  outline is numbered or a keyword column, whether a negative amount is written
+  in accounting brackets, and which word announces a superseded sheet. A
+  document naming no profile gets a default in which all three are the refusing
+  value, so an unprofiled document is refused rather than guessed at. The
+  design and the justification for each field are in ADR 0006. This took the
+  second publisher's three schedules from 0% to 15.6%, 4.2% and 20.9%, and left
+  the first publisher's four byte for byte unchanged.
+- A recognizer for a priced table that dates itself from its sheet rather than
+  from its rows: a heading stating a unit in its own parenthesis over a run of
+  rows of one label and one amount. It refuses a block with no stated unit, a
+  page setting amounts in more than one column, a row that dates itself, a row
+  carrying a cell marked with dashes, and a label that does not stop clear of
+  the value column.
+- Per-sheet effective dates. A publisher that files sheet by sheet gives the
+  sheets of one schedule different effective days, so a price is dated from the
+  footer of the sheet it is printed on rather than from the document.
+- `group` on a charge, recording the heading of the block of rows a price was
+  read from. Without it a row labelled "Income Tier 1" would not say which of a
+  sheet's several tables it came from.
+- `--profile` on `parse` and `coverage`, for a document that is not in the
+  manifest. Registered documents take theirs from the manifest.
+- A labelled synthetic fixture in a keyword outline with accounting-bracket
+  negatives and a supersession header, so the profile is exercised offline in
+  CI and the same fixture read with no profile has to refuse all three.
 
 ### Fixed
 
@@ -79,7 +106,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A sheet number a page announces as cancelled is never cited as that page's
   own. A publisher that prints "Revised Cal. P.U.C. Sheet No. X" above
   "Cancelling Revised Cal. P.U.C. Sheet No. Y" had every citation on the page
-  pointing at the withdrawn sheet.
+  pointing at the withdrawn sheet. Which word announces the supersession now
+  comes from the document profile, and with no profile a page asserting two
+  sheet numbers records neither.
+- A sheet's own banner is no longer read as part of the part continued from the
+  sheet before. Under a keyword outline that published a page banner as an
+  eligibility statement. How deep the banner runs is read as the shallowest run
+  any sheet sets above its first keyword.
+- Under a keyword outline a paragraph break is read from the page's own line
+  spacing, because the body column carries no hanging indent to mark one.
+  Merging the paragraphs gave one coarse eligibility label to a run of text
+  where half said who was included and half said who was not.
 - A body line low on the page is no longer discarded as a footer. The band says
   where a footer may be and the page's own line spacing says where the body
   ends, so a line set at body spacing is accounted for instead of vanishing

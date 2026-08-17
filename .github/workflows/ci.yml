@@ -65,6 +65,21 @@ jobs:
             tests/fixtures/SYNTHETIC-example-schedule-complete.txt \
             --min-coverage 1.0 > /dev/null
 
+      - name: Confirm a document profile is required rather than assumed
+        # The same fixture read with and without a profile. With one it parses
+        # in part; with none the outline, the bracket notation and the
+        # supersession header are all refused and coverage falls.
+        run: |
+          set -euo pipefail
+          fixture=tests/fixtures/SYNTHETIC-example-keyword-schedule.txt
+          uv run ca-tariff-parse parse "$fixture" \
+            --profile pge-tariff-book --min-coverage 0.4 > /dev/null
+          if uv run ca-tariff-parse parse "$fixture" \
+               --min-coverage 0.4 > /dev/null; then
+            echo "a document with no profile should not have reached that coverage"
+            exit 1
+          fi
+
   scan:
     name: Secret, static and dependency scanning
     runs-on: ubuntu-latest

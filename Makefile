@@ -29,8 +29,10 @@ test: ## Run the test suite with the coverage floor
 
 verify: install lint typecheck test ## Everything CI runs
 
-coverage: ## Report parser coverage of the synthetic fixture
+coverage: ## Report parser coverage of the synthetic fixtures
 	$(UV) run ca-tariff-parse coverage tests/fixtures/SYNTHETIC-example-schedule-complete.txt
+	$(UV) run ca-tariff-parse coverage \
+		tests/fixtures/SYNTHETIC-example-keyword-schedule.txt --profile pge-tariff-book
 
 fetch: ## Download the published source documents (the only networked target)
 	$(UV) run ca-tariff-parse fetch --dir $(SOURCES_DIR)
@@ -38,10 +40,11 @@ fetch: ## Download the published source documents (the only networked target)
 verify-source: ## Check local source documents against the manifest digests
 	$(UV) run ca-tariff-parse verify-source --dir $(SOURCES_DIR)
 
-# Golden output is committed only for the documents the parser structures. The
-# second publisher's schedules parse at 0%, so their whole text would be
-# carried verbatim in `notes` and committing that would republish the document
-# this repository deliberately does not redistribute. See docs/adr/0005.
+# Golden output is committed only for the first publisher's schedules. Most of
+# each of the second publisher's is still carried verbatim in `notes`, so
+# committing it would republish a document this repository deliberately does
+# not redistribute. Those three are covered by the spot checks in
+# tests/test_realdoc.py instead. See docs/adr/0003 and docs/adr/0006.
 golden: ## Regenerate golden output from the real documents (review every diff)
 	@test -f $(SOURCES_DIR)/1-R-TOD.pdf || { echo "run 'make fetch' first"; exit 1; }
 	$(UV) run ca-tariff-parse parse $(SOURCES_DIR)/1-R-TOD.pdf --id smud-r-tod \

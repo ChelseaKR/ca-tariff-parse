@@ -13,6 +13,10 @@ SOURCES = REPO_ROOT / "sources"
 
 COMPLETE = FIXTURES / "SYNTHETIC-example-schedule-complete.txt"
 UNKNOWN = FIXTURES / "SYNTHETIC-example-schedule-unknown-section.txt"
+#: A fixture in the second publisher's shape: a keyword column outline,
+#: negatives in accounting brackets and a supersession header. Used to exercise
+#: the document profile offline, without redistributing anyone's document.
+KEYWORD = FIXTURES / "SYNTHETIC-example-keyword-schedule.txt"
 
 
 @pytest.fixture
@@ -23,6 +27,11 @@ def complete_fixture() -> Path:
 @pytest.fixture
 def unknown_fixture() -> Path:
     return UNKNOWN
+
+
+@pytest.fixture
+def keyword_fixture() -> Path:
+    return KEYWORD
 
 
 def provenance(**overrides: object) -> dict[str, object]:

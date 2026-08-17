@@ -10,6 +10,7 @@ from . import (
     dated_charge,
     header,
     rate_table,
+    sheet_rates,
 )
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "dated_charge",
     "header",
     "rate_table",
+    "sheet_rates",
 ]
