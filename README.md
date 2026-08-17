@@ -94,8 +94,13 @@ emit:
   or one carrying an exception ("between noon and midnight except during the
   Peak hours"), because a bare range would misstate the rule. The verbatim
   definition is carried instead;
+- a time-of-use window whose definition holds a currency amount, because that
+  is a price sitting in the same column, not a statement of when a period runs;
 - a price for a cell the publisher marked `n/a`;
-- a holiday row with a missing cell.
+- a holiday row with a missing cell, or a whole holiday table whose header does
+  not divide into three headings;
+- a dated block pricing several categories at once whose amounts do not line up
+  one for one with the headings above them.
 
 **Coverage is a published output, not an implicit claim.** Every parse reports
 how many content lines it accounted for, and everything it did not understand
@@ -106,21 +111,55 @@ output as one it fully understands, and there is a test that proves it.
 
 ## Coverage today
 
-Parsing the two SMUD residential schedules currently accounts for roughly 77%
-and 69% of their content lines. The remainder is prose the parser makes no
-attempt to structure (standby eligibility conditions, proration rules, critical
-peak pricing narrative). It is reported, not hidden.
+Four published schedules are in the manifest. None of them parses completely,
+and the figure for each is an output of the tool rather than a claim made here.
+
+| Schedule | Lines recognized | Charges | Windows | Holidays |
+| --- | --- | --- | --- | --- |
+| R-TOD, residential time-of-day | 117/151 (77.5%) | 42 | 5 | 11 |
+| R, residential | 79/115 (68.7%) | 30 | 0 | 0 |
+| CI-TOD1, commercial and industrial time-of-day | 121/201 (60.2%) | 78 | 5 | 11 |
+| SSR, solar and storage | 49/76 (64.5%) | 0 | 0 | 0 |
+
+`make coverage-real` reproduces the table from the fetched documents.
+
+The two commercial and solar schedules were added to test whether a parser
+written against two residential sheets works on anything else. It largely did
+not, and what it got wrong is written up in
+[ADR 0004](docs/adr/0004-read-table-geometry-from-the-document.md): fixed
+column coordinates found none of the eleven holidays on the commercial sheet, a
+transition table of future prices was read as a time-of-use window whose
+definition was a price, and a charge priced across three service voltage levels
+had two of its three amounts folded into the effective date. Those are fixed.
+Coverage of the residential schedules did not move, and their golden output is
+unchanged.
+
+What is left unaccounted for is largely genuine narrative: proration wording,
+critical peak pricing terms, service voltage definitions, metering conditions.
+Three specific things are structured and still refused, on purpose:
+
+- **A price stated inside a sentence.** SSR gives its export compensation rate
+  as "The Export Compensation Rate effective June 1, 2026 will be $0.0960 per
+  kWh". Reading a price out of prose means deciding by guesswork what the price
+  is for, so SSR emits no charges at all rather than one.
+- **The proration table**, on three of the four documents. Its second column is
+  a merged cell whose text interleaves with the rows beside it, so pairing a
+  circumstance with a basis line by line attaches the wrong rule to the wrong
+  circumstance.
+- **The commercial transition table**, which states its unit in a column of its
+  own and dates its prices to a bare year with a footnote. Both are unlike
+  every other priced table here, and neither is read yet.
 
 ```
-$ uv run ca-tariff-parse coverage sources/1-R-TOD.pdf --id smud-r-tod
-content lines   117/151 recognized (77.5%)
-sections        16/24 fully recognized (66.7%)
+$ uv run ca-tariff-parse coverage sources/CI-TOD1.pdf --id smud-ci-tod1
+content lines   121/201 recognized (60.2%)
+sections        15/29 fully recognized (51.7%)
 fully recognized False
-emitted         42 charge(s), 5 time-of-use window(s), 11 holiday(s), 6 cross reference(s)
+emitted         78 charge(s), 5 time-of-use window(s), 11 holiday(s), 5 cross reference(s)
 
 unparsed:
-  II.C       p.2 L35 to p.3 L5 (7) 7 of 8 lines in a recognized section matched no rule
-      | 1. The CPP Rate base prices per time-of-day period are the same ...
+  VIII       p.7 L4 to p.8 L1 (12) 12 of 13 lines in a recognized section matched no rule
+      | Season and Charge Component Unit 2028*
 ```
 
 ## Source documents
@@ -195,9 +234,10 @@ would alter a published price shows up as a reviewable diff.
 ## Development
 
 ```bash
-make verify   # install, lint, typecheck, test with the coverage floor
-make fmt      # apply formatting and safe fixes
-make golden   # regenerate golden output (review every changed price)
+make verify        # install, lint, typecheck, test with the coverage floor
+make fmt           # apply formatting and safe fixes
+make golden        # regenerate golden output (review every changed price)
+make coverage-real # report parse coverage of every fetched document
 ```
 
 ## Licence

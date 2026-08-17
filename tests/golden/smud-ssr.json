@@ -1,0 +1,1080 @@
+{
+  "schema": "ca-tariff-parse/parsed-schedule/v1",
+  "parser_version": "0.1.0",
+  "disclaimer": "This output is a representation of a published document, not a calculation of what any customer owes. It is not rate advice and not a bill estimate. Values are reproduced from the cited source and may be superseded, prorated, surcharged or adjusted by other schedules and rules. Verify against the publisher before relying on anything here. This project is not affiliated with, endorsed by, or approved by any utility.",
+  "source": {
+    "document_id": "smud-ssr",
+    "sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+    "page_count": 4,
+    "byte_size": 203785,
+    "filename": "01_SSR.pdf",
+    "publisher": "Sacramento Municipal Utility District",
+    "retrieved_from": "https://www.smud.org/-/media/Documents/Rate-Information/Rates/01_SSR.ashx",
+    "retrieved_at": "2026-08-17",
+    "synthetic": false
+  },
+  "identity": {
+    "schedule_code": {
+      "value": "SSR",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "front",
+        "line": 2,
+        "end_line": null,
+        "snippet": "Rate Schedule SSR",
+        "locator": "smud-ssr p.1 sheet SSR-1 front L2"
+      }
+    },
+    "title": {
+      "value": "Solar and Storage Rate",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "front",
+        "line": 1,
+        "end_line": null,
+        "snippet": "Solar and Storage Rate",
+        "locator": "smud-ssr p.1 sheet SSR-1 front L1"
+      }
+    },
+    "resolution": {
+      "value": "26-04-04",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "front",
+        "line": 39,
+        "end_line": null,
+        "snippet": "(as amended by Resolution No. 26-04-04 adopted April 16, 2026) Effective: June 1, 2026",
+        "locator": "smud-ssr p.1 sheet SSR-1 front L39"
+      }
+    },
+    "adopted": {
+      "value": "April 16, 2026",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "front",
+        "line": 39,
+        "end_line": null,
+        "snippet": "(as amended by Resolution No. 26-04-04 adopted April 16, 2026) Effective: June 1, 2026",
+        "locator": "smud-ssr p.1 sheet SSR-1 front L39"
+      }
+    },
+    "effective": {
+      "value": "June 1, 2026",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "front",
+        "line": 39,
+        "end_line": null,
+        "snippet": "(as amended by Resolution No. 26-04-04 adopted April 16, 2026) Effective: June 1, 2026",
+        "locator": "smud-ssr p.1 sheet SSR-1 front L39"
+      }
+    },
+    "sheets": [
+      {
+        "value": "SSR-1",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "front",
+          "line": 37,
+          "end_line": null,
+          "snippet": "SACRAMENTO MUNICIPAL UTILITY DISTRICT Sheet No. SSR-1",
+          "locator": "smud-ssr p.1 sheet SSR-1 front L37"
+        }
+      },
+      {
+        "value": "SSR-2",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 2,
+          "sheet": "SSR-2",
+          "section": "front",
+          "line": 39,
+          "end_line": null,
+          "snippet": "SACRAMENTO MUNICIPAL UTILITY DISTRICT Sheet No. SSR-2",
+          "locator": "smud-ssr p.2 sheet SSR-2 front L39"
+        }
+      },
+      {
+        "value": "SSR-3",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 3,
+          "sheet": "SSR-3",
+          "section": "front",
+          "line": 8,
+          "end_line": null,
+          "snippet": "SACRAMENTO MUNICIPAL UTILITY DISTRICT Sheet No. SSR-3",
+          "locator": "smud-ssr p.3 sheet SSR-3 front L8"
+        }
+      }
+    ]
+  },
+  "applicability": [
+    {
+      "text": {
+        "value": "This Rate Schedule SSR applies to residential, commercial/industrial, and agricultural customers who establish service at a",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 4,
+          "end_line": null,
+          "snippet": "This Rate Schedule SSR applies to residential, commercial/industrial, and agricultural customers who establish service at a",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L4"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "premises that has an electrical generation facility that is fueled by a renewable fuel source on or after March 1, 2022 (except",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 5,
+          "end_line": null,
+          "snippet": "premises that has an electrical generation facility that is fueled by a renewable fuel source on or after March 1, 2022 (except",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L5"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "customers subject to the transition period described under Section II. Transitional Conditions) or have an electrical generation",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 6,
+          "end_line": null,
+          "snippet": "customers subject to the transition period described under Section II. Transitional Conditions) or have an electrical generation",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L6"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "facility on their premises that is fueled by a renewable fuel source which was approved for interconnection by SMUD on or after",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 7,
+          "end_line": null,
+          "snippet": "facility on their premises that is fueled by a renewable fuel source which was approved for interconnection by SMUD on or after",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L7"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "March 1, 2022 (except customers subject to the transition period described under Section II. Transitional Conditions).*",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 8,
+          "end_line": null,
+          "snippet": "March 1, 2022 (except customers subject to the transition period described under Section II. Transitional Conditions).*",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L8"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "All customers that have an electrical generation facility on their premises that has been approved for interconnection on or before",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 9,
+          "end_line": null,
+          "snippet": "All customers that have an electrical generation facility on their premises that has been approved for interconnection on or before",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L9"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "February 28, 2022 that is fueled by a renewable fuel source may elect to enroll in Rate Schedule SSR on or after March 1, 2022.",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 10,
+          "end_line": null,
+          "snippet": "February 28, 2022 that is fueled by a renewable fuel source may elect to enroll in Rate Schedule SSR on or after March 1, 2022.",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L10"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "A renewable electrical generation facility is a facility that is eligible for certification as a renewable energy resource as defined by",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 11,
+          "end_line": null,
+          "snippet": "A renewable electrical generation facility is a facility that is eligible for certification as a renewable energy resource as defined by",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L11"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "the California Energy Resources Conservation and Development Commission (CEC).1 These facilities include, but may not be",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 12,
+          "end_line": null,
+          "snippet": "the California Energy Resources Conservation and Development Commission (CEC).1 These facilities include, but may not be",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L12"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "limited to, generators fueled by: • photovoltaic • digester gas • wind • municipal solid waste conversion • biomass • landfill gas • solar thermal • ocean wave • geothermal • ocean thermal • fuel cells using renewable fuels • tidal current • small hydroelectric",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 13,
+          "end_line": 20,
+          "snippet": "limited to, generators fueled by: • photovoltaic • digester gas • wind • municipal solid waste conversion • biomass • landfill gas • solar thermal • ocean wave • geothermal • ocean thermal • fuel cells using renewable fuels • tidal current • small hydroelectric",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L13-20"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "Small hydroelectric generation facilities will not qualify for this tariff if the facility will cause an adverse impact on instream",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 21,
+          "end_line": null,
+          "snippet": "Small hydroelectric generation facilities will not qualify for this tariff if the facility will cause an adverse impact on instream",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L21"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "beneficial uses or cause a change in the volume or timing of streamflow. Fuel cells will not qualify for this tariff if the fuel cell",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 22,
+          "end_line": null,
+          "snippet": "beneficial uses or cause a change in the volume or timing of streamflow. Fuel cells will not qualify for this tariff if the fuel cell",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L22"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "derives any portion of its fuel from a nonrenewable fuel.",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 23,
+          "end_line": null,
+          "snippet": "derives any portion of its fuel from a nonrenewable fuel.",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L23"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "*Storage facilities installed without an associated generating facility qualify for this tariff, regardless of the date approved by",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 24,
+          "end_line": null,
+          "snippet": "*Storage facilities installed without an associated generating facility qualify for this tariff, regardless of the date approved by",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L24"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "SMUD.",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 1,
+          "sheet": "SSR-1",
+          "section": "I",
+          "line": 25,
+          "end_line": null,
+          "snippet": "SMUD.",
+          "locator": "smud-ssr p.1 sheet SSR-1 I L25"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "The following are requirements for eligibility under this Rate Schedule:",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 2,
+          "sheet": "SSR-2",
+          "section": "IV.A",
+          "line": 5,
+          "end_line": null,
+          "snippet": "The following are requirements for eligibility under this Rate Schedule:",
+          "locator": "smud-ssr p.2 sheet SSR-2 IV.A L5"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "The facility must be located on the customer's premises; and",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 2,
+          "sheet": "SSR-2",
+          "section": "IV.A",
+          "line": 6,
+          "end_line": null,
+          "snippet": "1. The facility must be located on the customer's premises; and",
+          "locator": "smud-ssr p.2 sheet SSR-2 IV.A L6"
+        }
+      },
+      "disposition": "required"
+    },
+    {
+      "text": {
+        "value": "The facility must operate in parallel with SMUD's distribution facilities; and",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 2,
+          "sheet": "SSR-2",
+          "section": "IV.A",
+          "line": 7,
+          "end_line": null,
+          "snippet": "2. The facility must operate in parallel with SMUD's distribution facilities; and",
+          "locator": "smud-ssr p.2 sheet SSR-2 IV.A L7"
+        }
+      },
+      "disposition": "required"
+    },
+    {
+      "text": {
+        "value": "The customer must meet all requirements of Rule and Regulation 21; and",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 2,
+          "sheet": "SSR-2",
+          "section": "IV.A",
+          "line": 8,
+          "end_line": null,
+          "snippet": "3. The customer must meet all requirements of Rule and Regulation 21; and",
+          "locator": "smud-ssr p.2 sheet SSR-2 IV.A L8"
+        }
+      },
+      "disposition": "required"
+    },
+    {
+      "text": {
+        "value": "The facility must be intended primarily to offset up to 110% of the customer's own electrical requirements; and",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 2,
+          "sheet": "SSR-2",
+          "section": "IV.A",
+          "line": 9,
+          "end_line": null,
+          "snippet": "4. The facility must be intended primarily to offset up to 110% of the customer's own electrical requirements; and",
+          "locator": "smud-ssr p.2 sheet SSR-2 IV.A L9"
+        }
+      },
+      "disposition": "required"
+    },
+    {
+      "text": {
+        "value": "The facilities and the electrical requirements are located at a single and same metering point; and",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 2,
+          "sheet": "SSR-2",
+          "section": "IV.A",
+          "line": 10,
+          "end_line": null,
+          "snippet": "5. The facilities and the electrical requirements are located at a single and same metering point; and",
+          "locator": "smud-ssr p.2 sheet SSR-2 IV.A L10"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "Residential customers must also be on Rate Schedule R-TOD; and",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 2,
+          "sheet": "SSR-2",
+          "section": "IV.A",
+          "line": 11,
+          "end_line": null,
+          "snippet": "6. Residential customers must also be on Rate Schedule R-TOD; and",
+          "locator": "smud-ssr p.2 sheet SSR-2 IV.A L11"
+        }
+      },
+      "disposition": "required"
+    },
+    {
+      "text": {
+        "value": "The generating capacity can be a maximum of 3,000 kilowatts. For photovoltaic generation facilities, generation capacity is measured using the California Energy Commission Alternating Current (CEC-AC) rating. For all other renewable electrical generation facilities, the nameplate Alternating Current (AC) rating will be used to measure generation capacity. This paragraph defining the measurement of capacity only pertains to the applicability of this rate schedule and may differ from any measurement of capacity used in Rule and Regulation 21.",
+        "provenance": {
+          "document_id": "smud-ssr",
+          "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+          "page": 2,
+          "sheet": "SSR-2",
+          "section": "IV.A",
+          "line": 12,
+          "end_line": 17,
+          "snippet": "7. The generating capacity can be a maximum of 3,000 kilowatts. For photovoltaic generation facilities, generation capacity is measured using the California Energy Commission Alternating Current (CEC-AC) rating. For all other renewable electrical generation facilities, the nameplate Alternating Current (AC) rating will be used to measure generation capacity. This paragraph defining the measurement of capacity only pertains to the applicability of this rate schedule and may differ from any measurement of capacity used in Rule and Regulation 21.",
+          "locator": "smud-ssr p.2 sheet SSR-2 IV.A L12-17"
+        }
+      },
+      "disposition": "included"
+    }
+  ],
+  "charges": [],
+  "tou_windows": [],
+  "holidays": [],
+  "cross_references": [],
+  "notes": [
+    {
+      "value": "In the event that this Solar and Storage Rate is not available on March 1, 2022 due to implementation delays, customers will",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "II",
+        "line": 27,
+        "end_line": null,
+        "snippet": "In the event that this Solar and Storage Rate is not available on March 1, 2022 due to implementation delays, customers will",
+        "locator": "smud-ssr p.1 sheet SSR-1 II L27"
+      }
+    },
+    {
+      "value": "temporarily be subject to Rate Schedule NEM1 until transitioned to Rate Schedule SSR when it is technically feasible.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "II",
+        "line": 28,
+        "end_line": null,
+        "snippet": "temporarily be subject to Rate Schedule NEM1 until transitioned to Rate Schedule SSR when it is technically feasible.",
+        "locator": "smud-ssr p.1 sheet SSR-1 II L28"
+      }
+    },
+    {
+      "value": "The transitional customers may receive a storage incentive under a Solar and Storage Rate program and may size their electrical",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "II",
+        "line": 29,
+        "end_line": null,
+        "snippet": "The transitional customers may receive a storage incentive under a Solar and Storage Rate program and may size their electrical",
+        "locator": "smud-ssr p.1 sheet SSR-1 II L29"
+      }
+    },
+    {
+      "value": "generating facility up to 110% of their own electrical requirements.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "II",
+        "line": 30,
+        "end_line": null,
+        "snippet": "generating facility up to 110% of their own electrical requirements.",
+        "locator": "smud-ssr p.1 sheet SSR-1 II L30"
+      }
+    },
+    {
+      "value": "Customers with a storage facility without an associated eligible generating facility cannot be on Rate Schedule NEM1.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "II",
+        "line": 31,
+        "end_line": null,
+        "snippet": "Customers with a storage facility without an associated eligible generating facility cannot be on Rate Schedule NEM1.",
+        "locator": "smud-ssr p.1 sheet SSR-1 II L31"
+      }
+    },
+    {
+      "value": "Customers who qualify for the Solar and Storage Rate through this Rate Schedule are exempt from generator standby charges on",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "III",
+        "line": 33,
+        "end_line": null,
+        "snippet": "Customers who qualify for the Solar and Storage Rate through this Rate Schedule are exempt from generator standby charges on",
+        "locator": "smud-ssr p.1 sheet SSR-1 III L33"
+      }
+    },
+    {
+      "value": "that portion of their load that is served by the eligible facility.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "III",
+        "line": 34,
+        "end_line": null,
+        "snippet": "that portion of their load that is served by the eligible facility.",
+        "locator": "smud-ssr p.1 sheet SSR-1 III L34"
+      }
+    },
+    {
+      "value": "1 See the CEC's most current Renewable Portfolio Standard Eligibility Guidebook for the purposes of providing the technical",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "III",
+        "line": 35,
+        "end_line": null,
+        "snippet": "1 See the CEC's most current Renewable Portfolio Standard Eligibility Guidebook for the purposes of providing the technical",
+        "locator": "smud-ssr p.1 sheet SSR-1 III L35"
+      }
+    },
+    {
+      "value": "definitions of a renewable electrical generation facility.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 1,
+        "sheet": "SSR-1",
+        "section": "III",
+        "line": 36,
+        "end_line": null,
+        "snippet": "definitions of a renewable electrical generation facility.",
+        "locator": "smud-ssr p.1 sheet SSR-1 III L36"
+      }
+    },
+    {
+      "value": "SMUD will pay for and install, at no cost to the customer, a single meter capable of registering the flow of electricity in both",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "V",
+        "line": 19,
+        "end_line": null,
+        "snippet": "SMUD will pay for and install, at no cost to the customer, a single meter capable of registering the flow of electricity in both",
+        "locator": "smud-ssr p.2 sheet SSR-2 V L19"
+      }
+    },
+    {
+      "value": "directions.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "V",
+        "line": 20,
+        "end_line": null,
+        "snippet": "directions.",
+        "locator": "smud-ssr p.2 sheet SSR-2 V L20"
+      }
+    },
+    {
+      "value": "The Export Compensation Rate effective June 1, 2026 will be $0.0960 per kWh (subject to updates as described in the paragraph",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VI",
+        "line": 22,
+        "end_line": null,
+        "snippet": "The Export Compensation Rate effective June 1, 2026 will be $0.0960 per kWh (subject to updates as described in the paragraph",
+        "locator": "smud-ssr p.2 sheet SSR-2 VI L22"
+      }
+    },
+    {
+      "value": "below).",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VI",
+        "line": 23,
+        "end_line": null,
+        "snippet": "below).",
+        "locator": "smud-ssr p.2 sheet SSR-2 VI L23"
+      }
+    },
+    {
+      "value": "Export is defined as all kWh registered on the customer bi-directional meter as delivered to SMUD.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VI",
+        "line": 24,
+        "end_line": null,
+        "snippet": "Export is defined as all kWh registered on the customer bi-directional meter as delivered to SMUD.",
+        "locator": "smud-ssr p.2 sheet SSR-2 VI L24"
+      }
+    },
+    {
+      "value": "SMUD will update the Export Compensation Rate every four years, starting in 2026, using a combination of publicly available",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VI",
+        "line": 25,
+        "end_line": null,
+        "snippet": "SMUD will update the Export Compensation Rate every four years, starting in 2026, using a combination of publicly available",
+        "locator": "smud-ssr p.2 sheet SSR-2 VI L25"
+      }
+    },
+    {
+      "value": "local indices and SMUD actual costs for components of the Export Compensation Rate. The Export Compensation Rate will not",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VI",
+        "line": 26,
+        "end_line": null,
+        "snippet": "local indices and SMUD actual costs for components of the Export Compensation Rate. The Export Compensation Rate will not",
+        "locator": "smud-ssr p.2 sheet SSR-2 VI L26"
+      }
+    },
+    {
+      "value": "be changed more than ± 30% every four years. The revised value will be subject to Board approval at a regular Board meeting",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VI",
+        "line": 27,
+        "end_line": null,
+        "snippet": "be changed more than ± 30% every four years. The revised value will be subject to Board approval at a regular Board meeting",
+        "locator": "smud-ssr p.2 sheet SSR-2 VI L27"
+      }
+    },
+    {
+      "value": "and will be posted on www.smud.org. The revised Export Compensation Rate will apply to all customers on the Solar and",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VI",
+        "line": 28,
+        "end_line": null,
+        "snippet": "and will be posted on www.smud.org. The revised Export Compensation Rate will apply to all customers on the Solar and",
+        "locator": "smud-ssr p.2 sheet SSR-2 VI L28"
+      }
+    },
+    {
+      "value": "Storage Rate.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VI",
+        "line": 29,
+        "end_line": null,
+        "snippet": "Storage Rate.",
+        "locator": "smud-ssr p.2 sheet SSR-2 VI L29"
+      }
+    },
+    {
+      "value": "For the purposes of this schedule a \"month\" is considered to be a single billing period of 27 to 34 days.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VII",
+        "line": 31,
+        "end_line": null,
+        "snippet": "For the purposes of this schedule a \"month\" is considered to be a single billing period of 27 to 34 days.",
+        "locator": "smud-ssr p.2 sheet SSR-2 VII L31"
+      }
+    },
+    {
+      "value": "category.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VII.A",
+        "line": 33,
+        "end_line": null,
+        "snippet": "category.",
+        "locator": "smud-ssr p.2 sheet SSR-2 VII.A L33"
+      }
+    },
+    {
+      "value": "credit can only offset electricity usage charges. Any remaining credit will carry over to subsequent billing periods.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VII.B",
+        "line": 35,
+        "end_line": null,
+        "snippet": "credit can only offset electricity usage charges. Any remaining credit will carry over to subsequent billing periods.",
+        "locator": "smud-ssr p.2 sheet SSR-2 VII.B L35"
+      }
+    },
+    {
+      "value": "Charge, electricity usage charges that are not offset by the export credit, program fees, surcharges and taxes must be paid",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VII.C",
+        "line": 37,
+        "end_line": null,
+        "snippet": "Charge, electricity usage charges that are not offset by the export credit, program fees, surcharges and taxes must be paid",
+        "locator": "smud-ssr p.2 sheet SSR-2 VII.C L37"
+      }
+    },
+    {
+      "value": "each monthly billing cycle.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 2,
+        "sheet": "SSR-2",
+        "section": "VII.C",
+        "line": 38,
+        "end_line": null,
+        "snippet": "each monthly billing cycle.",
+        "locator": "smud-ssr p.2 sheet SSR-2 VII.C L38"
+      }
+    },
+    {
+      "value": "associated with a renewable or other electrical generating facility) must be on Rate Schedule SSR.",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 3,
+        "sheet": "SSR-3",
+        "section": "VIII.B",
+        "line": 6,
+        "end_line": null,
+        "snippet": "associated with a renewable or other electrical generating facility) must be on Rate Schedule SSR.",
+        "locator": "smud-ssr p.3 sheet SSR-3 VIII.B L6"
+      }
+    },
+    {
+      "value": "(End)",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 3,
+        "sheet": "SSR-3",
+        "section": "VIII.B",
+        "line": 7,
+        "end_line": null,
+        "snippet": "(End)",
+        "locator": "smud-ssr p.3 sheet SSR-3 VIII.B L7"
+      }
+    },
+    {
+      "value": "THIS PAGE INTENTIONALLY LEFT BLANK",
+      "provenance": {
+        "document_id": "smud-ssr",
+        "document_sha256": "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e",
+        "page": 4,
+        "sheet": null,
+        "section": "VIII.B",
+        "line": 1,
+        "end_line": null,
+        "snippet": "THIS PAGE INTENTIONALLY LEFT BLANK",
+        "locator": "smud-ssr p.4 VIII.B L1"
+      }
+    }
+  ],
+  "unparsed": [
+    {
+      "section": "II",
+      "heading": "Transitional Conditions",
+      "page": 1,
+      "sheet": "SSR-1",
+      "first_line": 27,
+      "last_page": 1,
+      "last_sheet": "SSR-1",
+      "last_line": 31,
+      "line_count": 5,
+      "reason": "5 of 6 lines in a recognized section matched no rule",
+      "span": "p.1 lines 27-31",
+      "sample": [
+        "In the event that this Solar and Storage Rate is not available on March 1, 2022 due to implementation delays, customers will",
+        "temporarily be subject to Rate Schedule NEM1 until transitioned to Rate Schedule SSR when it is technically feasible.",
+        "The transitional customers may receive a storage incentive under a Solar and Storage Rate program and may size their electrical",
+        "generating facility up to 110% of their own electrical requirements."
+      ]
+    },
+    {
+      "section": "III",
+      "heading": "Generator Standby Charges",
+      "page": 1,
+      "sheet": "SSR-1",
+      "first_line": 33,
+      "last_page": 1,
+      "last_sheet": "SSR-1",
+      "last_line": 36,
+      "line_count": 4,
+      "reason": "4 of 5 lines in a recognized section matched no rule",
+      "span": "p.1 lines 33-36",
+      "sample": [
+        "Customers who qualify for the Solar and Storage Rate through this Rate Schedule are exempt from generator standby charges on",
+        "that portion of their load that is served by the eligible facility.",
+        "1 See the CEC's most current Renewable Portfolio Standard Eligibility Guidebook for the purposes of providing the technical",
+        "definitions of a renewable electrical generation facility."
+      ]
+    },
+    {
+      "section": "V",
+      "heading": "Metering",
+      "page": 2,
+      "sheet": "SSR-2",
+      "first_line": 19,
+      "last_page": 2,
+      "last_sheet": "SSR-2",
+      "last_line": 20,
+      "line_count": 2,
+      "reason": "2 of 3 lines in a recognized section matched no rule",
+      "span": "p.2 lines 19-20",
+      "sample": [
+        "SMUD will pay for and install, at no cost to the customer, a single meter capable of registering the flow of electricity in both",
+        "directions."
+      ]
+    },
+    {
+      "section": "VI",
+      "heading": "Export Compensation Rate",
+      "page": 2,
+      "sheet": "SSR-2",
+      "first_line": 22,
+      "last_page": 2,
+      "last_sheet": "SSR-2",
+      "last_line": 29,
+      "line_count": 8,
+      "reason": "8 of 9 lines in a recognized section matched no rule",
+      "span": "p.2 lines 22-29",
+      "sample": [
+        "The Export Compensation Rate effective June 1, 2026 will be $0.0960 per kWh (subject to updates as described in the paragraph",
+        "below).",
+        "Export is defined as all kWh registered on the customer bi-directional meter as delivered to SMUD.",
+        "SMUD will update the Export Compensation Rate every four years, starting in 2026, using a combination of publicly available"
+      ]
+    },
+    {
+      "section": "VII",
+      "heading": "Payments",
+      "page": 2,
+      "sheet": "SSR-2",
+      "first_line": 31,
+      "last_page": 2,
+      "last_sheet": "SSR-2",
+      "last_line": 31,
+      "line_count": 1,
+      "reason": "1 of 2 lines in a recognized section matched no rule",
+      "span": "p.2 lines 31-31",
+      "sample": [
+        "For the purposes of this schedule a \"month\" is considered to be a single billing period of 27 to 34 days."
+      ]
+    },
+    {
+      "section": "VII.A",
+      "heading": "In any regular billing month, the electricity supplied by SMUD is billed at retail pricing, based on the customer's rate",
+      "page": 2,
+      "sheet": "SSR-2",
+      "first_line": 33,
+      "last_page": 2,
+      "last_sheet": "SSR-2",
+      "last_line": 33,
+      "line_count": 1,
+      "reason": "1 of 2 lines in a recognized section matched no rule",
+      "span": "p.2 lines 33-33",
+      "sample": [
+        "category."
+      ]
+    },
+    {
+      "section": "VII.B",
+      "heading": "Any electricity that is exported to SMUD is credited at the Export Compensation Rate on the customer's bill. The export",
+      "page": 2,
+      "sheet": "SSR-2",
+      "first_line": 35,
+      "last_page": 2,
+      "last_sheet": "SSR-2",
+      "last_line": 35,
+      "line_count": 1,
+      "reason": "1 of 2 lines in a recognized section matched no rule",
+      "span": "p.2 lines 35-35",
+      "sample": [
+        "credit can only offset electricity usage charges. Any remaining credit will carry over to subsequent billing periods."
+      ]
+    },
+    {
+      "section": "VII.C",
+      "heading": "The System Infrastructure Fixed Charge, Summer Peak Demand Charge, Maximum Demand Charge, Site Infrastructure",
+      "page": 2,
+      "sheet": "SSR-2",
+      "first_line": 37,
+      "last_page": 2,
+      "last_sheet": "SSR-2",
+      "last_line": 38,
+      "line_count": 2,
+      "reason": "2 of 3 lines in a recognized section matched no rule",
+      "span": "p.2 lines 37-38",
+      "sample": [
+        "Charge, electricity usage charges that are not offset by the export credit, program fees, surcharges and taxes must be paid",
+        "each monthly billing cycle."
+      ]
+    },
+    {
+      "section": "VIII.B",
+      "heading": "Customers that received a storage incentive through a qualifying SMUD program that only have a storage facility (that is not",
+      "page": 3,
+      "sheet": "SSR-3",
+      "first_line": 6,
+      "last_page": 4,
+      "last_sheet": "SSR-3",
+      "last_line": 1,
+      "line_count": 3,
+      "reason": "3 of 4 lines in a recognized section matched no rule",
+      "span": "p.3 L6 to p.4 L1",
+      "sample": [
+        "associated with a renewable or other electrical generating facility) must be on Rate Schedule SSR.",
+        "(End)",
+        "THIS PAGE INTENTIONALLY LEFT BLANK"
+      ]
+    }
+  ],
+  "coverage": {
+    "content_lines": 76,
+    "recognized_lines": 49,
+    "unrecognized_lines": 27,
+    "boilerplate_lines": 15,
+    "sections_total": 14,
+    "sections_recognized": 5,
+    "sections_unrecognized": 9,
+    "line_ratio": 0.644737,
+    "section_ratio": 0.357143,
+    "fully_recognized": false
+  }
+}

@@ -35,3 +35,27 @@ sha256 = "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b"
 retrieved_at = "2026-08-17"
 pages = 4
 bytes = 209810
+
+[[document]]
+id = "smud-ci-tod1"
+schedule = "CI-TOD1"
+title = "Commercial & Industrial Time-of-Day (0-299 kW)"
+publisher = "Sacramento Municipal Utility District"
+url = "https://www.smud.org/-/media/Documents/Rate-Information/Rates/CI-TOD1.ashx"
+filename = "CI-TOD1.pdf"
+sha256 = "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510"
+retrieved_at = "2026-08-17"
+pages = 8
+bytes = 282745
+
+[[document]]
+id = "smud-ssr"
+schedule = "SSR"
+title = "Solar and Storage Rate"
+publisher = "Sacramento Municipal Utility District"
+url = "https://www.smud.org/-/media/Documents/Rate-Information/Rates/01_SSR.ashx"
+filename = "01_SSR.pdf"
+sha256 = "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e"
+retrieved_at = "2026-08-17"
+pages = 4
+bytes = 203785

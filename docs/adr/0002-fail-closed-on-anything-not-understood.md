@@ -34,9 +34,12 @@ produce output identical to one that is fully understood.
 
 ## Consequences
 
-- Reported coverage on real documents is well short of 100% (roughly 77% and
-  69% on the two SMUD residential schedules). This is the honest number and it
-  is published in the README rather than hidden.
+- Reported coverage on real documents is well short of 100%: roughly 77% and
+  69% on the two residential schedules, 60% on the commercial one and 65% on
+  the solar and storage one. These are the honest numbers and they are
+  published in the README rather than hidden. The two lower figures come from
+  documents added specifically to find out what the parser could not read; see
+  ADR 0004.
 - Coverage must never be treated as a target. Widening a tolerance or a regex
   to raise it converts a visible gap into an invisible fabrication, which is
   the exact failure this decision exists to prevent. `CONTRIBUTING.md` says so

@@ -3,7 +3,8 @@ SOURCES_DIR ?= sources
 
 .DEFAULT_GOAL := help
 
-.PHONY: help install lint fmt typecheck test verify coverage fetch verify-source golden clean
+.PHONY: help install lint fmt typecheck test verify coverage coverage-real fetch verify-source \
+        golden clean
 
 help: ## Show this help
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -43,7 +44,18 @@ golden: ## Regenerate golden output from the real documents (review every diff)
 		-o tests/golden/smud-r-tod.json
 	$(UV) run ca-tariff-parse parse $(SOURCES_DIR)/1-R.pdf --id smud-r \
 		-o tests/golden/smud-r.json
+	$(UV) run ca-tariff-parse parse $(SOURCES_DIR)/CI-TOD1.pdf --id smud-ci-tod1 \
+		-o tests/golden/smud-ci-tod1.json
+	$(UV) run ca-tariff-parse parse $(SOURCES_DIR)/01_SSR.pdf --id smud-ssr \
+		-o tests/golden/smud-ssr.json
 	@echo "Golden files regenerated. Review every changed price before committing."
+
+coverage-real: ## Report parser coverage of each fetched source document
+	@for pair in smud-r-tod:1-R-TOD.pdf smud-r:1-R.pdf \
+	             smud-ci-tod1:CI-TOD1.pdf smud-ssr:01_SSR.pdf; do \
+		$(UV) run ca-tariff-parse coverage \
+			$(SOURCES_DIR)/$${pair#*:} --id $${pair%%:*}; \
+	done
 
 clean: ## Remove build and test artefacts
 	rm -rf .pytest_cache .ruff_cache .mypy_cache .coverage htmlcov dist build

@@ -22,59 +22,39 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from ..extract import Line, Word
+from ..extract import Line, Word, squash
 from ..model import Charge, Cited, Money
 from ..segment import Section
-from .base import MONEY_RE, NA_RE, Citer, Emission
-
-#: Horizontal gap, in points, that separates two column headings.
-COLUMN_GAP = 8.0
-#: Distance, in points, an amount may sit from a column centre and still be
-#: assigned to it. Beyond this the assignment is treated as ambiguous.
-COLUMN_TOLERANCE = 45.0
-#: Clear space left of the first column, used to split label from values.
-LABEL_MARGIN = 20.0
+from .base import (
+    LABEL_MARGIN,
+    MONEY_RE,
+    NA_RE,
+    PERIOD_ALTERNATION,
+    Citer,
+    Column,
+    Emission,
+    assign,
+    columns_from,
+    unit_tail,
+)
 
 HEADER_SQUASHED = "effectiveasof"
 CATEGORY_IN_HEADING_RE = re.compile(r"rate\s+categor(?:y|ies)\s+([A-Z0-9]+)", re.IGNORECASE)
 CATEGORY_IN_CAPTION_RE = re.compile(r"\((?P<code>[A-Z]{2,6}\d{0,2})\)\s*\Z")
-TOU_PREFIX_RE = re.compile(r"\A(Super\s+Off-Peak|Off-Peak|Mid-Peak|Peak|On-Peak)\b", re.IGNORECASE)
+#: A rate category written as a caption prefix, e.g. "CITS-0: C&I Secondary
+#: 0-20 kW", or standing alone on its own line, e.g. "GFN". Residential sheets
+#: put the code in a trailing parenthesis; commercial sheets lead with it.
+CATEGORY_CODE = r"[A-Z][A-Z0-9]{1,7}(?:-[A-Z0-9]{1,3})?"
+CATEGORY_IN_PREFIX_RE = re.compile(rf"\A(?P<code>{CATEGORY_CODE}):\s+\S")
+CATEGORY_ALONE_RE = re.compile(rf"\A(?P<code>{CATEGORY_CODE})\Z")
+TOU_PREFIX_RE = re.compile(rf"\A(?P<period>{PERIOD_ALTERNATION})\b", re.IGNORECASE)
 GROUP_LABEL_RE = re.compile(r"charge\s*\Z", re.IGNORECASE)
-
-#: Unit expressions recognised in a charge label, longest first. Each is a
-#: verbatim substring of the source label, never a synthesised unit string.
-UNIT_PATTERNS = (
-    "$/kWh",
-    "per month per meter",
-    "per month per unit",
-    "per month",
-)
-
-
-class Column:
-    """One effective-date column of a rate table."""
-
-    __slots__ = ("label", "x0", "x1")
-
-    def __init__(self, words: list[Word]) -> None:
-        self.label = " ".join(word.text for word in words)
-        self.x0 = min(word.x0 for word in words)
-        self.x1 = max(word.x1 for word in words)
-
-    @property
-    def center(self) -> float:
-        return (self.x0 + self.x1) / 2.0
-
-
-def _columns(date_line: Line) -> list[Column]:
-    """Split a date row into columns on horizontal whitespace."""
-    groups: list[list[Word]] = []
-    for word in date_line.words:
-        if groups and word.x0 - groups[-1][-1].x1 <= COLUMN_GAP:
-            groups[-1].append(word)
-        else:
-            groups.append([word])
-    return [Column(group) for group in groups]
+#: A row naming the part of the year the rows beneath it apply to. Residential
+#: sheets write "Non-Summer Season (October - May)"; the nondemand commercial
+#: table writes "All Year".
+ALL_YEAR_RE = re.compile(r"\A(All Year|All Seasons)\Z", re.IGNORECASE)
+#: Squashed unit that makes a row an energy charge rather than a fixed one.
+ENERGY_UNIT_SQUASHED = "$/kwh"
 
 
 def _find_header(section: Section) -> int | None:
@@ -88,20 +68,6 @@ def claims(section: Section) -> bool:
     return _find_header(section) is not None
 
 
-def _unit_of(label: str) -> str | None:
-    for pattern in UNIT_PATTERNS:
-        if pattern.lower() in label.lower():
-            return pattern
-    return None
-
-
-def _assign(word: Word, columns: list[Column]) -> Column | None:
-    best = min(columns, key=lambda column: abs(column.center - word.center))
-    if abs(best.center - word.center) > COLUMN_TOLERANCE:
-        return None
-    return best
-
-
 @dataclass(slots=True)
 class _TableState:
     """Context a row inherits from the rows above it."""
@@ -111,13 +77,22 @@ class _TableState:
     season: Cited[str] | None = None
 
 
+def _category_code(text: str) -> str | None:
+    """Read a rate category code off a caption row, in any of its printed forms."""
+    for pattern in (CATEGORY_IN_CAPTION_RE, CATEGORY_IN_PREFIX_RE, CATEGORY_ALONE_RE):
+        match = pattern.search(text)
+        if match:
+            return match.group("code")
+    return None
+
+
 def _read_context_row(line: Line, citer: Citer, state: _TableState) -> bool:
     """Absorb a rate category, season, or group heading. False if unrecognised."""
-    caption = CATEGORY_IN_CAPTION_RE.search(line.text)
-    if caption:
-        state.category = citer.text(line, state.section, caption.group("code"))
+    code = _category_code(line.text)
+    if code is not None:
+        state.category = citer.text(line, state.section, code)
         return True
-    if "season" in line.squashed:
+    if "season" in line.squashed or ALL_YEAR_RE.match(line.text):
         state.season = citer.text(line, state.section, line.text)
         return True
     return bool(GROUP_LABEL_RE.search(line.text))
@@ -138,15 +113,15 @@ def _read_value_row(
     partially: if any amount cannot be attributed to exactly one effective-date
     column, the entire row is refused.
     """
-    unit_text = _unit_of(label)
+    unit_text = unit_tail(label)
     if unit_text is None:
         # A priced row whose unit the parser cannot read is never emitted with a
         # guessed unit.
         return None
 
-    kind = "energy_usage" if unit_text == "$/kWh" else "fixed_charge"
+    kind = "energy_usage" if squash(unit_text) == ENERGY_UNIT_SQUASHED else "fixed_charge"
     tou_match = TOU_PREFIX_RE.match(label)
-    tou_period = citer.text(line, state.section, tou_match.group(1)) if tou_match else None
+    tou_period = citer.text(line, state.section, tou_match.group("period")) if tou_match else None
 
     row: list[Charge] = []
     accounted = False
@@ -159,7 +134,7 @@ def _read_value_row(
         money = MONEY_RE.match(word.text)
         if not money:
             continue
-        column = _assign(word, columns)
+        column = assign(word, columns)
         if column is None:
             return None
         row.append(
@@ -193,7 +168,7 @@ def parse(section: Section, citer: Citer) -> Emission:
         return emission
 
     date_line = lines[header_at + 1]
-    columns = _columns(date_line)
+    columns = columns_from(date_line.words)
     if not columns:
         return emission
 

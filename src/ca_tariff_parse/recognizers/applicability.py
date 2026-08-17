@@ -23,13 +23,17 @@ EXCLUDES = (
     "closed to new customers",
 )
 REQUIRES = (
-    "must be on this rate schedule",
+    "must ",
     "is required for",
     "are required to",
-    "must have",
-    "must advise",
     "is required to",
 )
+
+#: A section whose own heading is this states eligibility under another name.
+#: A schedule that puts its conditions under "Conditions of Service" rather
+#: than "Applicability" is saying the same kind of thing, and skipping it left
+#: the parser answering "who is eligible" from half the document.
+ELIGIBILITY_HEADINGS = frozenset({"eligibility", "eligibilityrequirements"})
 
 
 def _disposition(text: str) -> str:
@@ -42,10 +46,11 @@ def _disposition(text: str) -> str:
 
 
 def claims(section: Section, headings: dict[str, str]) -> bool:
-    """True for the Applicability part and its lettered subsections."""
+    """True for the Applicability part, its subsections, and any Eligibility part."""
     root = section.section_id.split(".")[0]
-    root_heading = headings.get(root, "")
-    return squash(root_heading) == "applicability"
+    if squash(headings.get(root, "")) == "applicability":
+        return True
+    return squash(section.heading) in ELIGIBILITY_HEADINGS
 
 
 def parse(section: Section, citer: Citer) -> Emission:

@@ -11,8 +11,13 @@ from .base import Citer, LineKey
 FRONT = "front"
 
 SCHEDULE_RE = re.compile(r"\ARate Schedule\s+(?P<code>[A-Za-z0-9][A-Za-z0-9\-]*)\Z")
+#: The footer line that dates the schedule. A schedule amended since it was
+#: first adopted prints the amending resolution inside brackets, as in
+#: "(as amended by Resolution No. 26-04-04 adopted April 16, 2026) Effective:
+#: June 1, 2026", so the closing bracket is allowed to fall outside the adopted
+#: date rather than being carried into it.
 RESOLUTION_RE = re.compile(
-    r"Resolution\s+No\.?\s*(?P<res>\S+)\s+adopted\s+(?P<adopted>.+?)\s+"
+    r"Resolution\s+No\.?\s*(?P<res>\S+)\s+adopted\s+(?P<adopted>.+?)\)?\s+"
     r"Effective:\s*(?P<effective>.+?)\s*\Z",
     re.IGNORECASE,
 )

@@ -28,26 +28,39 @@ did not state would be an invention.
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 from itertools import pairwise
 
-from ..extract import Line
+from ..extract import Line, Word
 from ..model import Cited, Holiday, TouWindow
 from ..segment import Section
-from .base import Citer, Emission
+from .base import MONEY_RE, PERIOD_ALTERNATION, Citer, Emission
 
-#: Column boundaries for the window table, in points.
-SEASON_MAX_X = 200.0
-PERIOD_MAX_X = 300.0
-#: Column boundaries for the holiday table, in points.
-HOLIDAY_MONTH_X = 295.0
-HOLIDAY_DATE_X = 405.0
+#: Clear space, in points, left either side of a derived column boundary.
+COLUMN_MARGIN = 10.0
+#: Two x positions within this many points are the same column.
+ALIGN_TOLERANCE = 1.5
 
-PERIOD_RE = re.compile(r"\A(Super\s+Off-Peak|Off-Peak|Mid-Peak|On-Peak|Peak)\Z", re.IGNORECASE)
+PERIOD_RE = re.compile(rf"\A(?:{PERIOD_ALTERNATION})\Z", re.IGNORECASE)
 PARENTHETICAL_RE = re.compile(r"\A\(.+\)\Z")
-HOLIDAY_INTRO_RE = re.compile(r"holidays\s*:\s*\Z", re.IGNORECASE)
+_MONTH = r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?"
+#: A season's date range, written either parenthesised ("(Jun 1 - Sept 30)") or
+#: bare ("October 1 -May 31"). Both forms are a continuation of the season name
+#: set above them, not a season of their own.
+DATE_RANGE_RE = re.compile(
+    rf"\A\(?\s*{_MONTH}\s*\d{{1,2}}\s*[-–—]\s*{_MONTH}\s*\d{{1,2}}\s*\)?\Z",
+    re.IGNORECASE,
+)
+HOLIDAY_INTRO_RE = re.compile(r"\bholidays?\b.*:\s*\Z", re.IGNORECASE)
 HOLIDAY_HEADER_SQUASHED = "holidaymonthdate"
 #: A clock time as tariffs write them: "5:00 p.m.", "6 a.m.", "noon", "midnight".
 _TIME = r"(?:\d{1,2}(?::\d{2})?\s*[ap]\.?m\.?|noon|midnight)"
+#: A window definition states when the period runs. Requiring one of these
+#: words keeps a priced table row out of the window table: a transition
+#: schedule prints "Non-Summer Off-Peak per kWh $0.1237", which lines up in the
+#: same three columns and would otherwise be read as a period whose definition
+#: is a price.
+DEFINITION_RE = re.compile(r"\bhours\b|\bbetween\b", re.IGNORECASE)
 
 #: Matches only a definition that is exactly a day type and a plain time range,
 #: with nothing after the closing time. A definition carrying an exception
@@ -61,18 +74,66 @@ PLAIN_RANGE_RE = re.compile(
 RESIDUAL_RE = re.compile(r"\AAll other hours\b", re.IGNORECASE)
 
 
-def claims(section: Section) -> bool:
-    squashed = {line.squashed for line in section.content_lines}
-    has_periods = any(
-        PERIOD_RE.match(
-            " ".join(
-                word.text for word in line.words if SEASON_MAX_X <= word.x0 < PERIOD_MAX_X
-            ).strip()
-        )
-        for line in section.content_lines
+#: Horizontal gap, in points, that separates two headings of a table.
+HEADER_GAP = 8.0
+
+
+@dataclass(frozen=True, slots=True)
+class WindowColumns:
+    """Where the window table's three columns divide, in points."""
+
+    season_max: float
+    period_max: float
+
+
+def _period_runs(line: Line) -> list[tuple[Word, ...]]:
+    """Maximal word runs on this line that spell exactly a period name.
+
+    Longest first, so "Off-Peak Saver" is read as one period rather than as
+    "Off-Peak" followed by a stray word.
+    """
+    runs: list[tuple[Word, ...]] = []
+    index = 0
+    while index < len(line.words):
+        for size in (3, 2, 1):
+            run = line.words[index : index + size]
+            if len(run) == size and PERIOD_RE.match(" ".join(word.text for word in run)):
+                runs.append(tuple(run))
+                index += size
+                break
+        else:
+            index += 1
+    return runs
+
+
+def _window_columns(lines: list[Line]) -> WindowColumns | None:
+    """Recover the period column from the alignment the table itself uses.
+
+    The period names of a window table are set flush in a single column, and
+    that column is what divides the season label on its left from the
+    definition on its right. Reading the division off the document keeps the
+    table from depending on x coordinates that only happened to be right for
+    one publisher's residential sheet: the same table on a commercial sheet
+    sits about fifteen points further right.
+    """
+    aligned: dict[float, list[tuple[Word, ...]]] = {}
+    for line in lines:
+        for run in _period_runs(line):
+            key = next(
+                (known for known in aligned if abs(known - run[0].x0) <= ALIGN_TOLERANCE),
+                run[0].x0,
+            )
+            aligned.setdefault(key, []).append(run)
+    if not aligned:
+        return None
+    # The period column is the alignment most of the period names share. A
+    # lone "Peak" inside a wrapped definition also spells a period name, and
+    # must not be mistaken for the column.
+    left, runs = max(aligned.items(), key=lambda item: (len(item[1]), -item[0]))
+    return WindowColumns(
+        season_max=left - COLUMN_MARGIN,
+        period_max=max(word.x1 for run in runs for word in run) + COLUMN_MARGIN,
     )
-    has_holidays = any(HOLIDAY_HEADER_SQUASHED in text for text in squashed)
-    return has_periods or has_holidays
 
 
 #: Fraction of the median row gap below which two text lines are treated as
@@ -110,38 +171,80 @@ def _bucket(row: list[Line], low: float, high: float) -> str:
     return re.sub(r"\s+", " ", " ".join(part for part in parts if part)).strip()
 
 
+def _holiday_header(lines: list[Line]) -> Line | None:
+    for line in lines:
+        if HOLIDAY_HEADER_SQUASHED in line.squashed:
+            return line
+    return None
+
+
+def _holiday_columns(header: Line) -> tuple[float, float] | None:
+    """Read the Month and Date boundaries off the holiday table's own header.
+
+    The three headings name the three cells, so where they sit is where the
+    cells divide. Fixed coordinates read the residential sheet correctly and
+    read every holiday on the commercial sheet, whose table sits about thirty
+    points further right, as a row with two cells missing.
+    """
+    groups: list[list[Word]] = []
+    for word in header.words:
+        if groups and word.x0 - groups[-1][-1].x1 <= HEADER_GAP:
+            groups[-1].append(word)
+        else:
+            groups.append([word])
+    if len(groups) != 3:
+        return None
+    month_x = groups[1][0].x0 - COLUMN_MARGIN
+    date_x = groups[2][0].x0 - COLUMN_MARGIN
+    if not groups[0][-1].x1 < month_x < date_x:
+        return None
+    return (month_x, date_x)
+
+
 def _split_tables(section: Section) -> tuple[list[Line], list[Line], Line | None]:
-    """Split the section into the window table, the holiday table and the intro."""
-    windows: list[Line] = []
-    holidays: list[Line] = []
-    intro: Line | None = None
-    target = windows
-    for line in section.content_lines:
-        if HOLIDAY_INTRO_RE.search(line.text):
-            intro = line
-            target = holidays
-            continue
-        target.append(line)
-    return windows, holidays, intro
+    """Split the section into the window table, the holiday table and its intro.
+
+    The split is made at the holiday table's own header row rather than at the
+    sentence introducing it, because publishers word that sentence differently:
+    one sheet ends it "during the following holidays:" and another "are as
+    follows:".
+    """
+    lines = section.content_lines
+    header = _holiday_header(lines)
+    if header is None:
+        return lines, [], None
+    at = lines.index(header)
+    intro = lines[at - 1] if at and HOLIDAY_INTRO_RE.search(lines[at - 1].text) else None
+    return (lines[: at - 1] if intro is not None else lines[:at]), lines[at:], intro
 
 
 #: A season label: the rows it occupies, the lines carrying it, and its text.
 SeasonLabel = tuple[int, list[Line], str]
 
 
-def _season_labels(rows: list[list[Line]]) -> list[SeasonLabel]:
-    """Collect season labels, joining a date range onto the name above it.
+def _continues_a_season(text: str) -> bool:
+    """True when this season-column fragment belongs to the label above it.
 
-    A season is written as a name followed by its date range, and the two halves
-    are often set on separate rows of a vertically centred cell.
+    A season is written as a name followed by its date range, and the two
+    halves are often set on separate rows of a vertically centred cell. One
+    sheet parenthesises the range, "(Jun 1 - Sept 30)", and another does not,
+    "October 1 -May 31". Reading the bare form as a season of its own split
+    "Summer" from its own dates and left half the windows unattributed.
     """
+    return bool(PARENTHETICAL_RE.match(text) or DATE_RANGE_RE.match(text))
+
+
+def _season_labels(rows: list[list[Line]], columns: WindowColumns) -> list[SeasonLabel]:
+    """Collect season labels, joining a date range onto the name above it."""
     labels: list[SeasonLabel] = []
     for position, row in enumerate(rows):
-        text = _bucket(row, 0.0, SEASON_MAX_X)
+        text = _bucket(row, 0.0, columns.season_max)
         if not text:
             continue
-        carriers = [line for line in row if any(word.x0 < SEASON_MAX_X for word in line.words)]
-        if labels and PARENTHETICAL_RE.match(text):
+        carriers = [
+            line for line in row if any(word.x0 < columns.season_max for word in line.words)
+        ]
+        if labels and _continues_a_season(text):
             start, group, existing = labels[-1]
             labels[-1] = (start, [*group, *carriers], f"{existing} {text}")
         else:
@@ -178,25 +281,47 @@ def _window_times(
     )
 
 
+def _states_when_a_period_runs(definition: str) -> bool:
+    """True when the right-hand cell defines a time window.
+
+    A cell carrying a currency amount is not a window definition: it is a price
+    that happens to fall in the same column. A transition schedule prints
+    "Non-Summer Off-Peak per kWh $0.1237" in exactly this shape, and reading it
+    as a window would state a time-of-use rule the document never wrote.
+    """
+    if not definition or any(MONEY_RE.match(token) for token in definition.split()):
+        return False
+    return bool(DEFINITION_RE.search(definition))
+
+
+def _is_window_row(row: list[Line], columns: WindowColumns) -> bool:
+    return bool(PERIOD_RE.match(_bucket(row, columns.season_max, columns.period_max))) and (
+        _states_when_a_period_runs(_bucket(row, columns.period_max, float("inf")))
+    )
+
+
 def _parse_windows(lines: list[Line], section: Section, citer: Citer, emission: Emission) -> None:
+    columns = _window_columns(lines)
+    if columns is None:
+        return
     rows = logical_rows(lines)
-    labels = _season_labels(rows)
+    labels = _season_labels(rows, columns)
 
     for position, row in enumerate(rows):
-        period = _bucket(row, SEASON_MAX_X, PERIOD_MAX_X)
-        definition = _bucket(row, PERIOD_MAX_X, float("inf"))
+        period = _bucket(row, columns.season_max, columns.period_max)
+        definition = _bucket(row, columns.period_max, float("inf"))
         season = _season_for(labels, position)
-        if not PERIOD_RE.match(period) or not definition or season is None:
+        if not _is_window_row(row, columns) or season is None:
             continue
 
         season_group, season_text = season
         definition_lines = [
-            line for line in row if any(word.x0 >= PERIOD_MAX_X for word in line.words)
+            line for line in row if any(word.x0 >= columns.period_max for word in line.words)
         ]
         line = next(
             candidate
             for candidate in row
-            if any(SEASON_MAX_X <= word.x0 < PERIOD_MAX_X for word in candidate.words)
+            if any(columns.season_max <= word.x0 < columns.period_max for word in candidate.words)
         )
 
         residual = bool(RESIDUAL_RE.match(definition))
@@ -225,16 +350,21 @@ def _parse_windows(lines: list[Line], section: Section, citer: Citer, emission: 
 
 
 def _parse_holidays(lines: list[Line], section: Section, citer: Citer, emission: Emission) -> None:
-    started = False
-    for line in lines:
-        if not started:
-            if HOLIDAY_HEADER_SQUASHED in line.squashed:
-                started = True
-                emission.take(line)
-            continue
-        name = _bucket([line], 0.0, HOLIDAY_MONTH_X)
-        month = _bucket([line], HOLIDAY_MONTH_X, HOLIDAY_DATE_X)
-        day_rule = _bucket([line], HOLIDAY_DATE_X, float("inf"))
+    header = _holiday_header(lines)
+    if header is None:
+        return
+    columns = _holiday_columns(header)
+    if columns is None:
+        # The header does not divide into three headings, so which cell holds
+        # the month and which the day rule cannot be read off the document. No
+        # holiday is emitted rather than one assembled from guessed columns.
+        return
+    month_x, date_x = columns
+    emission.take(header)
+    for line in lines[lines.index(header) + 1 :]:
+        name = _bucket([line], 0.0, month_x)
+        month = _bucket([line], month_x, date_x)
+        day_rule = _bucket([line], date_x, float("inf"))
         if not (name and month and day_rule):
             # A row missing a cell is not completed by guessing.
             continue
@@ -248,11 +378,31 @@ def _parse_holidays(lines: list[Line], section: Section, citer: Citer, emission:
         emission.take(line)
 
 
+def _body(section: Section, windows: list[Line]) -> list[Line]:
+    """The window table without the heading line that opens its section."""
+    return windows[1:] if section.level > 0 and windows else windows
+
+
+def claims(section: Section) -> bool:
+    """True only for a section that really holds a window or holiday table.
+
+    Claiming on geometry alone was enough for the residential sheets and was
+    wrong on a commercial one, where a transition schedule of future prices
+    lines up in the same three columns as a window table.
+    """
+    windows, holidays, _ = _split_tables(section)
+    body = _body(section, windows)
+    columns = _window_columns(body)
+    if columns is not None and any(_is_window_row(row, columns) for row in logical_rows(body)):
+        return True
+    return _holiday_header(holidays) is not None
+
+
 def parse(section: Section, citer: Citer) -> Emission:
     emission = Emission()
     windows, holidays, intro = _split_tables(section)
 
-    body = windows[1:] if section.level > 0 and windows else windows
+    body = _body(section, windows)
     if section.level > 0 and windows:
         emission.take(windows[0])
 

@@ -173,6 +173,11 @@ class Charge:
     rate_category: Cited[str] | None = None
     season: Cited[str] | None = None
     tou_period: Cited[str] | None = None
+    applies_to: Cited[str] | None = None
+    """The column heading this price sat under, when one charge is priced
+    across several categories at once, for example a service voltage level.
+    Carried verbatim from the heading, and absent when the block prices a
+    single amount per effective date."""
 
     def to_json(self) -> dict[str, object]:
         out: dict[str, object] = {
@@ -181,7 +186,7 @@ class Charge:
             "price": self.price.to_json(),
             "effective_from": self.effective_from.to_json(),
         }
-        for name in ("rate_category", "season", "tou_period"):
+        for name in ("rate_category", "season", "tou_period", "applies_to"):
             value: Cited[str] | None = getattr(self, name)
             if value is not None:
                 out[name] = value.to_json()

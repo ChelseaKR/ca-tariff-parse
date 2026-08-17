@@ -159,6 +159,190 @@ def test_a_holiday_row_missing_a_cell_is_not_completed_by_guessing() -> None:
     assert parsed.unparsed
 
 
+def test_a_dated_row_of_several_amounts_needs_a_heading_for_each() -> None:
+    """Two amounts under one heading cannot be told apart, so neither is emitted.
+
+    Before this, everything after the first amount was swallowed into the
+    effective date and the last amount was emitted as though it were the whole
+    charge.
+    """
+    parsed = parse(
+        build(
+            {
+                5: [(9, "III. Example Options")],
+                6: [(15, "A. Example Standby Option")],
+                8: [(20, "Example Standby Charge by Level"), (52, "Alpha")],
+                9: [(20, "($/kW of Example Capacity per month)")],
+                10: [(26, "Effective May 1, 2026"), (53, "$1.234"), (67, "$2.345")],
+                11: [(26, "Effective January 1, 2027"), (53, "$3.456"), (67, "$4.567")],
+            }
+        )
+    )
+    assert parsed.charges == ()
+    assert parsed.unparsed
+
+
+def test_a_dated_row_of_several_amounts_is_split_by_its_headings() -> None:
+    """Control case: with one heading per amount, each price keeps its category."""
+    parsed = parse(
+        build(
+            {
+                5: [(9, "III. Example Options")],
+                6: [(15, "A. Example Standby Option")],
+                8: [(20, "Example Standby Charge by Level"), (52, "Alpha"), (66, "Beta")],
+                9: [(20, "($/kW of Example Capacity per month)")],
+                10: [(26, "Effective May 1, 2026"), (53, "$1.234"), (67, "$2.345")],
+                11: [(26, "Effective January 1, 2027"), (53, "$3.456"), (67, "$4.567")],
+            }
+        )
+    )
+    assert [
+        (c.price.amount.value, c.applies_to.value if c.applies_to else None, c.effective_from.value)
+        for c in parsed.charges
+    ] == [
+        ("1.234", "Alpha", "May 1, 2026"),
+        ("2.345", "Beta", "May 1, 2026"),
+        ("3.456", "Alpha", "January 1, 2027"),
+        ("4.567", "Beta", "January 1, 2027"),
+    ]
+    assert all(c.label.value == "Example Standby Charge by Level" for c in parsed.charges)
+
+
+def test_two_dated_blocks_in_one_section_keep_their_own_labels() -> None:
+    """A section can price two things, and the second is not filed under the first."""
+    parsed = parse(
+        build(
+            {
+                5: [(9, "III. Example Options")],
+                6: [(15, "A. Example Rates")],
+                8: [(20, "Example First Rate per excess KVAR")],
+                9: [(26, "Effective May 1, 2026"), (58, "$1.234")],
+                10: [(26, "Effective January 1, 2027"), (58, "$2.345")],
+                12: [(20, "Example Second Rate per excess KVAR")],
+                13: [(26, "Effective May 1, 2026"), (58, "$3.456")],
+                14: [(26, "Effective January 1, 2027"), (58, "$4.567")],
+            }
+        )
+    )
+    assert [(c.label.value, c.price.amount.value) for c in parsed.charges] == [
+        ("Example First Rate", "1.234"),
+        ("Example First Rate", "2.345"),
+        ("Example Second Rate", "3.456"),
+        ("Example Second Rate", "4.567"),
+    ]
+    assert {c.price.unit.value for c in parsed.charges} == {"per excess KVAR"}
+
+
+def test_a_unit_is_read_to_the_end_of_its_label() -> None:
+    """ "per month" is a substring of "per monthly max kW" and must not win.
+
+    Quoting a demand charge as a flat monthly amount would understate it by
+    the whole demand, and nothing in the output would show that had happened.
+    """
+    parsed = parse(
+        build(
+            {
+                5: [(9, "II. Example Rates")],
+                6: [(15, "A. Example Rate")],
+                8: [(70, "Effective as of")],
+                9: [(70, "May 1, 2026")],
+                10: [(20, "Example Demand Charge $ per monthly max kW"), (72, "$9.99")],
+            }
+        )
+    )
+    assert [c.price.unit.value for c in parsed.charges] == ["$ per monthly max kW"]
+    assert parsed.charges[0].kind == "fixed_charge"
+
+
+def test_a_longer_period_name_is_not_truncated_to_a_shorter_one() -> None:
+    """Off-Peak Saver is its own period with its own price, not an Off-Peak."""
+    parsed = parse(
+        build(
+            {
+                5: [(9, "II. Example Rates")],
+                6: [(15, "A. Example Rate")],
+                8: [(58, "Effective as of")],
+                9: [(58, "May 1, 2026")],
+                10: [(20, "Off-Peak Saver $/kWh"), (60, "$9.99")],
+            }
+        )
+    )
+    assert [c.tou_period.value for c in parsed.charges if c.tou_period] == ["Off-Peak Saver"]
+
+
+def test_a_priced_row_is_not_read_as_a_time_of_use_window() -> None:
+    """A future price table lines up in the same columns as a window table.
+
+    Its right hand cell holds a price, not a definition of when a period runs,
+    and emitting it as a window would state a rule the document never wrote.
+    """
+    parsed = parse(
+        build(
+            {
+                5: [(9, "VIII. Example Transition Schedule")],
+                7: [(30, "Non-Summer"), (42, "Peak"), (56, "per kWh"), (70, "$1.5060")],
+                8: [(30, "Non-Summer"), (42, "Off-Peak"), (56, "per kWh"), (70, "$1.2370")],
+            }
+        )
+    )
+    assert parsed.tou_windows == ()
+    assert parsed.unparsed
+
+
+def test_the_holiday_table_is_read_wherever_the_publisher_sets_it() -> None:
+    """The three headings say where the cells divide, so fixed columns are wrong."""
+    parsed = parse(
+        build(
+            {
+                5: [(9, "IV. Example Billing Periods")],
+                6: [(15, "A. Example Time-of-Day Billing Periods")],
+                8: [(15, "Off-Peak pricing shall apply during the following holidays:")],
+                10: [(20, "Holiday"), (45, "Month"), (60, "Date")],
+                11: [(20, "Example New Year Day"), (45, "January"), (60, "1")],
+            }
+        )
+    )
+    assert [(h.name.value, h.month.value, h.day_rule.value) for h in parsed.holidays] == [
+        ("Example New Year Day", "January", "1")
+    ]
+
+
+def test_a_season_date_range_without_brackets_stays_with_its_season() -> None:
+    """One publisher brackets the range and another does not; both are one label."""
+    parsed = parse(
+        build(
+            {
+                5: [(9, "IV. Example Billing Periods")],
+                6: [(15, "A. Example Time-of-Day Billing Periods")],
+                8: [(36, "Peak"), (54, "Weekdays between 5:00 p.m. and 8:00 p.m.")],
+                9: [(8, "Example Summer")],
+                10: [(36, "Off-Peak"), (54, "All other hours, including holidays.")],
+                11: [(8, "March 1 -April 30")],
+            }
+        )
+    )
+    assert [w.season.value for w in parsed.tou_windows] == [
+        "Example Summer March 1 -April 30",
+        "Example Summer March 1 -April 30",
+    ]
+
+
+def test_an_eligibility_section_is_read_as_applicability() -> None:
+    """A schedule that files its conditions under another heading still states them."""
+    parsed = parse(
+        build(
+            {
+                5: [(9, "IV. Example Conditions of Service")],
+                6: [(15, "A. Eligibility")],
+                7: [(20, "1. The example facility must be on the example premises.")],
+            }
+        )
+    )
+    assert [(a.text.value, a.disposition) for a in parsed.applicability] == [
+        ("The example facility must be on the example premises.", "required")
+    ]
+
+
 def test_a_table_caption_the_parser_cannot_read_is_reported() -> None:
     """A caption that is not a rate category must not be silently swallowed."""
     parsed = parse(
