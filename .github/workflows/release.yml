@@ -7,10 +7,11 @@
 # the API and refuses to publish unless it is byte for byte the object the
 # verification job approved.
 #
-# One-time setup before the first release: set the repository variable
-# RELEASE_SIGNERS to the allowed-signers line for the SSH key used to sign
-# release tags, in the form `<principal> <keytype> <key>`. Until it is set this
-# workflow fails closed rather than publishing an unverified tag.
+# The signer list is committed at .github/allowed_signers, one line per
+# identity in the form `<principal> <keytype> <key>`, and is read from trusted
+# main rather than from the tag under release. While that file names no
+# principal this workflow fails closed rather than publishing an unverified
+# tag.
 name: release
 
 on:
@@ -58,7 +59,6 @@ jobs:
         id: identity
         env:
           TAG: ${{ inputs.tag }}
-          RELEASE_SIGNERS: ${{ vars.RELEASE_SIGNERS }}
         run: |
           set -euo pipefail
 
@@ -78,13 +78,16 @@ jobs:
           # that never landed cannot be released.
           git merge-base --is-ancestor "${TAG}^{commit}" origin/main
 
-          if [ -z "${RELEASE_SIGNERS:-}" ]; then
-            echo "RELEASE_SIGNERS is not set; refusing to publish an unverified tag" >&2
+          # Present is not the same as populated: a signer file of comments
+          # would let verify-tag run against an empty principal list, and the
+          # failure would read like a bad signature rather than a missing key.
+          if [ ! -s .github/allowed_signers ] \
+             || ! grep -qv '^[[:space:]]*\(#\|$\)' .github/allowed_signers; then
+            echo ".github/allowed_signers names no principal; refusing to publish an unverified tag" >&2
             exit 1
           fi
-          printf '%s\n' "${RELEASE_SIGNERS}" > "${RUNNER_TEMP}/allowed-signers"
           git config gpg.format ssh
-          git config gpg.ssh.allowedSignersFile "${RUNNER_TEMP}/allowed-signers"
+          git config gpg.ssh.allowedSignersFile .github/allowed_signers
           git verify-tag "${TAG}"
 
           {

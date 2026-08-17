@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.1.0] - 2026-08-18
+
+First release. A command line parser that turns published California
+electricity rate schedules into structured data, with provenance on every
+emitted value and coverage published as an output rather than claimed. It is
+not rate advice and not a bill estimate, and it is not affiliated with,
+endorsed by, or approved by SMUD or any other utility.
+
 ### Added
 
 - Deterministic parser for published California electricity rate schedules,
@@ -130,4 +140,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The published PDFs are deliberately not redistributed from this repository.
   Only their digests and retrieval details are committed.
 
-[Unreleased]: https://github.com/ChelseaKR/ca-tariff-parse/commits/main
+[Unreleased]: https://github.com/ChelseaKR/ca-tariff-parse/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/ChelseaKR/ca-tariff-parse/releases/tag/v0.1.0
