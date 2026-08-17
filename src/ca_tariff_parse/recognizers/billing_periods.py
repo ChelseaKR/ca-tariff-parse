@@ -51,6 +51,20 @@ DATE_RANGE_RE = re.compile(
     rf"\A\(?\s*{_MONTH}\s*\d{{1,2}}\s*[-–—]\s*{_MONTH}\s*\d{{1,2}}\s*\)?\Z",
     re.IGNORECASE,
 )
+#: A season is a part of the year, and a table that groups its periods by
+#: season states which part: "Summer (Jun 1 - Sept 30)", "Non-Summer October 1
+#: -May 31", "All Year". Requiring the label to say so is what stops any text
+#: that happens to sit left of the period column from being read as a season.
+#: A second publisher's commercial sheet sets the column heading "TIME PERIOD"
+#: there, and two windows were emitted under a season called "PERIOD" that
+#: nobody published. A fabricated season on a real window is exactly the class
+#: of wrong value this parser exists to refuse, so a window whose season cannot
+#: be read is not emitted at all.
+SEASON_SPAN_RE = re.compile(
+    rf"{_MONTH}\s*\d{{0,2}}\s*(?:[-–—]|through|to)\s*{_MONTH}\s*\d{{0,2}}"
+    r"|\ball\s+(?:year|seasons)\b",
+    re.IGNORECASE,
+)
 HOLIDAY_INTRO_RE = re.compile(r"\bholidays?\b.*:\s*\Z", re.IGNORECASE)
 HOLIDAY_HEADER_SQUASHED = "holidaymonthdate"
 #: A clock time as tariffs write them: "5:00 p.m.", "6 a.m.", "noon", "midnight".
@@ -253,15 +267,20 @@ def _season_labels(rows: list[list[Line]], columns: WindowColumns) -> list[Seaso
 
 
 def _season_for(labels: list[SeasonLabel], position: int) -> tuple[list[Line], str] | None:
-    """Find the season group a row belongs to.
+    """Find the season group a row belongs to, or ``None`` if it has no season.
 
     The label is centred over its group rather than sitting at the top of it, so
     the group runs until the first row of the next label.
+
+    A label that does not state a part of the year is not a season, and the
+    rows under it get no season rather than that label's text. A non-season
+    label still divides the groups, so a row under it is never attributed to
+    the season above it either.
     """
     for index, (_start, group, text) in enumerate(labels):
         next_start = labels[index + 1][0] if index + 1 < len(labels) else None
         if next_start is None or position < next_start:
-            return (group, text)
+            return (group, text) if SEASON_SPAN_RE.search(text) else None
     return None
 
 

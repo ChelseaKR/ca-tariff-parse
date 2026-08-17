@@ -1,10 +1,16 @@
 """Parse the real published schedules, when they are present locally.
 
 The published PDFs are not redistributed from this repository, so these tests
-skip unless the documents have been fetched. What is committed is the golden
-output: the structured result of parsing them, with every value carrying its
-citation. Comparing against the golden file is how a change in the parser that
-would alter a published price gets caught.
+skip unless the documents have been fetched. What is committed for the
+documents this parser structures is the golden output: the structured result of
+parsing them, with every value carrying its citation. Comparing against the
+golden file is how a change in the parser that would alter a published price
+gets caught.
+
+A second publisher's schedules are here too, and they parse at 0%. No golden
+file is committed for those, because nothing is recognized and the whole
+document text would sit in ``notes``. What is asserted for them is the refusal:
+no charge, no window, no holiday, and every content line reported.
 
 Run ``make fetch`` first to exercise these.
 """
@@ -29,6 +35,15 @@ CASES = [
     ("smud-r", "1-R.pdf"),
     ("smud-ci-tod1", "CI-TOD1.pdf"),
     ("smud-ssr", "01_SSR.pdf"),
+]
+#: A second publisher, whose schedules this parser does not structure at all.
+#: No golden file is committed for them: nothing is recognized, so the whole
+#: document text would be carried verbatim in ``notes`` and committing that
+#: would republish the document. What is asserted instead is the refusal.
+SECOND_PUBLISHER_CASES = [
+    ("pge-e-1", "ELEC_SCHEDS_E-1.pdf"),
+    ("pge-e-tou-c", "ELEC_SCHEDS_E-TOU-C.pdf"),
+    ("pge-b-1", "ELEC_SCHEDS_B-1.pdf"),
 ]
 
 
@@ -109,3 +124,54 @@ def test_a_multi_column_dated_block_keeps_its_amounts_apart() -> None:
     }
     # No amount ever leaks into the effective date it is filed under.
     assert all("$" not in c.effective_from.value for c in parsed.charges)
+
+
+@pytest.mark.parametrize(("document_id", "filename"), SECOND_PUBLISHER_CASES)
+def test_second_publisher_document_matches_the_manifest_digest(
+    document_id: str, filename: str
+) -> None:
+    path = _require(document_id, filename)
+    entry = find(load_manifest(MANIFEST), document_id)
+    assert verify(entry, path) == entry.sha256
+
+
+@pytest.mark.parametrize(("document_id", "filename"), SECOND_PUBLISHER_CASES)
+def test_a_second_publisher_is_refused_rather_than_guessed_at(
+    document_id: str, filename: str
+) -> None:
+    """Nothing is emitted from a document whose structure is not understood.
+
+    These schedules carry no numbered outline, so the segmenter finds one
+    section and the recognizers have nothing to key on. The honest result is
+    zero coverage and an unparsed report naming the whole document. What must
+    never happen is a value: a price, a window or a holiday read out of a
+    document the parser cannot follow would be a plausible looking number with
+    a citation that makes it look checked.
+    """
+    path = _require(document_id, filename)
+    entry = find(load_manifest(MANIFEST), document_id)
+    parsed = parse_manifest_document(entry, path)
+
+    assert parsed.charges == ()
+    assert parsed.tou_windows == ()
+    assert parsed.holidays == ()
+    assert parsed.coverage.line_ratio == 0.0
+    assert parsed.coverage.fully_recognized is False
+    # Nothing is dropped: every content line is reported and carried verbatim.
+    assert len(parsed.notes) == parsed.coverage.content_lines
+    assert sum(item.line_count for item in parsed.unparsed) == parsed.coverage.content_lines
+
+
+def test_no_citation_names_a_sheet_the_publisher_cancelled() -> None:
+    """Each page prints its own sheet number over the one it supersedes.
+
+    Reading the second of the two made every citation on the page point at a
+    withdrawn document.
+    """
+    path = _require("pge-e-1", "ELEC_SCHEDS_E-1.pdf")
+    entry = find(load_manifest(MANIFEST), "pge-e-1")
+    parsed = parse_manifest_document(entry, path)
+    sheets = [sheet.value for sheet in parsed.identity.sheets]
+    assert sheets == ["61362-E", "61097-E", "61098-E", "61099-E", "61100-E", "61101-E", "61102-E"]
+    assert "61247-E" not in sheets
+    assert all(note.provenance.sheet in sheets for note in parsed.notes)

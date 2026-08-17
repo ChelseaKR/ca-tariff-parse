@@ -20,6 +20,7 @@ from __future__ import annotations
 import hashlib
 import re
 from dataclasses import dataclass
+from itertools import pairwise
 from pathlib import Path
 
 #: Nominal width of one character cell in a monospace fixture, in points.
@@ -33,6 +34,14 @@ MONO_PAGE_HEIGHT = 792.0
 HEADER_BAND = 0.085
 #: Fraction of page height above which a line counts as running footer.
 FOOTER_BAND = 0.86
+#: Multiple of a page's own median line gap that separates a running footer
+#: from the last line of the body. A footer is set apart by clear space, so a
+#: line inside the footer band that sits at ordinary body spacing under the
+#: line above it is still body. Without this the band alone decides, and a
+#: publisher who runs body text a little further down the page loses it: three
+#: lines of one second publisher's schedules fell just past the band, one of
+#: them carrying a published amount.
+FOOTER_SEPARATION = 1.5
 #: Vertical distance in points within which two words belong to the same line.
 LINE_TOLERANCE = 3.0
 
@@ -130,30 +139,75 @@ class LayoutDoc:
 
 
 _SHEET_RE = re.compile(r"Sheet\s*No\.?\s*([A-Za-z0-9][A-Za-z0-9\-]*)", re.IGNORECASE)
+#: A supersession header. A sheet that replaces an earlier one prints both
+#: numbers, as in "Revised Cal. P.U.C. Sheet No. 61362-E" over "Cancelling
+#: Revised Cal. P.U.C. Sheet No. 61247-E". The cancelled number names the sheet
+#: this page is *not*, so citing it would point every value on the page at a
+#: superseded document.
+CANCELS_RE = re.compile(r"\bcancel", re.IGNORECASE)
+
+
+def sheet_numbers(line: Line) -> list[str]:
+    """Sheet numbers this line asserts, ignoring any it cancels.
+
+    Returns an empty list for a line that only names a cancelled sheet, so a
+    caller never records a superseded sheet number as this page's own.
+    """
+    if CANCELS_RE.search(line.text):
+        return []
+    return _SHEET_RE.findall(line.text)
 
 
 def _detect_sheet(lines: list[Line]) -> str | None:
-    """Read the sheet number off the page furniture, if the document has one."""
-    for line in reversed(lines):
-        if not line.furniture:
-            continue
-        match = _SHEET_RE.search(line.text)
-        if match:
-            return match.group(1)
-    return None
+    """Read the sheet number off the page furniture, if the document has one.
+
+    Two publishers put the number in different places and one of them prints
+    two of them, so the rule is to collect every number the page asserts as its
+    own and to use it only when they agree. Disagreement means the page does
+    not state a single sheet number, and none is recorded rather than one of
+    them being picked.
+    """
+    found = [number for line in lines if line.furniture for number in sheet_numbers(line)]
+    if not found or len(set(found)) != 1:
+        return None
+    return found[0]
+
+
+def _median_gap(tops: list[float]) -> float:
+    gaps = sorted(later - earlier for earlier, later in pairwise(tops))
+    return gaps[len(gaps) // 2] if gaps else 0.0
 
 
 def _mark_furniture(raw: list[tuple[float, tuple[Word, ...]]], height: float) -> list[bool]:
-    """Flag running headers and footers by vertical band.
+    """Flag running headers and footers.
 
     Page furniture is not content. It is still cited (the effective date lives
     there) but it is excluded from the coverage denominator so that a five page
     schedule is not credited for repeating its own title five times.
+
+    The vertical bands say where furniture may be. Where the footer actually
+    begins is read from the page's own line spacing: a footer is set apart from
+    the body by clear space, so the footer starts at the first line in the band
+    that is separated from the line above it by more than the page's ordinary
+    line gap. A line in the band at body spacing is body, and is accounted for
+    rather than silently dropped.
     """
+    tops = [top for top, _words in raw]
+    median = _median_gap(tops)
     flags: list[bool] = []
-    for top, _words in raw:
+    in_footer = False
+    for index, top in enumerate(tops):
         ratio = top / height if height else 0.0
-        flags.append(ratio <= HEADER_BAND or ratio >= FOOTER_BAND)
+        if ratio <= HEADER_BAND:
+            flags.append(True)
+            continue
+        if ratio < FOOTER_BAND:
+            flags.append(False)
+            continue
+        if not in_footer:
+            gap = top - tops[index - 1] if index else float("inf")
+            in_footer = median <= 0.0 or gap > median * FOOTER_SEPARATION
+        flags.append(in_footer)
     return flags
 
 

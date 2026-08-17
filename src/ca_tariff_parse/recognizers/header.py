@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from ..extract import LayoutDoc
+from ..extract import LayoutDoc, sheet_numbers
 from ..model import Cited, ScheduleIdentity
 from .base import Citer, LineKey
 
@@ -65,10 +65,14 @@ def parse_identity(doc: LayoutDoc, citer: Citer) -> tuple[ScheduleIdentity, set[
                     effective = citer.text(line, FRONT, match.group("effective").strip())
                 continue
 
-            match = SHEET_RE.search(text)
-            if match:
+            # A supersession header prints the cancelled sheet number as well
+            # as this page's own. Only the numbers the page asserts as its own
+            # are recorded, so the schedule is never described by a sheet it
+            # replaced. The cancelling line is still consumed, because it is
+            # accounted for even though nothing is read from it.
+            if SHEET_RE.search(text):
                 consumed.add((line.page, line.index))
-                sheets.append(citer.text(line, FRONT, match.group("sheet")))
+                sheets.extend(citer.text(line, FRONT, number) for number in sheet_numbers(line))
 
     identity = ScheduleIdentity(
         schedule_code=schedule_code,

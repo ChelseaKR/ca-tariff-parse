@@ -38,6 +38,10 @@ fetch: ## Download the published source documents (the only networked target)
 verify-source: ## Check local source documents against the manifest digests
 	$(UV) run ca-tariff-parse verify-source --dir $(SOURCES_DIR)
 
+# Golden output is committed only for the documents the parser structures. The
+# second publisher's schedules parse at 0%, so their whole text would be
+# carried verbatim in `notes` and committing that would republish the document
+# this repository deliberately does not redistribute. See docs/adr/0005.
 golden: ## Regenerate golden output from the real documents (review every diff)
 	@test -f $(SOURCES_DIR)/1-R-TOD.pdf || { echo "run 'make fetch' first"; exit 1; }
 	$(UV) run ca-tariff-parse parse $(SOURCES_DIR)/1-R-TOD.pdf --id smud-r-tod \
@@ -52,7 +56,9 @@ golden: ## Regenerate golden output from the real documents (review every diff)
 
 coverage-real: ## Report parser coverage of each fetched source document
 	@for pair in smud-r-tod:1-R-TOD.pdf smud-r:1-R.pdf \
-	             smud-ci-tod1:CI-TOD1.pdf smud-ssr:01_SSR.pdf; do \
+	             smud-ci-tod1:CI-TOD1.pdf smud-ssr:01_SSR.pdf \
+	             pge-e-1:ELEC_SCHEDS_E-1.pdf pge-e-tou-c:ELEC_SCHEDS_E-TOU-C.pdf \
+	             pge-b-1:ELEC_SCHEDS_B-1.pdf; do \
 		$(UV) run ca-tariff-parse coverage \
 			$(SOURCES_DIR)/$${pair#*:} --id $${pair%%:*}; \
 	done

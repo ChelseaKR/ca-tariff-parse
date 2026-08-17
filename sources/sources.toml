@@ -59,3 +59,46 @@ sha256 = "fe588545545c5b341f9436fa15923fc35192aca72b6499c116cf3bf72c2b800e"
 retrieved_at = "2026-08-17"
 pages = 4
 bytes = 203785
+
+# A second publisher, added to find out how much of this parser is general and
+# how much was four documents' worth of one publisher's typesetting. The answer
+# is in docs/adr/0005. These three parse at 0% and their unparsed report is the
+# output. Retrieval checked https://www.pge.com/robots.txt first, which
+# disallows only /mobile/ and /mobile_jbri/ for a general client and publishes
+# a sitemap of the tariff book.
+
+[[document]]
+id = "pge-e-1"
+schedule = "E-1"
+title = "Residential Services"
+publisher = "Pacific Gas and Electric Company"
+url = "https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_SCHEDS_E-1.pdf"
+filename = "ELEC_SCHEDS_E-1.pdf"
+sha256 = "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239"
+retrieved_at = "2026-08-17"
+pages = 7
+bytes = 656128
+
+[[document]]
+id = "pge-e-tou-c"
+schedule = "E-TOU-C"
+title = "Residential Time-of-Use (Peak Pricing 4 - 9 p.m. Every Day)"
+publisher = "Pacific Gas and Electric Company"
+url = "https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_SCHEDS_E-TOU-C.pdf"
+filename = "ELEC_SCHEDS_E-TOU-C.pdf"
+sha256 = "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931"
+retrieved_at = "2026-08-17"
+pages = 10
+bytes = 932456
+
+[[document]]
+id = "pge-b-1"
+schedule = "B-1"
+title = "Small General Service"
+publisher = "Pacific Gas and Electric Company"
+url = "https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_SCHEDS_B-1.pdf"
+filename = "ELEC_SCHEDS_B-1.pdf"
+sha256 = "c549733e3813bee59ae444b54a4b827fa37e8dd792e8f790f7361df5280b8bea"
+retrieved_at = "2026-08-17"
+pages = 11
+bytes = 823553

@@ -133,7 +133,13 @@ def _read_value_row(
             continue
         money = MONEY_RE.match(word.text)
         if not money:
-            continue
+            # A cell in the value area that is neither an amount nor an
+            # explicit "n/a" cannot be read. Skipping it would publish the rest
+            # of the row as though it were the whole row, which is how a table
+            # of three prices comes out carrying two. A second publisher writes
+            # a negative as "($0.08140)", which is a real price in a form this
+            # parser does not read, so the whole row is refused instead.
+            return None
         column = assign(word, columns)
         if column is None:
             return None

@@ -40,6 +40,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `applies_to` on a charge, recording the column heading a price sat under
   when one charge is priced across several categories at once.
 - `make coverage-real`, reporting parse coverage of every fetched document.
+- Three schedules from a second publisher in the manifest, added to find out
+  how much of this parser is general. They parse at 0%, that figure is
+  published in the README beside the four that parse, and the account of what
+  is general and what was one publisher's house style is in ADR 0005. No golden
+  file is committed for them: nothing is recognized, so the whole document text
+  would sit in `notes` and committing that would republish the document.
 
 ### Fixed
 
@@ -65,6 +71,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   dated row in a section was previously filed under the first label above it.
 - A resolution footer that names an amending resolution in brackets no longer
   carries the closing bracket into the adopted date.
+- A time-of-use window is no longer given a season read off any text that
+  happens to sit left of the period column. A second publisher heads that
+  column "TIME PERIOD" and two windows were emitted under a season called
+  "PERIOD". A season states a part of the year, and a window whose season
+  cannot be read is not emitted.
+- A sheet number a page announces as cancelled is never cited as that page's
+  own. A publisher that prints "Revised Cal. P.U.C. Sheet No. X" above
+  "Cancelling Revised Cal. P.U.C. Sheet No. Y" had every citation on the page
+  pointing at the withdrawn sheet.
+- A body line low on the page is no longer discarded as a footer. The band says
+  where a footer may be and the page's own line spacing says where the body
+  ends, so a line set at body spacing is accounted for instead of vanishing
+  from both the coverage denominator and the unparsed report.
+- A rate table row is refused whole when any cell in its value area is neither
+  an amount nor an explicit `n/a`. The row was previously committed with the
+  unreadable cell skipped, so a row of three prices could publish two.
 
 ### Notes
 

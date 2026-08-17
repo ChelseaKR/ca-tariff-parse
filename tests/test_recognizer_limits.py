@@ -360,3 +360,67 @@ def test_a_table_caption_the_parser_cannot_read_is_reported() -> None:
     assert [c.price.amount.value for c in parsed.charges] == ["9.99"]
     assert parsed.charges[0].rate_category is None
     assert any("(Closed)" in note.value for note in parsed.notes)
+
+
+def test_a_window_whose_season_is_not_a_season_is_not_emitted() -> None:
+    """A column heading left of the period column is not the season.
+
+    A second publisher heads that column "TIME PERIOD" and sets its real
+    seasons further right. Reading the heading as a season published two
+    windows belonging to a season nobody wrote.
+    """
+    parsed = parse(
+        build(
+            {
+                5: [(9, "IV. Example Billing Periods")],
+                6: [(15, "A. Example Time-of-Day Billing Periods")],
+                8: [(8, "PERIOD")],
+                9: [(36, "Peak"), (54, "Weekdays between 5:00 p.m. and 8:00 p.m.")],
+                10: [(36, "Off-Peak"), (54, "All other hours, including holidays.")],
+            }
+        )
+    )
+    assert parsed.tou_windows == ()
+    assert any("PERIOD" in note.value for note in parsed.notes)
+
+
+def test_the_same_table_under_a_stated_season_is_emitted() -> None:
+    """Control case: the refusal above is about the label, not the layout."""
+    parsed = parse(
+        build(
+            {
+                5: [(9, "IV. Example Billing Periods")],
+                6: [(15, "A. Example Time-of-Day Billing Periods")],
+                8: [(8, "Example Summer (Mar - Apr)")],
+                9: [(36, "Peak"), (54, "Weekdays between 5:00 p.m. and 8:00 p.m.")],
+                10: [(36, "Off-Peak"), (54, "All other hours, including holidays.")],
+            }
+        )
+    )
+    assert [(w.season.value, w.period.value) for w in parsed.tou_windows] == [
+        ("Example Summer (Mar - Apr)", "Peak"),
+        ("Example Summer (Mar - Apr)", "Off-Peak"),
+    ]
+
+
+def test_a_row_with_a_cell_the_parser_cannot_read_is_refused_whole() -> None:
+    """Publishing the readable half of a row would understate the row.
+
+    A second publisher writes a negative amount in accounting brackets, as
+    "($0.0500)". That is a real published price in a form this parser does not
+    read, and emitting the row without it would present one price as though it
+    were the whole row.
+    """
+    parsed = parse(
+        build(
+            {
+                5: [(9, "II. Example Rates")],
+                6: [(15, "A. Example Rate")],
+                8: [(50, "Effective as of"), (68, "Effective as of")],
+                9: [(50, "May 1, 2026"), (68, "January 1, 2027")],
+                10: [(20, "Fixed Charge per month"), (52, "($0.0500)"), (70, "$9.99")],
+            }
+        )
+    )
+    assert parsed.charges == ()
+    assert any("($0.0500)" in note.value for note in parsed.notes)

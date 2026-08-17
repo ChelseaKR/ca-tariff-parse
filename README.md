@@ -111,32 +111,62 @@ output as one it fully understands, and there is a test that proves it.
 
 ## Coverage today
 
-Four published schedules are in the manifest. None of them parses completely,
-and the figure for each is an output of the tool rather than a claim made here.
+Seven published schedules from two publishers are in the manifest. None of them
+parses completely, three of them do not parse at all, and the figure for each
+is an output of the tool rather than a claim made here.
 
-| Schedule | Lines recognized | Charges | Windows | Holidays |
-| --- | --- | --- | --- | --- |
-| R-TOD, residential time-of-day | 117/151 (77.5%) | 42 | 5 | 11 |
-| R, residential | 79/115 (68.7%) | 30 | 0 | 0 |
-| CI-TOD1, commercial and industrial time-of-day | 121/201 (60.2%) | 78 | 5 | 11 |
-| SSR, solar and storage | 49/76 (64.5%) | 0 | 0 | 0 |
+| Schedule | Publisher | Lines recognized | Charges | Windows | Holidays |
+| --- | --- | --- | --- | --- | --- |
+| R-TOD, residential time-of-day | SMUD | 117/151 (77.5%) | 42 | 5 | 11 |
+| R, residential | SMUD | 79/115 (68.7%) | 30 | 0 | 0 |
+| CI-TOD1, commercial and industrial time-of-day | SMUD | 121/201 (60.2%) | 78 | 5 | 11 |
+| SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 |
+| E-1, residential | PG&E | 0/269 (0.0%) | 0 | 0 | 0 |
+| E-TOU-C, residential time-of-use | PG&E | 0/425 (0.0%) | 0 | 0 | 0 |
+| B-1, small general service | PG&E | 0/507 (0.0%) | 0 | 0 | 0 |
 
 `make coverage-real` reproduces the table from the fetched documents.
 
-The two commercial and solar schedules were added to test whether a parser
-written against two residential sheets works on anything else. It largely did
-not, and what it got wrong is written up in
-[ADR 0004](docs/adr/0004-read-table-geometry-from-the-document.md): fixed
-column coordinates found none of the eleven holidays on the commercial sheet, a
-transition table of future prices was read as a time-of-use window whose
-definition was a price, and a charge priced across three service voltage levels
-had two of its three amounts folded into the effective date. Those are fixed.
-Coverage of the residential schedules did not move, and their golden output is
-unchanged.
+### What a second publisher cost
 
-What is left unaccounted for is largely genuine narrative: proration wording,
-critical peak pricing terms, service voltage definitions, metering conditions.
-Three specific things are structured and still refused, on purpose:
+The three zeroes are the honest result of asking whether this parser
+generalises. It does not. The full account is in
+[ADR 0005](docs/adr/0005-a-second-publisher-needs-a-document-profile.md); the
+short version is that three quarters of the collapse is one assumption. This
+parser recovers a document's outline from statute-style numbering, roman
+numerals over capital letters, and cites every value to the part it came from.
+The second publisher has no numbered outline: it sets a keyword in a narrow
+left-hand column with the text beside it, so a line reads `APPLICABILITY: This
+schedule is applicable to ...`. With no outline the whole document lands in one
+section and no recognizer has anything to key on.
+
+What turned out to be general is the machinery that made the failure legible
+rather than dangerous: the positional layout model, the citation and audit
+rules, the coverage accounting, and above all the refusals. Even before the
+fixes below, two of the three documents emitted not one value: a rate table
+whose shape is not recognised produces nothing rather than something plausible.
+What turned out to be specific to the first
+publisher is every recognizer's claim: the rate table keys on the literal words
+`Effective as of`, the identity reader on `Rate Schedule <code>` and a
+resolution number, cross references on `Refer to Rate Schedule X`. A second
+publisher writes all of those differently and gets nothing.
+
+One thing did produce output, and it was wrong: two time-of-use windows under a
+season called `PERIOD`, which is the window table's own column heading and not
+a season at all. That, a citation naming a sheet the publisher had cancelled,
+and a body line silently swallowed by a fixed footer band are fixed here,
+because each is wrong for any publisher. The publisher-specific gaps are left
+open on purpose. Closing them with a second branch beside the first is how a
+parser becomes a pile of special cases, so ADR 0005 designs a per-document
+profile instead and does not implement it against a single second example.
+
+Coverage of the four SMUD schedules did not move and their golden output is
+byte for byte unchanged.
+
+What is left unaccounted for on those four is largely genuine narrative:
+proration wording, critical peak pricing terms, service voltage definitions,
+metering conditions. Three specific things are structured and still refused, on
+purpose:
 
 - **A price stated inside a sentence.** SSR gives its export compensation rate
   as "The Export Compensation Rate effective June 1, 2026 will be $0.0960 per
@@ -176,6 +206,8 @@ relax the check.
 permission, endorsement, or any relationship with the publisher.
 
 Retrieval honours `robots.txt` and is a handful of requests, never a crawl.
+`robots.txt` for a host is read before anything is fetched from it, and a
+publisher that disallows the path is not fetched from at all.
 
 ## Commands
 
@@ -208,8 +240,12 @@ non-zero when too little of the document was understood.
 
 Tests run against a clearly labelled synthetic fixture, so the suite works
 offline and without redistributing a publisher's document. The golden output of
-the real schedules is committed under `tests/golden/`, so a parser change that
-would alter a published price shows up as a reviewable diff.
+the four schedules that parse is committed under `tests/golden/`, so a parser
+change that would alter a published price shows up as a reviewable diff. No
+golden file is committed for the three that parse at 0%: nothing is recognized,
+so the whole document text would sit in `notes` and committing that would
+republish the document. Those three are covered by tests asserting the refusal
+instead.
 
 ## Standards Conformance
 

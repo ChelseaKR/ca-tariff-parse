@@ -169,3 +169,58 @@ def test_logical_rows_handles_a_single_line() -> None:
     line = Line(page=1, index=1, top=1.0, words=(Word("x", 1.0, 2.0),), furniture=False)
     assert logical_rows([line]) == [[line]]
     assert logical_rows([]) == []
+
+
+def _page(rows: dict[int, str]) -> str:
+    return "\n".join(rows.get(index, "") for index in range(max(rows) + 1)) + "\n"
+
+
+def test_a_cancelled_sheet_number_is_never_cited_as_the_page_its_own() -> None:
+    """A supersession header names the sheet this page replaces, not this one.
+
+    Citing it would point every value on the page at a document the publisher
+    has withdrawn.
+    """
+    doc = layout_from_monospace(
+        _page(
+            {
+                0: "         Revised Example Sheet No. SYN-9-2",
+                1: "         Cancelling Revised Example Sheet No. SYN-9-1",
+                3: "         Example body line.",
+            }
+        ),
+        "syn-cancel",
+    )
+    assert doc.pages[0].sheet == "SYN-9-2"
+
+
+def test_no_sheet_is_recorded_when_a_page_asserts_two_different_ones() -> None:
+    """Disagreement is not resolved by picking one of them."""
+    doc = layout_from_monospace(
+        _page(
+            {
+                0: "         Example Sheet No. SYN-9-2",
+                1: "         Example Sheet No. SYN-9-7",
+                3: "         Example body line.",
+            }
+        ),
+        "syn-two-sheets",
+    )
+    assert doc.pages[0].sheet is None
+
+
+def test_a_body_line_low_on_the_page_is_not_treated_as_a_footer() -> None:
+    """The footer begins where the page leaves clear space, not at a fixed band.
+
+    A publisher that runs body text further down the page than another would
+    otherwise lose those lines: they would be excluded from the coverage
+    denominator and never reported as unparsed.
+    """
+    rows = {index: f"         Example body line {index}." for index in range(2, 51)}
+    rows[53] = "         Example Utility (SYNTHETIC) Sheet No. SYN-9-1"
+    doc = layout_from_monospace(_page(rows), "syn-low-body")
+    page = doc.pages[0]
+    low = next(line for line in page.lines if line.text.endswith("line 50."))
+    assert low.furniture is False
+    footer = next(line for line in page.lines if "Sheet No." in line.text)
+    assert footer.furniture is True
