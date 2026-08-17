@@ -20,8 +20,11 @@ repos:
         # table geometry, so trailing space there is content, not whitespace.
         exclude: ^tests/fixtures/
 
+  # Keep this rev in step with the ruff floor in pyproject.toml and the
+  # version uv.lock resolves. A hook older than CI's ruff will format code
+  # one way locally and fail `ruff format --check` in CI.
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.0
+    rev: v0.16.3
     hooks:
       - id: ruff-check
         args: ["--fix"]
