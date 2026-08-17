@@ -83,11 +83,7 @@ def _cmd_coverage(args: argparse.Namespace) -> int:
     if parsed.unparsed:
         out.write("\nunparsed:\n")
         for item in parsed.unparsed:
-            out.write(
-                f"  {item.section:<10} p.{item.page} "
-                f"lines {item.first_line}-{item.last_line} "
-                f"({item.line_count}) {item.reason}\n"
-            )
+            out.write(f"  {item.section:<10} {item.span} ({item.line_count}) {item.reason}\n")
             for sample in item.sample:
                 out.write(f"      | {sample[:96]}\n")
     out.write(f"\n{DISCLAIMER}\n")

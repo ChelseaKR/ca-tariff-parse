@@ -111,3 +111,47 @@ def test_the_extra_section_does_not_perturb_what_was_understood(
     assert [x.target.value for x in understood.cross_references] == [
         x.target.value for x in partial.cross_references
     ]
+
+
+def test_an_unparsed_span_is_readable_across_a_page_break() -> None:
+    """Line numbers are per page, so a span needs a page at each end.
+
+    Without this a section running over a page break reports "lines 35-5",
+    which a reader cannot use to find the text being reported.
+    """
+    from ca_tariff_parse.model import UnparsedSection
+
+    same_page = UnparsedSection(
+        section="II.C",
+        heading="Example",
+        page=2,
+        sheet="X-2",
+        first_line=3,
+        last_line=9,
+        line_count=7,
+        reason="example",
+    )
+    assert same_page.span == "p.2 lines 3-9"
+    assert same_page.to_json()["last_page"] == 2
+
+    across = UnparsedSection(
+        section="II.C",
+        heading="Example",
+        page=2,
+        sheet="X-2",
+        first_line=35,
+        last_line=5,
+        line_count=7,
+        reason="example",
+        last_page=3,
+        last_sheet="X-3",
+    )
+    assert across.span == "p.2 L35 to p.3 L5"
+    assert across.to_json()["last_sheet"] == "X-3"
+
+
+def test_a_real_cross_page_section_reports_both_pages(unknown_fixture: Path) -> None:
+    for item in parse_path(unknown_fixture).unparsed:
+        assert item.end_page >= item.page
+        if item.end_page == item.page:
+            assert item.last_line >= item.first_line

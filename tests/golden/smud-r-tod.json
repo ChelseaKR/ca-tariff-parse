@@ -5873,9 +5873,12 @@
       "page": 2,
       "sheet": "R-TOD-2",
       "first_line": 35,
+      "last_page": 3,
+      "last_sheet": "R-TOD-3",
       "last_line": 5,
       "line_count": 7,
       "reason": "7 of 8 lines in a recognized section matched no rule",
+      "span": "p.2 L35 to p.3 L5",
       "sample": [
         "1. The CPP Rate base prices per time-of-day period are the same as the prices per time-of-day period for TOD (5-8 p.m.).",
         "2. The CPP Rate provides a discount per kWh on the Mid-Peak and Off-Peak prices during summer months.",
@@ -5889,9 +5892,12 @@
       "page": 3,
       "sheet": "R-TOD-3",
       "first_line": 7,
+      "last_page": 3,
+      "last_sheet": "R-TOD-3",
       "last_line": 7,
       "line_count": 1,
       "reason": "1 of 4 lines in a recognized section matched no rule",
+      "span": "p.3 lines 7-7",
       "sample": [
         "This credit is for residential customers who have a licensed passenger battery electric plug-in or plug-in hybrid electric vehicle."
       ]
@@ -5902,9 +5908,12 @@
       "page": 3,
       "sheet": "R-TOD-3",
       "first_line": 11,
+      "last_page": 3,
+      "last_sheet": "R-TOD-3",
       "last_line": 11,
       "line_count": 1,
       "reason": "1 of 2 lines in a recognized section matched no rule",
+      "span": "p.3 lines 11-11",
       "sample": [
         "Refer to the following rate schedules for details on these surcharges."
       ]
@@ -5915,9 +5924,12 @@
       "page": 3,
       "sheet": "R-TOD-3",
       "first_line": 19,
+      "last_page": 3,
+      "last_sheet": "R-TOD-3",
       "last_line": 33,
       "line_count": 10,
       "reason": "10 of 16 lines in a recognized section matched no rule",
+      "span": "p.3 lines 19-33",
       "sample": [
         "Standby Service applies when all of the following conditions are met:",
         "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
@@ -5931,9 +5943,12 @@
       "page": 3,
       "sheet": "R-TOD-3",
       "first_line": 36,
+      "last_page": 3,
+      "last_sheet": "R-TOD-3",
       "last_line": 37,
       "line_count": 2,
       "reason": "2 of 3 lines in a recognized section matched no rule",
+      "span": "p.3 lines 36-37",
       "sample": [
         "SMUD offers optional programs that allow customers to receive renewable energy for an additional charge, detailed on",
         "www.smud.org"
@@ -5945,9 +5960,12 @@
       "page": 4,
       "sheet": "R-TOD-4",
       "first_line": 4,
+      "last_page": 4,
+      "last_sheet": "R-TOD-4",
       "last_line": 8,
       "line_count": 5,
       "reason": "5 of 6 lines in a recognized section matched no rule",
+      "span": "p.4 lines 4-8",
       "sample": [
         "For customers who purchase and install additional equipment and software identified by SMUD meter specialists as necessary for",
         "load data collection and transfer to electronic media outside SMUD, SMUD will charge a monthly service fee to cover",
@@ -5961,9 +5979,12 @@
       "page": 4,
       "sheet": "R-TOD-4",
       "first_line": 10,
+      "last_page": 4,
+      "last_sheet": "R-TOD-4",
       "last_line": 11,
       "line_count": 2,
       "reason": "2 of 8 lines in a recognized section matched no rule",
+      "span": "p.4 lines 10-11",
       "sample": [
         "This option applies to customers located in areas where three-phase service is available. A Special Facilities fee may be charged",
         "to cover the additional costs for providing this service. This charge is in addition to the System Infrastructure Fixed Charge."
@@ -5975,9 +5996,12 @@
       "page": 5,
       "sheet": "R-TOD-5",
       "first_line": 5,
+      "last_page": 5,
+      "last_sheet": "R-TOD-5",
       "last_line": 10,
       "line_count": 6,
       "reason": "6 of 7 lines in a recognized section matched no rule",
+      "span": "p.5 lines 5-10",
       "sample": [
         "The electricity usage charge will not be prorated, regardless of the number of days in the billing period or the spanning of",
         "multiple seasons. The monthly System Infrastructure Fixed Charge will be prorated when the bill period is shorter than 27 days",

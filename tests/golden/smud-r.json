@@ -3644,9 +3644,12 @@
       "page": 2,
       "sheet": "R-2",
       "first_line": 19,
+      "last_page": 2,
+      "last_sheet": "R-2",
       "last_line": 19,
       "line_count": 1,
       "reason": "1 of 12 lines in a recognized section matched no rule",
+      "span": "p.2 lines 19-19",
       "sample": [
         "Master Metered Multifamily and Mobile Home Park Billing (Closed)"
       ]
@@ -3657,9 +3660,12 @@
       "page": 2,
       "sheet": "R-2",
       "first_line": 29,
+      "last_page": 2,
+      "last_sheet": "R-2",
       "last_line": 29,
       "line_count": 1,
       "reason": "1 of 2 lines in a recognized section matched no rule",
+      "span": "p.2 lines 29-29",
       "sample": [
         "Refer to the following rate schedule for details on electricity usage surcharges that apply to all kWh."
       ]
@@ -3670,9 +3676,12 @@
       "page": 3,
       "sheet": "R-3",
       "first_line": 3,
+      "last_page": 3,
+      "last_sheet": "R-3",
       "last_line": 18,
       "line_count": 11,
       "reason": "11 of 17 lines in a recognized section matched no rule",
+      "span": "p.3 lines 3-18",
       "sample": [
         "Standby Service applies when all of the following conditions are met:",
         "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
@@ -3686,9 +3695,12 @@
       "page": 3,
       "sheet": "R-3",
       "first_line": 21,
+      "last_page": 3,
+      "last_sheet": "R-3",
       "last_line": 22,
       "line_count": 2,
       "reason": "2 of 3 lines in a recognized section matched no rule",
+      "span": "p.3 lines 21-22",
       "sample": [
         "SMUD offers optional programs that allow customers to receive renewable energy for an additional charge, detailed on",
         "www.smud.org."
@@ -3700,9 +3712,12 @@
       "page": 3,
       "sheet": "R-3",
       "first_line": 24,
+      "last_page": 3,
+      "last_sheet": "R-3",
       "last_line": 28,
       "line_count": 5,
       "reason": "5 of 6 lines in a recognized section matched no rule",
+      "span": "p.3 lines 24-28",
       "sample": [
         "For customers who purchase and install additional equipment and software identified by SMUD meter specialists as necessary for",
         "load data collection and transfer to electronic media outside SMUD, SMUD will charge a monthly service fee to cover",
@@ -3716,9 +3731,12 @@
       "page": 3,
       "sheet": "R-3",
       "first_line": 31,
+      "last_page": 3,
+      "last_sheet": "R-3",
       "last_line": 32,
       "line_count": 2,
       "reason": "2 of 8 lines in a recognized section matched no rule",
+      "span": "p.3 lines 31-32",
       "sample": [
         "This option is open to customers located in areas where three-phase service is available. A Special Facilities fee may be charged",
         "to cover the additional costs for providing this service. This charge is in addition to the SIFC."
@@ -3730,9 +3748,12 @@
       "page": 4,
       "sheet": "R-4",
       "first_line": 4,
+      "last_page": 4,
+      "last_sheet": "R-4",
       "last_line": 17,
       "line_count": 14,
       "reason": "14 of 15 lines in a recognized section matched no rule",
+      "span": "p.4 lines 4-17",
       "sample": [
         "KWh usage may be prorated for nonstandard billing periods, when billing period spans a price change, and/or when the billing",
         "period spans more than one season. The monthly SIFC will be prorated when the bill period is shorter than 27 days. The",

@@ -263,6 +263,11 @@ class UnparsedSection:
 
     Unparsed content is a first class output. It is never dropped, and it is
     never quietly folded into a neighbouring section.
+
+    Line numbers are per page, and a section can run across a page break, so
+    the span is reported as a page and line at each end rather than as a single
+    page with two line numbers. Without both pages a span like "lines 35 to 5"
+    is unreadable, and a reader cannot find the text being reported.
     """
 
     section: str
@@ -273,7 +278,20 @@ class UnparsedSection:
     last_line: int
     line_count: int
     reason: str
+    last_page: int | None = None
+    last_sheet: str | None = None
     sample: list[str] = field(default_factory=list)
+
+    @property
+    def end_page(self) -> int:
+        return self.last_page if self.last_page is not None else self.page
+
+    @property
+    def span(self) -> str:
+        """Human readable location, e.g. ``p.2 L35 to p.3 L5``."""
+        if self.end_page == self.page:
+            return f"p.{self.page} lines {self.first_line}-{self.last_line}"
+        return f"p.{self.page} L{self.first_line} to p.{self.end_page} L{self.last_line}"
 
     def to_json(self) -> dict[str, object]:
         return {
@@ -282,9 +300,12 @@ class UnparsedSection:
             "page": self.page,
             "sheet": self.sheet,
             "first_line": self.first_line,
+            "last_page": self.end_page,
+            "last_sheet": self.last_sheet if self.last_sheet is not None else self.sheet,
             "last_line": self.last_line,
             "line_count": self.line_count,
             "reason": self.reason,
+            "span": self.span,
             "sample": list(self.sample),
         }
 

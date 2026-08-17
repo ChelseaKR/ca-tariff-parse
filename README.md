@@ -114,12 +114,12 @@ peak pricing narrative). It is reported, not hidden.
 ```
 $ uv run ca-tariff-parse coverage sources/1-R-TOD.pdf --id smud-r-tod
 content lines   117/151 recognized (77.5%)
-sections        15/24 fully recognized (62.5%)
+sections        16/24 fully recognized (66.7%)
 fully recognized False
 emitted         42 charge(s), 5 time-of-use window(s), 11 holiday(s), 6 cross reference(s)
 
 unparsed:
-  II.C       p.2 lines 30-37 (7) 7 of 8 lines in a recognized section matched no rule
+  II.C       p.2 L35 to p.3 L5 (7) 7 of 8 lines in a recognized section matched no rule
       | 1. The CPP Rate base prices per time-of-day period are the same ...
 ```
 
