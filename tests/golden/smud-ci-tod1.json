@@ -8557,6 +8557,98 @@
       }
     }
   ],
+  "proration": [
+    {
+      "circumstance": {
+        "value": "Bill period is shorter than 27 days",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 6,
+          "sheet": "CI-TOD1-6",
+          "section": "VII.B",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Bill period is shorter than 27 days",
+          "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L12"
+        }
+      },
+      "basis": {
+        "value": "Relationship between the length of the billing period and 30 days.",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 6,
+          "sheet": "CI-TOD1-6",
+          "section": "VII.B",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Relationship between the length of the billing period and 30 days.",
+          "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L13"
+        }
+      }
+    },
+    {
+      "circumstance": {
+        "value": "Bill period is longer than 34 days",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 6,
+          "sheet": "CI-TOD1-6",
+          "section": "VII.B",
+          "line": 14,
+          "end_line": null,
+          "snippet": "Bill period is longer than 34 days",
+          "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L14"
+        }
+      },
+      "basis": {
+        "value": "Relationship between the length of the billing period and 30 days.",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 6,
+          "sheet": "CI-TOD1-6",
+          "section": "VII.B",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Relationship between the length of the billing period and 30 days.",
+          "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L13"
+        }
+      }
+    },
+    {
+      "circumstance": {
+        "value": "Price changes within bill period",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 6,
+          "sheet": "CI-TOD1-6",
+          "section": "VII.B",
+          "line": 16,
+          "end_line": null,
+          "snippet": "Price changes within bill period",
+          "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L16"
+        }
+      },
+      "basis": {
+        "value": "Relationship between the length of the billing period and the number of days that fall within the respective pricing periods.",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 6,
+          "sheet": "CI-TOD1-6",
+          "section": "VII.B",
+          "line": 15,
+          "end_line": 17,
+          "snippet": "Relationship between the length of the billing period and the number of days that fall within the respective pricing periods.",
+          "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L15-17"
+        }
+      }
+    }
+  ],
   "notes": [
     {
       "value": "The holidays recognized for the Time-of-Day Billing Periods are as follows:",
@@ -9343,104 +9435,6 @@
       }
     },
     {
-      "value": "Billing Circumstance Basis for Proration",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 6,
-        "sheet": "CI-TOD1-6",
-        "section": "VII.B",
-        "line": 11,
-        "end_line": null,
-        "snippet": "Billing Circumstance Basis for Proration",
-        "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L11"
-      }
-    },
-    {
-      "value": "Bill period is shorter than 27 days",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 6,
-        "sheet": "CI-TOD1-6",
-        "section": "VII.B",
-        "line": 12,
-        "end_line": null,
-        "snippet": "Bill period is shorter than 27 days",
-        "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L12"
-      }
-    },
-    {
-      "value": "Relationship between the length of the billing period and 30 days.",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 6,
-        "sheet": "CI-TOD1-6",
-        "section": "VII.B",
-        "line": 13,
-        "end_line": null,
-        "snippet": "Relationship between the length of the billing period and 30 days.",
-        "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L13"
-      }
-    },
-    {
-      "value": "Bill period is longer than 34 days",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 6,
-        "sheet": "CI-TOD1-6",
-        "section": "VII.B",
-        "line": 14,
-        "end_line": null,
-        "snippet": "Bill period is longer than 34 days",
-        "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L14"
-      }
-    },
-    {
-      "value": "Relationship between the length of the billing period and the",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 6,
-        "sheet": "CI-TOD1-6",
-        "section": "VII.B",
-        "line": 15,
-        "end_line": null,
-        "snippet": "Relationship between the length of the billing period and the",
-        "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L15"
-      }
-    },
-    {
-      "value": "Price changes within bill period",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 6,
-        "sheet": "CI-TOD1-6",
-        "section": "VII.B",
-        "line": 16,
-        "end_line": null,
-        "snippet": "Price changes within bill period",
-        "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L16"
-      }
-    },
-    {
-      "value": "number of days that fall within the respective pricing periods.",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 6,
-        "sheet": "CI-TOD1-6",
-        "section": "VII.B",
-        "line": 17,
-        "end_line": null,
-        "snippet": "number of days that fall within the respective pricing periods.",
-        "locator": "smud-ci-tod1 p.6 sheet CI-TOD1-6 VII.B L17"
-      }
-    },
-    {
       "value": "Use of Contract Capacity for billing is at SMUD's sole discretion. Refer to Rule and Regulation 1 and Rule and Regulation 6.",
       "provenance": {
         "document_id": "smud-ci-tod1",
@@ -9880,15 +9874,14 @@
       "first_line": 8,
       "last_page": 6,
       "last_sheet": "CI-TOD1-6",
-      "last_line": 17,
-      "line_count": 10,
-      "reason": "10 of 11 lines in a recognized section matched no rule",
-      "span": "p.6 lines 8-17",
+      "last_line": 10,
+      "line_count": 3,
+      "reason": "3 of 11 lines in a recognized section matched no rule",
+      "span": "p.6 lines 8-10",
       "sample": [
         "Charges are prorated when the billing period is less than 27 days, more than 34 days or spans more than one price. The System",
         "Infrastructure Fixed Charge, Summer Peak Demand Charge, Maximum Demand Charge, and Site Infrastructure Charge will be",
-        "prorated as shown in the following table.",
-        "Billing Circumstance Basis for Proration"
+        "prorated as shown in the following table."
       ]
     },
     {
@@ -9948,13 +9941,13 @@
   ],
   "coverage": {
     "content_lines": 201,
-    "recognized_lines": 121,
-    "unrecognized_lines": 80,
+    "recognized_lines": 128,
+    "unrecognized_lines": 73,
     "boilerplate_lines": 28,
     "sections_total": 29,
     "sections_recognized": 15,
     "sections_unrecognized": 14,
-    "line_ratio": 0.60199,
+    "line_ratio": 0.636816,
     "section_ratio": 0.517241,
     "fully_recognized": false
   }

@@ -3131,6 +3131,98 @@
       }
     }
   ],
+  "proration": [
+    {
+      "circumstance": {
+        "value": "Bill period is shorter than 27 days (SIFC and kWh)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 4,
+          "sheet": "R-4",
+          "section": "V",
+          "line": 9,
+          "end_line": 10,
+          "snippet": "Bill period is shorter than 27 days (SIFC and kWh)",
+          "locator": "smud-r p.4 sheet R-4 V L9-10"
+        }
+      },
+      "basis": {
+        "value": "Relationship between the length of the billing period and 30 days.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 4,
+          "sheet": "R-4",
+          "section": "V",
+          "line": 10,
+          "end_line": null,
+          "snippet": "Relationship between the length of the billing period and 30 days.",
+          "locator": "smud-r p.4 sheet R-4 V L10"
+        }
+      }
+    },
+    {
+      "circumstance": {
+        "value": "Bill period is longer than 34 days (kWh)",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 4,
+          "sheet": "R-4",
+          "section": "V",
+          "line": 11,
+          "end_line": null,
+          "snippet": "Bill period is longer than 34 days (kWh)",
+          "locator": "smud-r p.4 sheet R-4 V L11"
+        }
+      },
+      "basis": {
+        "value": "Relationship between the length of the billing period and 30 days.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 4,
+          "sheet": "R-4",
+          "section": "V",
+          "line": 10,
+          "end_line": null,
+          "snippet": "Relationship between the length of the billing period and 30 days.",
+          "locator": "smud-r p.4 sheet R-4 V L10"
+        }
+      }
+    },
+    {
+      "circumstance": {
+        "value": "Seasons overlap and price changes within bill period",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 4,
+          "sheet": "R-4",
+          "section": "V",
+          "line": 13,
+          "end_line": 15,
+          "snippet": "Seasons overlap and price changes within bill period",
+          "locator": "smud-r p.4 sheet R-4 V L13-15"
+        }
+      },
+      "basis": {
+        "value": "Relationship between the length of the billing period and the number of days that fall within the respective season or pricing periods.",
+        "provenance": {
+          "document_id": "smud-r",
+          "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
+          "page": 4,
+          "sheet": "R-4",
+          "section": "V",
+          "line": 12,
+          "end_line": 16,
+          "snippet": "Relationship between the length of the billing period and the number of days that fall within the respective season or pricing periods.",
+          "locator": "smud-r p.4 sheet R-4 V L12-16"
+        }
+      }
+    }
+  ],
   "notes": [
     {
       "value": "Master Metered Multifamily and Mobile Home Park Billing (Closed)",
@@ -3497,132 +3589,6 @@
       }
     },
     {
-      "value": "Billing Circumstance Basis for Proration",
-      "provenance": {
-        "document_id": "smud-r",
-        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
-        "page": 4,
-        "sheet": "R-4",
-        "section": "V",
-        "line": 8,
-        "end_line": null,
-        "snippet": "Billing Circumstance Basis for Proration",
-        "locator": "smud-r p.4 sheet R-4 V L8"
-      }
-    },
-    {
-      "value": "Bill period is shorter than 27 days (SIFC",
-      "provenance": {
-        "document_id": "smud-r",
-        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
-        "page": 4,
-        "sheet": "R-4",
-        "section": "V",
-        "line": 9,
-        "end_line": null,
-        "snippet": "Bill period is shorter than 27 days (SIFC",
-        "locator": "smud-r p.4 sheet R-4 V L9"
-      }
-    },
-    {
-      "value": "and kWh) Relationship between the length of the billing period and 30 days.",
-      "provenance": {
-        "document_id": "smud-r",
-        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
-        "page": 4,
-        "sheet": "R-4",
-        "section": "V",
-        "line": 10,
-        "end_line": null,
-        "snippet": "and kWh) Relationship between the length of the billing period and 30 days.",
-        "locator": "smud-r p.4 sheet R-4 V L10"
-      }
-    },
-    {
-      "value": "Bill period is longer than 34 days (kWh)",
-      "provenance": {
-        "document_id": "smud-r",
-        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
-        "page": 4,
-        "sheet": "R-4",
-        "section": "V",
-        "line": 11,
-        "end_line": null,
-        "snippet": "Bill period is longer than 34 days (kWh)",
-        "locator": "smud-r p.4 sheet R-4 V L11"
-      }
-    },
-    {
-      "value": "Relationship between the length of the billing period and the",
-      "provenance": {
-        "document_id": "smud-r",
-        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
-        "page": 4,
-        "sheet": "R-4",
-        "section": "V",
-        "line": 12,
-        "end_line": null,
-        "snippet": "Relationship between the length of the billing period and the",
-        "locator": "smud-r p.4 sheet R-4 V L12"
-      }
-    },
-    {
-      "value": "Seasons overlap and price changes within",
-      "provenance": {
-        "document_id": "smud-r",
-        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
-        "page": 4,
-        "sheet": "R-4",
-        "section": "V",
-        "line": 13,
-        "end_line": null,
-        "snippet": "Seasons overlap and price changes within",
-        "locator": "smud-r p.4 sheet R-4 V L13"
-      }
-    },
-    {
-      "value": "number of days that fall within the respective season or pricing",
-      "provenance": {
-        "document_id": "smud-r",
-        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
-        "page": 4,
-        "sheet": "R-4",
-        "section": "V",
-        "line": 14,
-        "end_line": null,
-        "snippet": "number of days that fall within the respective season or pricing",
-        "locator": "smud-r p.4 sheet R-4 V L14"
-      }
-    },
-    {
-      "value": "bill period",
-      "provenance": {
-        "document_id": "smud-r",
-        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
-        "page": 4,
-        "sheet": "R-4",
-        "section": "V",
-        "line": 15,
-        "end_line": null,
-        "snippet": "bill period",
-        "locator": "smud-r p.4 sheet R-4 V L15"
-      }
-    },
-    {
-      "value": "periods.",
-      "provenance": {
-        "document_id": "smud-r",
-        "document_sha256": "2bc1beb88755f70db7f3bdce0b516a80946524455188bfae7eda5a5d68da555b",
-        "page": 4,
-        "sheet": "R-4",
-        "section": "V",
-        "line": 16,
-        "end_line": null,
-        "snippet": "periods.",
-        "locator": "smud-r p.4 sheet R-4 V L16"
-      }
-    },
-    {
       "value": "(End)",
       "provenance": {
         "document_id": "smud-r",
@@ -3751,8 +3717,8 @@
       "last_page": 4,
       "last_sheet": "R-4",
       "last_line": 17,
-      "line_count": 14,
-      "reason": "14 of 15 lines in a recognized section matched no rule",
+      "line_count": 5,
+      "reason": "5 of 15 lines in a recognized section matched no rule",
       "span": "p.4 lines 4-17",
       "sample": [
         "KWh usage may be prorated for nonstandard billing periods, when billing period spans a price change, and/or when the billing",
@@ -3764,13 +3730,13 @@
   ],
   "coverage": {
     "content_lines": 115,
-    "recognized_lines": 79,
-    "unrecognized_lines": 36,
+    "recognized_lines": 88,
+    "unrecognized_lines": 27,
     "boilerplate_lines": 16,
     "sections_total": 20,
     "sections_recognized": 13,
     "sections_unrecognized": 7,
-    "line_ratio": 0.686957,
+    "line_ratio": 0.765217,
     "section_ratio": 0.65,
     "fully_recognized": false
   }

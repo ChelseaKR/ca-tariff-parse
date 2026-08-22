@@ -81,7 +81,8 @@ def _cmd_coverage(args: argparse.Namespace) -> int:
         f"emitted         {len(parsed.charges)} charge(s), "
         f"{len(parsed.tou_windows)} time-of-use window(s), "
         f"{len(parsed.holidays)} holiday(s), "
-        f"{len(parsed.cross_references)} cross reference(s)\n"
+        f"{len(parsed.cross_references)} cross reference(s), "
+        f"{len(parsed.proration)} proration rule(s)\n"
     )
     if parsed.unparsed:
         out.write("\nunparsed:\n")

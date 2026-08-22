@@ -257,6 +257,25 @@ class Applicability:
 
 
 @dataclass(frozen=True, slots=True)
+class ProrationRule:
+    """One row of a billing-proration table: a circumstance and its basis.
+
+    Read from a ruled table's own cells rather than from line order, because a
+    basis cell that spans more than one circumstance is a genuine merge the
+    publisher drew, not an artefact of how the words happen to wrap. Each
+    ``ProrationRule`` still carries its own citation, so a basis shared by two
+    circumstances appears as two rules, each citing the same basis cell and
+    its own circumstance cell.
+    """
+
+    circumstance: Cited[str]
+    basis: Cited[str]
+
+    def to_json(self) -> dict[str, object]:
+        return {"circumstance": self.circumstance.to_json(), "basis": self.basis.to_json()}
+
+
+@dataclass(frozen=True, slots=True)
 class CrossReference:
     """A pointer from this schedule to another published schedule."""
 
@@ -427,6 +446,7 @@ class ParsedSchedule:
     tou_windows: tuple[TouWindow, ...]
     holidays: tuple[Holiday, ...]
     cross_references: tuple[CrossReference, ...]
+    proration: tuple[ProrationRule, ...]
     notes: tuple[Cited[str], ...]
     unparsed: tuple[UnparsedSection, ...]
     coverage: Coverage
@@ -444,6 +464,7 @@ class ParsedSchedule:
             "tou_windows": [w.to_json() for w in self.tou_windows],
             "holidays": [h.to_json() for h in self.holidays],
             "cross_references": [x.to_json() for x in self.cross_references],
+            "proration": [p.to_json() for p in self.proration],
             "notes": [n.to_json() for n in self.notes],
             "unparsed": [u.to_json() for u in self.unparsed],
             "coverage": self.coverage.to_json(),

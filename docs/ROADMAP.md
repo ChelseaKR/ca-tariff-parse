@@ -12,46 +12,65 @@ except in the explicit `fetch` command.
 The operator-facing signal is the `coverage` command, which reports what the
 parser accounted for and what it did not.
 
+## Done
+
+These were the largest items on this roadmap. Each is described where it
+landed rather than repeated here.
+
+- **A document profile, so a second publisher can be read at all.**
+  [ADR 0005](adr/0005-a-second-publisher-needs-a-document-profile.md) and
+  [ADR 0006](adr/0006-the-document-profile-holds-three-things.md); see "The
+  document profile" in the README. Three PG&E schedules went from 0% coverage
+  to what the coverage table now reports.
+- **An amount written in accounting brackets**, as `($0.08140)` for a
+  negative. Shipped as the profile's `bracket_negative_amounts` field; see
+  ADR 0006.
+- **The proration table**, on three of the four SMUD documents. Its basis
+  column is sometimes a cell genuinely drawn to span more than one
+  circumstance, which line-by-line reading cannot tell apart from an
+  unrelated cell. Shipped by reading the table's own ruled border directly
+  (`ExtractedTable` in `extract.py`) rather than inferring row breaks from
+  spacing; see "The proration table" in the README and ADR 0007.
+- **A stable JSON Schema for `parsed-schedule/v1`**, published at
+  `schemas/parsed-schedule-v1.schema.json` and validated in the test suite
+  against every golden file and every synthetic fixture's output, and, when
+  the real source documents are present locally, all seven of those too, so
+  the schema cannot drift from what `parse` actually emits.
+
 ## Planned
 
 Named in rough order of how much of the remaining unparsed content each would
 account for, and why each is still refused today.
 
-- **The proration table**, on three of the four documents. Its second column is
-  a merged cell whose lines interleave with the rows beside it, so a line by
-  line pairing attaches the wrong basis to the wrong circumstance. Needs the
-  merged cell recovered before anything is emitted.
 - **The commercial transition table**, which puts the unit in a column of its
   own rather than in the label, and dates its prices to a bare year carrying a
-  footnote. Both differ from every priced table the parser reads today.
+  footnote. Both differ from every priced table the parser reads today. It has
+  no ruled border the way the proration table does, so the fix that closed
+  that table does not carry over directly; this one still needs its own shape
+  read from column geometry the way `sheet_rates.py` reads its tables.
 - **Enumerated condition lists** outside an Applicability or Eligibility
-  heading, such as the standby service conditions. Carried verbatim in `notes`
-  today but not structured.
+  heading, such as the standby service conditions ("Standby Service applies
+  when all of the following conditions are met: 1. ... 2. ... 3. ...",
+  repeated near-verbatim across all three SMUD tiered schedules). Carried
+  verbatim in `notes` today but not structured. The numbered-item splitting
+  `applicability.py` already does is close to what this needs; the open
+  question is what to name the emitted shape for a condition list that is not
+  an eligibility statement, since `Applicability.disposition` does not fit a
+  connection requirement.
 - **A price stated inside a sentence**, as the solar and storage schedule
   states its export compensation rate. Refused because deciding what such a
   price is for is guesswork, and a wrong answer here is a fabricated tariff
   value. Any attempt needs a rule narrow enough to refuse far more often than
   it accepts.
-- **A document profile, so a second publisher can be read at all.** Three
-  schedules from a second publisher are in the manifest and parse at 0%. The
-  reason and the shape of the fix are in
-  [ADR 0005](adr/0005-a-second-publisher-needs-a-document-profile.md): a
-  profile selected per manifest entry, stating only what a document cannot
-  state about itself, namely how its outline is written, how an amount is
-  written, and which page furniture announces a supersession. Recognizers keep
-  reading geometry from the document. This is the largest single item here and
-  it should not be attempted against one further publisher, because fitting it
-  to one example is the mistake it exists to avoid.
-- **An amount written in accounting brackets**, as `($0.08140)` for a negative.
-  Read as not a number today, so a row carrying one is refused whole. Whether
-  brackets mean a negative is a publisher's convention, so it belongs in the
-  profile rather than in the amount pattern.
-- **Filing change markers**, the `(R)`, `(N)`, `(I)` and `(D)` a regulated
-  publisher sets beside a revised line, and the change bars in its right
-  margin. They are carried verbatim inside cited text today, because stripping
-  them would edit a quotation. Recognising them as furniture rather than
-  content is a profile question too.
-- A stable JSON Schema published alongside the `parsed-schedule/v1` output.
+- **Filing change markers**, the `(R)`, `(N)`, `(I)`, `(D)`, `(L)`, `(T)` and
+  similar a regulated publisher sets beside a revised line, and the change
+  bars in its right margin (both visible today in the PG&E schedules' `notes`,
+  e.g. `"BASELINE RATES: ... (L)"`). They are carried verbatim inside cited
+  text today, because stripping them would edit a quotation. Recognising them
+  as furniture rather than content is a profile question too: which letters a
+  publisher uses, and what each means, is a filing convention the page does
+  not define for itself, the same shape of problem `supersession_word`
+  already solved for a cancelled sheet number.
 
 Coverage figures move only when a recognizer genuinely understands more of a
 document. Widening a rule to raise the number is a defect, not progress.

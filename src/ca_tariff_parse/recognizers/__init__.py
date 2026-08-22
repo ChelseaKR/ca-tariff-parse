@@ -9,6 +9,7 @@ from . import (
     cross_reference,
     dated_charge,
     header,
+    proration,
     rate_table,
     sheet_rates,
 )
@@ -20,6 +21,7 @@ __all__ = [
     "cross_reference",
     "dated_charge",
     "header",
+    "proration",
     "rate_table",
     "sheet_rates",
 ]
