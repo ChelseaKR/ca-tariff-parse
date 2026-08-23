@@ -527,6 +527,7 @@
   "holidays": [],
   "cross_references": [],
   "proration": [],
+  "conditions": [],
   "notes": [
     {
       "value": "In the event that this Solar and Storage Rate is not available on March 1, 2022 due to implementation delays, customers will",

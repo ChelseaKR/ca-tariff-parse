@@ -22,6 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `schemas/parsed-schedule-v1.schema.json`. Validated in the test suite
   against every committed golden file, every synthetic fixture and, when
   present locally, all seven real source documents.
+- A new `Condition` record and `conditions` array in `parsed-schedule/v1`, for
+  a numbered list of conditions gating a rate option outside any
+  Applicability or Eligibility part, such as the Standby Service option's own
+  "all of the following conditions are met" list on three SMUD schedules.
+  Carries no disposition: see ADR 0009 for why `Applicability`'s scale does
+  not fit one item of a conjunction. `coverage` reports a `condition(s)`
+  count alongside the rest.
 
 ## [0.1.0] - 2026-08-18
 

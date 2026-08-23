@@ -8649,6 +8649,98 @@
       }
     }
   ],
+  "conditions": [
+    {
+      "subject": {
+        "value": "Standby Service applies when the following conditions are met:",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 3,
+          "sheet": "CI-TOD1-3",
+          "section": "IV.D",
+          "line": 16,
+          "end_line": null,
+          "snippet": "Standby Service applies when the following conditions are met:",
+          "locator": "smud-ci-tod1 p.3 sheet CI-TOD1-3 IV.D L16"
+        }
+      },
+      "text": {
+        "value": "The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 3,
+          "sheet": "CI-TOD1-3",
+          "section": "IV.D",
+          "line": 17,
+          "end_line": null,
+          "snippet": "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
+          "locator": "smud-ci-tod1 p.3 sheet CI-TOD1-3 IV.D L17"
+        }
+      }
+    },
+    {
+      "subject": {
+        "value": "Standby Service applies when the following conditions are met:",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 3,
+          "sheet": "CI-TOD1-3",
+          "section": "IV.D",
+          "line": 16,
+          "end_line": null,
+          "snippet": "Standby Service applies when the following conditions are met:",
+          "locator": "smud-ci-tod1 p.3 sheet CI-TOD1-3 IV.D L16"
+        }
+      },
+      "text": {
+        "value": "The generator(s) are connected to SMUD's electrical system; and",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 3,
+          "sheet": "CI-TOD1-3",
+          "section": "IV.D",
+          "line": 18,
+          "end_line": null,
+          "snippet": "2. The generator(s) are connected to SMUD's electrical system; and",
+          "locator": "smud-ci-tod1 p.3 sheet CI-TOD1-3 IV.D L18"
+        }
+      }
+    },
+    {
+      "subject": {
+        "value": "Standby Service applies when the following conditions are met:",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 3,
+          "sheet": "CI-TOD1-3",
+          "section": "IV.D",
+          "line": 16,
+          "end_line": null,
+          "snippet": "Standby Service applies when the following conditions are met:",
+          "locator": "smud-ci-tod1 p.3 sheet CI-TOD1-3 IV.D L16"
+        }
+      },
+      "text": {
+        "value": "SMUD is required to have resources available to provide supplemental service, backup electricity and/or to supply electricity during generator(s) maintenance service.",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 3,
+          "sheet": "CI-TOD1-3",
+          "section": "IV.D",
+          "line": 19,
+          "end_line": 20,
+          "snippet": "3. SMUD is required to have resources available to provide supplemental service, backup electricity and/or to supply electricity during generator(s) maintenance service.",
+          "locator": "smud-ci-tod1 p.3 sheet CI-TOD1-3 IV.D L19-20"
+        }
+      }
+    }
+  ],
   "notes": [
     {
       "value": "The holidays recognized for the Time-of-Day Billing Periods are as follows:",
@@ -8760,76 +8852,6 @@
         "end_line": null,
         "snippet": "by actual maximum demand.",
         "locator": "smud-ci-tod1 p.3 sheet CI-TOD1-3 IV.C L14"
-      }
-    },
-    {
-      "value": "Standby Service applies when the following conditions are met:",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 3,
-        "sheet": "CI-TOD1-3",
-        "section": "IV.D",
-        "line": 16,
-        "end_line": null,
-        "snippet": "Standby Service applies when the following conditions are met:",
-        "locator": "smud-ci-tod1 p.3 sheet CI-TOD1-3 IV.D L16"
-      }
-    },
-    {
-      "value": "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 3,
-        "sheet": "CI-TOD1-3",
-        "section": "IV.D",
-        "line": 17,
-        "end_line": null,
-        "snippet": "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
-        "locator": "smud-ci-tod1 p.3 sheet CI-TOD1-3 IV.D L17"
-      }
-    },
-    {
-      "value": "2. The generator(s) are connected to SMUD's electrical system; and",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 3,
-        "sheet": "CI-TOD1-3",
-        "section": "IV.D",
-        "line": 18,
-        "end_line": null,
-        "snippet": "2. The generator(s) are connected to SMUD's electrical system; and",
-        "locator": "smud-ci-tod1 p.3 sheet CI-TOD1-3 IV.D L18"
-      }
-    },
-    {
-      "value": "3. SMUD is required to have resources available to provide supplemental service, backup electricity and/or to supply",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 3,
-        "sheet": "CI-TOD1-3",
-        "section": "IV.D",
-        "line": 19,
-        "end_line": null,
-        "snippet": "3. SMUD is required to have resources available to provide supplemental service, backup electricity and/or to supply",
-        "locator": "smud-ci-tod1 p.3 sheet CI-TOD1-3 IV.D L19"
-      }
-    },
-    {
-      "value": "electricity during generator(s) maintenance service.",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 3,
-        "sheet": "CI-TOD1-3",
-        "section": "IV.D",
-        "line": 20,
-        "end_line": null,
-        "snippet": "electricity during generator(s) maintenance service.",
-        "locator": "smud-ci-tod1 p.3 sheet CI-TOD1-3 IV.D L20"
       }
     },
     {
@@ -9744,18 +9766,18 @@
       "heading": "Standby Service Option",
       "page": 3,
       "sheet": "CI-TOD1-3",
-      "first_line": 16,
+      "first_line": 26,
       "last_page": 3,
       "last_sheet": "CI-TOD1-3",
       "last_line": 29,
-      "line_count": 9,
-      "reason": "9 of 15 lines in a recognized section matched no rule",
-      "span": "p.3 lines 16-29",
+      "line_count": 4,
+      "reason": "4 of 15 lines in a recognized section matched no rule",
+      "span": "p.3 lines 26-29",
       "sample": [
-        "Standby Service applies when the following conditions are met:",
-        "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
-        "2. The generator(s) are connected to SMUD's electrical system; and",
-        "3. SMUD is required to have resources available to provide supplemental service, backup electricity and/or to supply"
+        "In addition to the Standby Service Charge, SMUD will continue to bill for all applicable charges under this rate schedule.",
+        "The Standby Service Charge will be waived only for qualifying renewable generation under Rate Schedules NEM1 and SSR. The",
+        "Standby Service Charge applies to customers who install, interconnect, and operate their own electrical generation facility and",
+        "equipment to self-supply all their own power needs as a microgrid service, where SMUD provides only backup electricity."
       ]
     },
     {
@@ -9941,13 +9963,13 @@
   ],
   "coverage": {
     "content_lines": 201,
-    "recognized_lines": 128,
-    "unrecognized_lines": 73,
+    "recognized_lines": 133,
+    "unrecognized_lines": 68,
     "boilerplate_lines": 28,
     "sections_total": 29,
     "sections_recognized": 15,
     "sections_unrecognized": 14,
-    "line_ratio": 0.636816,
+    "line_ratio": 0.661692,
     "section_ratio": 0.517241,
     "fully_recognized": false
   }
