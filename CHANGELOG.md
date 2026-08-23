@@ -52,6 +52,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   swept into a numbered condition item as spurious trailing text; it is
   furniture (see `change_markers` above) and no longer part of any
   recognizer's input.
+- `sources` and `verify-source` no longer hang forever on a FIFO, or crash
+  with a raw traceback on a directory or a permission-denied file, at a
+  manifest entry's filename. Either now reads as `mismatched` — it is not the
+  document the parser was audited against, and it is never opened. Also:
+  `sha256` is now compared case-insensitively, so a hand-edited manifest
+  entry with an uppercase digest no longer reads a byte-identical file as
+  `mismatched`.
 
 ## [0.1.0] - 2026-08-18
 
