@@ -231,12 +231,18 @@ not recognised produces nothing rather than something plausible.
 
 What is left unaccounted for on the four SMUD schedules is largely genuine
 narrative: critical peak pricing terms, service voltage definitions, metering
-conditions. One specific thing is structured and still refused, on purpose:
+conditions. One specific thing is structured and stays refused, deliberately
+rather than for lack of a rule:
 
 - **A price stated inside a sentence.** SSR gives its export compensation rate
   as "The Export Compensation Rate effective June 1, 2026 will be $0.0960 per
-  kWh". Reading a price out of prose means deciding by guesswork what the price
-  is for, so SSR emits no charges at all rather than one.
+  kWh (subject to updates as described in the paragraph below)." Reading a
+  price out of prose means deciding by guesswork what the price is for, and
+  this one is additionally stated as provisional on a formula defined
+  elsewhere, which an ordinary `Charge` has no way to say. SSR emits no
+  charges at all rather than one, and stays that way; see
+  [ADR 0011](docs/adr/0011-a-price-inside-a-sentence-stays-refused.md) for why
+  this is a closed decision rather than an open gap.
 
 Two other shapes that were structured and refused when this section was first
 written are read now. `smud-ci-tod1`'s commercial transition table states its

@@ -55,16 +55,16 @@ landed rather than repeated here.
   running header, under a new profile field naming which letters a publisher
   uses this way. See ADR 0010.
 
-## Planned
-
-Named in rough order of how much of the remaining unparsed content each would
-account for, and why each is still refused today.
+## Decided against
 
 - **A price stated inside a sentence**, as the solar and storage schedule
-  states its export compensation rate. Refused because deciding what such a
-  price is for is guesswork, and a wrong answer here is a fabricated tariff
-  value. Any attempt needs a rule narrow enough to refuse far more often than
-  it accepts.
+  states its export compensation rate. This stays refused: not for lack of a
+  rule that could read this one sentence, but because a rule fitted to a
+  single example is not a generalisation, and this price is additionally
+  stated as provisional on a formula defined elsewhere, which an ordinary
+  `Charge` has no way to say. See ADR 0011 for the full reasoning; the
+  existing test asserting `smud-ssr` emits zero charges is the specification,
+  not a placeholder.
 
 Coverage figures move only when a recognizer genuinely understands more of a
 document. Widening a rule to raise the number is a defect, not progress.
