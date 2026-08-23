@@ -16,7 +16,7 @@ import tomllib
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 DEFAULT_MANIFEST = Path("sources/sources.toml")
 
@@ -52,7 +52,28 @@ class SourceEntry:
     itself; see :mod:`ca_tariff_parse.profiles`."""
 
     def path(self, root: Path) -> Path:
+        validate_source_filename(self.filename)
         return root / self.filename
+
+
+def validate_source_filename(filename: str) -> None:
+    """Reject manifest filenames with path traversal or platform-dependent semantics."""
+    requested = Path(filename)
+    windows_requested = PureWindowsPath(filename)
+    segments = filename.split("/")
+    if (
+        not filename
+        or "\\" in filename
+        or ":" in filename
+        or requested.is_absolute()
+        or windows_requested.is_absolute()
+        or bool(windows_requested.drive)
+        or any(segment in {"", "."} for segment in segments)
+        or ".." in segments
+    ):
+        raise SourceError(
+            f"manifest filename must be a portable relative path under root, got {filename!r}"
+        )
 
 
 def load_manifest(path: Path = DEFAULT_MANIFEST) -> list[SourceEntry]:

@@ -111,6 +111,26 @@ def test_manifest_urls_are_https(entries) -> None:
 
 
 @pytest.mark.parametrize(
+    "filename",
+    [
+        "../escape.pdf",
+        "../../etc/passwd",
+        "/etc/passwd",
+        "nested/../../escape.pdf",
+        "C:\\Windows\\system32",
+        "C:file.pdf",
+        "",
+        ".",
+    ],
+)
+def test_path_rejects_path_traversal_filenames(entries, filename: str) -> None:
+    """A manifest entry must not be able to traverse outside the declared root."""
+    entry = dataclasses.replace(find(entries, "smud-r-tod"), filename=filename)
+    with pytest.raises(SourceError, match="must be a portable relative path"):
+        entry.path(Path("sources"))
+
+
+@pytest.mark.parametrize(
     "url",
     [
         "file:///etc/passwd",

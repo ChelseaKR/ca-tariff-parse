@@ -112,12 +112,22 @@ def _cmd_sources(args: argparse.Namespace) -> int:
             # A file under the manifest's name is not necessarily the document
             # the parser was audited against: it may be truncated, replaced by
             # a publisher revision, hand-edited, or not even a regular file
-            # (a directory, a FIFO). safe_digest() never blocks or raises on
-            # any of that — it just reports no match. verify-source still
-            # raises on this.
-            actual = safe_digest(local)
-            matches = actual is not None and actual.lower() == entry.sha256.lower()
-            state = "present" if matches else "mismatched"
+            # (a directory, a FIFO).
+            # Short-circuit on a file-size mismatch first to avoid reading/hashing
+            # large PDFs when their size already proves a mismatch.
+            # safe_digest() never blocks or raises on any of that — it just
+            # reports no match. verify-source still raises on this.
+            try:
+                stat_size = local.stat().st_size
+            except OSError:
+                stat_size = -1
+
+            if stat_size != entry.bytes:
+                state = "mismatched"
+            else:
+                actual = safe_digest(local)
+                matches = actual is not None and actual.lower() == entry.sha256.lower()
+                state = "present" if matches else "mismatched"
         sys.stdout.write(
             f"{entry.id:<14} {entry.schedule:<8} {state:<12} {entry.publisher}\n"
             f"{'':<14} {entry.url}\n"

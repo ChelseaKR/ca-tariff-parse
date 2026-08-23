@@ -115,6 +115,12 @@ def test_sources_distinguishes_missing_present_and_mismatched(
     out = capsys.readouterr().out
     assert "mismatched" in out and "not fetched" not in out
 
+    # Present but mismatched on size alone (short-circuits before reading full file).
+    target.write_bytes(b"short")
+    assert main(["sources", "--manifest", str(manifest), "--dir", str(directory)]) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "mismatched" in out and "not fetched" not in out
+
 
 def test_sources_reports_mismatched_case_insensitively(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
@@ -205,6 +211,29 @@ def test_sources_reports_a_fifo_as_mismatched_without_hanging(
     assert main(["sources", "--manifest", str(manifest), "--dir", str(directory)]) == EXIT_OK
     out = capsys.readouterr().out
     assert "mismatched" in out
+
+
+def test_sources_handles_path_traversal_manifest_entry_gracefully(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A manifest entry with a path traversal filename must raise SourceError."""
+    manifest = tmp_path / "sources.toml"
+    manifest.write_text(
+        "[[document]]\n"
+        'id = "escape-doc"\n'
+        'schedule = "R"\n'
+        'title = "Escape"\n'
+        'publisher = "Test Utility"\n'
+        'url = "https://example.com/doc.pdf"\n'
+        'filename = "../../../../etc/passwd"\n'
+        'sha256 = "0000000000000000000000000000000000000000000000000000000000000000"\n'
+        'retrieved_at = "2026-01-01"\n'
+        "pages = 1\n"
+        "bytes = 100\n",
+        encoding="utf-8",
+    )
+    assert main(["sources", "--manifest", str(manifest)]) == EXIT_ERROR
+    assert "must be a portable relative path" in capsys.readouterr().err
 
 
 def test_a_missing_manifest_is_an_error(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
