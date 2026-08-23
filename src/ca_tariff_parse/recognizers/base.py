@@ -22,6 +22,7 @@ from ..model import (
     Applicability,
     Charge,
     Cited,
+    Condition,
     CrossReference,
     Holiday,
     ProrationRule,
@@ -131,6 +132,7 @@ class Emission:
     holidays: list[Holiday] = field(default_factory=list)
     cross_references: list[CrossReference] = field(default_factory=list)
     proration: list[ProrationRule] = field(default_factory=list)
+    conditions: list[Condition] = field(default_factory=list)
     notes: list[Cited[str]] = field(default_factory=list)
 
     def take(self, *lines: Line) -> None:
@@ -155,6 +157,7 @@ class Emission:
         self.holidays += other.holidays
         self.cross_references += other.cross_references
         self.proration += other.proration
+        self.conditions += other.conditions
         self.notes += other.notes
 
     def __bool__(self) -> bool:
@@ -165,6 +168,7 @@ class Emission:
             or self.holidays
             or self.cross_references
             or self.proration
+            or self.conditions
             or self.notes
         )
 

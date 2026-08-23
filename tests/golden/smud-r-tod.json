@@ -5392,6 +5392,128 @@
       }
     }
   ],
+  "conditions": [
+    {
+      "subject": {
+        "value": "Standby Service applies when all of the following conditions are met:",
+        "provenance": {
+          "document_id": "smud-r-tod",
+          "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
+          "page": 3,
+          "sheet": "R-TOD-3",
+          "section": "IV.D",
+          "line": 19,
+          "end_line": null,
+          "snippet": "Standby Service applies when all of the following conditions are met:",
+          "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L19"
+        }
+      },
+      "text": {
+        "value": "The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
+        "provenance": {
+          "document_id": "smud-r-tod",
+          "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
+          "page": 3,
+          "sheet": "R-TOD-3",
+          "section": "IV.D",
+          "line": 20,
+          "end_line": null,
+          "snippet": "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
+          "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L20"
+        }
+      }
+    },
+    {
+      "subject": {
+        "value": "Standby Service applies when all of the following conditions are met:",
+        "provenance": {
+          "document_id": "smud-r-tod",
+          "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
+          "page": 3,
+          "sheet": "R-TOD-3",
+          "section": "IV.D",
+          "line": 19,
+          "end_line": null,
+          "snippet": "Standby Service applies when all of the following conditions are met:",
+          "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L19"
+        }
+      },
+      "text": {
+        "value": "The generator(s) have a combined nameplate rating less than 100 kW; and",
+        "provenance": {
+          "document_id": "smud-r-tod",
+          "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
+          "page": 3,
+          "sheet": "R-TOD-3",
+          "section": "IV.D",
+          "line": 21,
+          "end_line": null,
+          "snippet": "2. The generator(s) have a combined nameplate rating less than 100 kW; and",
+          "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L21"
+        }
+      }
+    },
+    {
+      "subject": {
+        "value": "Standby Service applies when all of the following conditions are met:",
+        "provenance": {
+          "document_id": "smud-r-tod",
+          "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
+          "page": 3,
+          "sheet": "R-TOD-3",
+          "section": "IV.D",
+          "line": 19,
+          "end_line": null,
+          "snippet": "Standby Service applies when all of the following conditions are met:",
+          "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L19"
+        }
+      },
+      "text": {
+        "value": "The generator(s) are connected to SMUD's electrical system; and",
+        "provenance": {
+          "document_id": "smud-r-tod",
+          "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
+          "page": 3,
+          "sheet": "R-TOD-3",
+          "section": "IV.D",
+          "line": 22,
+          "end_line": null,
+          "snippet": "3. The generator(s) are connected to SMUD's electrical system; and",
+          "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L22"
+        }
+      }
+    },
+    {
+      "subject": {
+        "value": "Standby Service applies when all of the following conditions are met:",
+        "provenance": {
+          "document_id": "smud-r-tod",
+          "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
+          "page": 3,
+          "sheet": "R-TOD-3",
+          "section": "IV.D",
+          "line": 19,
+          "end_line": null,
+          "snippet": "Standby Service applies when all of the following conditions are met:",
+          "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L19"
+        }
+      },
+      "text": {
+        "value": "SMUD is required to have resources available to provide supplemental service, backup electricity and/ or to supply electricity during generator(s) maintenance service.",
+        "provenance": {
+          "document_id": "smud-r-tod",
+          "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
+          "page": 3,
+          "sheet": "R-TOD-3",
+          "section": "IV.D",
+          "line": 23,
+          "end_line": 24,
+          "snippet": "4. SMUD is required to have resources available to provide supplemental service, backup electricity and/ or to supply electricity during generator(s) maintenance service.",
+          "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L23-24"
+        }
+      }
+    }
+  ],
   "notes": [
     {
       "value": "Credit applies to all electricity usage charges from midnight to 6:00 a.m. daily.",
@@ -5545,90 +5667,6 @@
         "end_line": null,
         "snippet": "Refer to the following rate schedules for details on these surcharges.",
         "locator": "smud-r-tod p.3 sheet R-TOD-3 III L11"
-      }
-    },
-    {
-      "value": "Standby Service applies when all of the following conditions are met:",
-      "provenance": {
-        "document_id": "smud-r-tod",
-        "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
-        "page": 3,
-        "sheet": "R-TOD-3",
-        "section": "IV.D",
-        "line": 19,
-        "end_line": null,
-        "snippet": "Standby Service applies when all of the following conditions are met:",
-        "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L19"
-      }
-    },
-    {
-      "value": "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
-      "provenance": {
-        "document_id": "smud-r-tod",
-        "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
-        "page": 3,
-        "sheet": "R-TOD-3",
-        "section": "IV.D",
-        "line": 20,
-        "end_line": null,
-        "snippet": "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
-        "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L20"
-      }
-    },
-    {
-      "value": "2. The generator(s) have a combined nameplate rating less than 100 kW; and",
-      "provenance": {
-        "document_id": "smud-r-tod",
-        "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
-        "page": 3,
-        "sheet": "R-TOD-3",
-        "section": "IV.D",
-        "line": 21,
-        "end_line": null,
-        "snippet": "2. The generator(s) have a combined nameplate rating less than 100 kW; and",
-        "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L21"
-      }
-    },
-    {
-      "value": "3. The generator(s) are connected to SMUD's electrical system; and",
-      "provenance": {
-        "document_id": "smud-r-tod",
-        "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
-        "page": 3,
-        "sheet": "R-TOD-3",
-        "section": "IV.D",
-        "line": 22,
-        "end_line": null,
-        "snippet": "3. The generator(s) are connected to SMUD's electrical system; and",
-        "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L22"
-      }
-    },
-    {
-      "value": "4. SMUD is required to have resources available to provide supplemental service, backup electricity and/ or to supply",
-      "provenance": {
-        "document_id": "smud-r-tod",
-        "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
-        "page": 3,
-        "sheet": "R-TOD-3",
-        "section": "IV.D",
-        "line": 23,
-        "end_line": null,
-        "snippet": "4. SMUD is required to have resources available to provide supplemental service, backup electricity and/ or to supply",
-        "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L23"
-      }
-    },
-    {
-      "value": "electricity during generator(s) maintenance service.",
-      "provenance": {
-        "document_id": "smud-r-tod",
-        "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
-        "page": 3,
-        "sheet": "R-TOD-3",
-        "section": "IV.D",
-        "line": 24,
-        "end_line": null,
-        "snippet": "electricity during generator(s) maintenance service.",
-        "locator": "smud-r-tod p.3 sheet R-TOD-3 IV.D L24"
       }
     },
     {
@@ -5927,18 +5965,18 @@
       "heading": "Standby Service Option",
       "page": 3,
       "sheet": "R-TOD-3",
-      "first_line": 19,
+      "first_line": 30,
       "last_page": 3,
       "last_sheet": "R-TOD-3",
       "last_line": 33,
-      "line_count": 10,
-      "reason": "10 of 16 lines in a recognized section matched no rule",
-      "span": "p.3 lines 19-33",
+      "line_count": 4,
+      "reason": "4 of 16 lines in a recognized section matched no rule",
+      "span": "p.3 lines 30-33",
       "sample": [
-        "Standby Service applies when all of the following conditions are met:",
-        "1. The customer has generation, sited on the customer's premises, that serves all or part of the customer's load; and",
-        "2. The generator(s) have a combined nameplate rating less than 100 kW; and",
-        "3. The generator(s) are connected to SMUD's electrical system; and"
+        "In addition to the Standby Service Charge, SMUD will continue to bill for all applicable charges under this rate schedule.",
+        "The Standby Service Charge will be waived only for qualifying renewable generation under Rate Schedules NEM1 and SSR. The",
+        "Standby Service Charge applies to customers who install, interconnect, and operate their own electrical generation facility and",
+        "equipment to self-supply all their own power needs as a microgrid service, where SMUD provides only backup electricity."
       ]
     },
     {
@@ -6016,13 +6054,13 @@
   ],
   "coverage": {
     "content_lines": 151,
-    "recognized_lines": 119,
-    "unrecognized_lines": 32,
+    "recognized_lines": 125,
+    "unrecognized_lines": 26,
     "boilerplate_lines": 20,
     "sections_total": 24,
     "sections_recognized": 16,
     "sections_unrecognized": 8,
-    "line_ratio": 0.788079,
+    "line_ratio": 0.827815,
     "section_ratio": 0.666667,
     "fully_recognized": false
   }

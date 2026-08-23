@@ -124,15 +124,15 @@ Seven published schedules from two publishers are in the manifest. None of them
 parses completely, and the figure for each is an output of the tool rather than
 a claim made here.
 
-| Schedule | Publisher | Lines recognized | Charges | Windows | Holidays | Proration rules |
-| --- | --- | --- | --- | --- | --- | --- |
-| R-TOD, residential time-of-day | SMUD | 119/151 (78.8%) | 42 | 5 | 11 | 1 |
-| R, residential | SMUD | 88/115 (76.5%) | 30 | 0 | 0 | 3 |
-| CI-TOD1, commercial and industrial time-of-day | SMUD | 128/201 (63.7%) | 78 | 5 | 11 | 3 |
-| SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 | 0 |
-| E-1, residential | PG&E | 42/269 (15.6%) | 26 | 0 | 0 | 0 |
-| E-TOU-C, residential time-of-use | PG&E | 18/425 (4.2%) | 3 | 0 | 0 | 0 |
-| B-1, small general service | PG&E | 106/507 (20.9%) | 18 | 0 | 0 | 0 |
+| Schedule | Publisher | Lines recognized | Charges | Windows | Holidays | Proration rules | Conditions |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| R-TOD, residential time-of-day | SMUD | 125/151 (82.8%) | 42 | 5 | 11 | 1 | 4 |
+| R, residential | SMUD | 94/115 (81.7%) | 30 | 0 | 0 | 3 | 4 |
+| CI-TOD1, commercial and industrial time-of-day | SMUD | 133/201 (66.2%) | 78 | 5 | 11 | 3 | 3 |
+| SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 | 0 | 0 |
+| E-1, residential | PG&E | 42/269 (15.6%) | 26 | 0 | 0 | 0 | 0 |
+| E-TOU-C, residential time-of-use | PG&E | 18/425 (4.2%) | 3 | 0 | 0 | 0 | 0 |
+| B-1, small general service | PG&E | 106/507 (20.9%) | 18 | 0 | 0 | 0 | 0 |
 
 `make coverage-real` reproduces the table from the fetched documents.
 
@@ -233,12 +233,20 @@ conditions. Two specific things are structured and still refused, on purpose:
   own and dates its prices to a bare year with a footnote. Both are unlike
   every other priced table here, and it is not read yet.
 
+An enumerated condition list outside any Applicability or Eligibility part,
+such as the Standby Service option's own "Standby Service applies when all of
+the following conditions are met: 1. ... 2. ... 3. ..." on three SMUD
+schedules, is read now, as a new `Condition` record that carries no
+disposition; see
+[ADR 0009](docs/adr/0009-a-condition-list-carries-no-disposition.md) for why
+`Applicability`'s scale does not fit one item of a conjunction.
+
 ```
 $ uv run ca-tariff-parse coverage sources/CI-TOD1.pdf --id smud-ci-tod1
-content lines   128/201 recognized (63.7%)
+content lines   133/201 recognized (66.2%)
 sections        15/29 fully recognized (51.7%)
 fully recognized False
-emitted         78 charge(s), 5 time-of-use window(s), 11 holiday(s), 5 cross reference(s), 3 proration rule(s)
+emitted         78 charge(s), 5 time-of-use window(s), 11 holiday(s), 5 cross reference(s), 3 proration rule(s), 3 condition(s)
 
 unparsed:
   VIII       p.7 L4 to p.8 L1 (12) 12 of 13 lines in a recognized section matched no rule

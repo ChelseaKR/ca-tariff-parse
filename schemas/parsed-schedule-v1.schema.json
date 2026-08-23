@@ -16,6 +16,7 @@
     "holidays",
     "cross_references",
     "proration",
+    "conditions",
     "notes",
     "unparsed",
     "coverage"
@@ -33,6 +34,7 @@
     "holidays": { "type": "array", "items": { "$ref": "#/$defs/holiday" } },
     "cross_references": { "type": "array", "items": { "$ref": "#/$defs/crossReference" } },
     "proration": { "type": "array", "items": { "$ref": "#/$defs/prorationRule" } },
+    "conditions": { "type": "array", "items": { "$ref": "#/$defs/condition" } },
     "notes": { "type": "array", "items": { "$ref": "#/$defs/citedString" } },
     "unparsed": { "type": "array", "items": { "$ref": "#/$defs/unparsedSection" } },
     "coverage": { "$ref": "#/$defs/coverage" }
@@ -174,6 +176,19 @@
       "properties": {
         "circumstance": { "$ref": "#/$defs/citedString" },
         "basis": { "$ref": "#/$defs/citedString" }
+      }
+    },
+    "condition": {
+      "type": "object",
+      "description": "One item of a numbered list of conditions that must all be met, read from outside any Applicability or Eligibility part. Carries no disposition: unlike an applicability statement, one item of a conjunction the intro sentence already states in full does not sort into included, excluded or required.",
+      "required": ["subject", "text"],
+      "additionalProperties": false,
+      "properties": {
+        "subject": {
+          "$ref": "#/$defs/citedString",
+          "description": "The intro sentence naming what the list gates, carried verbatim and shared by every item read from the same list."
+        },
+        "text": { "$ref": "#/$defs/citedString" }
       }
     },
     "unparsedSection": {

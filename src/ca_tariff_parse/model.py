@@ -257,6 +257,30 @@ class Applicability:
 
 
 @dataclass(frozen=True, slots=True)
+class Condition:
+    """One item of a numbered list of conditions that must all be met.
+
+    A schedule sometimes gates a rate option on an enumerated list outside
+    any Applicability or Eligibility part, as in "Standby Service applies
+    when all of the following conditions are met: 1. ... 2. ... 3. ...".
+    ``Applicability.disposition`` sorts a statement into included, excluded
+    or required, and none of those fits one item of a conjunction: the item
+    is not itself a condition of eligibility for the schedule, it is one of
+    several conditions an option's own intro sentence already states are
+    jointly required, so no disposition is attached rather than forcing one.
+    """
+
+    subject: Cited[str]
+    """The intro sentence naming what the list gates, carried verbatim and
+    shared by every item read from the same list, e.g. "Standby Service
+    applies when all of the following conditions are met:"."""
+    text: Cited[str]
+
+    def to_json(self) -> dict[str, object]:
+        return {"subject": self.subject.to_json(), "text": self.text.to_json()}
+
+
+@dataclass(frozen=True, slots=True)
 class ProrationRule:
     """One row of a billing-proration table: a circumstance and its basis.
 
@@ -447,6 +471,7 @@ class ParsedSchedule:
     holidays: tuple[Holiday, ...]
     cross_references: tuple[CrossReference, ...]
     proration: tuple[ProrationRule, ...]
+    conditions: tuple[Condition, ...]
     notes: tuple[Cited[str], ...]
     unparsed: tuple[UnparsedSection, ...]
     coverage: Coverage
@@ -465,6 +490,7 @@ class ParsedSchedule:
             "holidays": [h.to_json() for h in self.holidays],
             "cross_references": [x.to_json() for x in self.cross_references],
             "proration": [p.to_json() for p in self.proration],
+            "conditions": [c.to_json() for c in self.conditions],
             "notes": [n.to_json() for n in self.notes],
             "unparsed": [u.to_json() for u in self.unparsed],
             "coverage": self.coverage.to_json(),

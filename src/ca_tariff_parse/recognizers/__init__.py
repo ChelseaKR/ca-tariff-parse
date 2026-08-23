@@ -5,6 +5,7 @@ from __future__ import annotations
 from . import (
     applicability,
     billing_periods,
+    condition_list,
     credit,
     cross_reference,
     dated_charge,
@@ -17,6 +18,7 @@ from . import (
 __all__ = [
     "applicability",
     "billing_periods",
+    "condition_list",
     "credit",
     "cross_reference",
     "dated_charge",

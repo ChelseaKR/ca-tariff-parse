@@ -36,6 +36,12 @@ landed rather than repeated here.
   against every golden file and every synthetic fixture's output, and, when
   the real source documents are present locally, all seven of those too, so
   the schema cannot drift from what `parse` actually emits.
+- **Enumerated condition lists** outside an Applicability or Eligibility
+  heading, such as the standby service conditions ("Standby Service applies
+  when all of the following conditions are met: 1. ... 2. ... 3. ..."). Read
+  as a new record, `Condition`, that carries no disposition at all rather than
+  forcing one from `Applicability`'s scale: see ADR 0009 for why that scale
+  does not fit a connection requirement.
 
 ## Planned
 
@@ -48,15 +54,6 @@ account for, and why each is still refused today.
   no ruled border the way the proration table does, so the fix that closed
   that table does not carry over directly; this one still needs its own shape
   read from column geometry the way `sheet_rates.py` reads its tables.
-- **Enumerated condition lists** outside an Applicability or Eligibility
-  heading, such as the standby service conditions ("Standby Service applies
-  when all of the following conditions are met: 1. ... 2. ... 3. ...",
-  repeated near-verbatim across all three SMUD tiered schedules). Carried
-  verbatim in `notes` today but not structured. The numbered-item splitting
-  `applicability.py` already does is close to what this needs; the open
-  question is what to name the emitted shape for a condition list that is not
-  an eligibility statement, since `Applicability.disposition` does not fit a
-  connection requirement.
 - **A price stated inside a sentence**, as the solar and storage schedule
   states its export compensation rate. Refused because deciding what such a
   price is for is guesswork, and a wrong answer here is a fabricated tariff

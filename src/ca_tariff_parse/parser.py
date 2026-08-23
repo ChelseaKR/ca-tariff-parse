@@ -8,6 +8,7 @@ parser did not understand rather than having to trust that nothing was missed.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 
 from .audit import assert_fully_cited
@@ -23,6 +24,7 @@ from .profiles import DEFAULT, DocumentProfile, resolve
 from .recognizers import (
     applicability,
     billing_periods,
+    condition_list,
     credit,
     cross_reference,
     dated_charge,
@@ -57,23 +59,28 @@ def _run_recognizers(
 ) -> Emission:
     headings = {section.section_id: section.heading for section in sections if section.level == 1}
     combined = Emission()
+    # Each shape decides independently whether it claims a section; a shape
+    # that does not is simply skipped, so this is a flat, data driven list
+    # rather than a chain of branches that grows harder to read with every
+    # new recognizer.
+    shapes: list[tuple[Callable[[Section], bool], Callable[[Section], Emission]]] = [
+        (rate_table.claims, lambda s: rate_table.parse(s, citer)),
+        (
+            lambda s: sheet_rates.claims(s, profile),
+            lambda s: sheet_rates.parse(s, citer, profile, effective_by_page),
+        ),
+        (dated_charge.claims, lambda s: dated_charge.parse(s, citer)),
+        (credit.claims, lambda s: credit.parse(s, citer, effective)),
+        (billing_periods.claims, lambda s: billing_periods.parse(s, citer)),
+        (cross_reference.claims, lambda s: cross_reference.parse(s, citer)),
+        (lambda s: applicability.claims(s, headings), lambda s: applicability.parse(s, citer)),
+        (lambda s: proration.claims(s, citer.doc), lambda s: proration.parse(s, citer)),
+        (condition_list.claims, lambda s: condition_list.parse(s, citer)),
+    ]
     for section in sections:
-        if rate_table.claims(section):
-            combined.extend(rate_table.parse(section, citer))
-        if sheet_rates.claims(section, profile):
-            combined.extend(sheet_rates.parse(section, citer, profile, effective_by_page))
-        if dated_charge.claims(section):
-            combined.extend(dated_charge.parse(section, citer))
-        if credit.claims(section):
-            combined.extend(credit.parse(section, citer, effective))
-        if billing_periods.claims(section):
-            combined.extend(billing_periods.parse(section, citer))
-        if cross_reference.claims(section):
-            combined.extend(cross_reference.parse(section, citer))
-        if applicability.claims(section, headings):
-            combined.extend(applicability.parse(section, citer))
-        if proration.claims(section, citer.doc):
-            combined.extend(proration.parse(section, citer))
+        for claims, parse in shapes:
+            if claims(section):
+                combined.extend(parse(section))
     return combined
 
 
@@ -169,6 +176,7 @@ def parse_document(
         holidays=tuple(emission.holidays),
         cross_references=tuple(emission.cross_references),
         proration=tuple(emission.proration),
+        conditions=tuple(emission.conditions),
         notes=tuple(emission.notes),
         unparsed=tuple(unparsed),
         coverage=coverage,
