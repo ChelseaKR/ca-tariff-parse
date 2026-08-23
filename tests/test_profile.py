@@ -58,11 +58,13 @@ def test_every_registered_profile_resolves() -> None:
         {"name": " "},
         {"name": "x", "outline": "sideways"},
         {"name": "x", "supersession_word": "  "},
+        {"name": "x", "change_markers": frozenset({"Rev"})},
+        {"name": "x", "change_markers": frozenset({"r"})},
     ],
 )
-def test_a_malformed_profile_cannot_be_built(kwargs: dict[str, str]) -> None:
+def test_a_malformed_profile_cannot_be_built(kwargs: dict[str, object]) -> None:
     with pytest.raises(ValueError):
-        DocumentProfile(**kwargs)
+        DocumentProfile(**kwargs)  # type: ignore[arg-type]
 
 
 # ---------------------------------------------------------------------------
@@ -113,6 +115,74 @@ def test_a_profile_says_which_word_withdraws_a_sheet() -> None:
 def test_without_that_word_a_page_asserting_two_sheets_records_neither() -> None:
     """Fail closed. No citation names a sheet, rather than naming the wrong one."""
     assert _sheet_page(DEFAULT) is None
+
+
+# ---------------------------------------------------------------------------
+# Filing change markers
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("glyph", "expected"),
+    [
+        ("(R)", True),
+        ("(N)", False),  # a real marker letter, just not one this profile names
+        ("(r)", False),  # lower case is not the glyph a publisher sets
+        ("|", True),
+        ("Revised", False),
+        ("(Revised)", False),
+    ],
+)
+def test_is_change_marker_reads_only_the_letters_the_profile_names(
+    glyph: str, expected: bool
+) -> None:
+    marks_r_only = DocumentProfile(name="x", change_markers=frozenset({"R"}))
+    assert marks_r_only.is_change_marker(glyph) is expected
+
+
+def test_a_change_bar_means_nothing_to_a_profile_naming_no_letters() -> None:
+    """The bar is the same right margin glyph as the bracketed letters.
+
+    Naming none is what a document with no marker convention gets by
+    default, and a bare "|" is then just a bare "|": not read as furniture.
+    """
+    assert DEFAULT.is_change_marker("|") is False
+    assert DEFAULT.is_change_marker("(R)") is False
+
+
+def _marker_page(profile: DocumentProfile) -> tuple[bool, ...]:
+    """Furniture flags, one per content line, of a tiny fixture page.
+
+    Padded well clear of the header and footer bands, so what is being read
+    is the change marker logic and not that banding. Line 2 is a bracketed
+    marker this profile may or may not name; line 3 is a bare change bar;
+    line 4 is a marker attached to real text, which must never be read as
+    furniture -- stripping it would edit a quotation.
+    """
+    doc = layout_from_monospace(
+        "\n".join(
+            [
+                *([""] * 6),
+                "APPLICABILITY: This SYNTHETIC schedule applies to example customers.",
+                "(R)",
+                "|",
+                "Example Tier 1 Usage $1.10 (R)",
+            ]
+        ),
+        "syn-marker",
+        profile=profile,
+    )
+    return tuple(line.furniture for line in doc.pages[0].lines)
+
+
+def test_a_bare_marker_and_change_bar_become_furniture_under_a_naming_profile() -> None:
+    marks_r = DocumentProfile(name="x", change_markers=frozenset({"R"}))
+    flags = _marker_page(marks_r)
+    assert flags == (False, True, True, False)
+
+
+def test_the_same_page_keeps_every_line_as_content_under_the_default_profile() -> None:
+    assert _marker_page(DEFAULT) == (False, False, False, False)
 
 
 # ---------------------------------------------------------------------------

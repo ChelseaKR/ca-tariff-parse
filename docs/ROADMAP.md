@@ -47,6 +47,13 @@ landed rather than repeated here.
   footnote. It has no ruled border the way the proration table does, so this
   needed its own shape read from column geometry, the way `sheet_rates.py`
   reads its tables. Shipped as `transition_table.py`; see ADR 0008.
+- **Filing change markers**, the `(R)`, `(N)`, `(I)`, `(D)`, `(L)`, `(T)` and
+  similar a regulated publisher sets beside a revised line, and the change bar
+  in its right margin. A marker attached to real text is still carried
+  verbatim inside whatever citation quotes that line, unchanged; a line that
+  is *nothing but* the marker is now read as furniture, the same category as a
+  running header, under a new profile field naming which letters a publisher
+  uses this way. See ADR 0010.
 
 ## Planned
 
@@ -58,15 +65,6 @@ account for, and why each is still refused today.
   price is for is guesswork, and a wrong answer here is a fabricated tariff
   value. Any attempt needs a rule narrow enough to refuse far more often than
   it accepts.
-- **Filing change markers**, the `(R)`, `(N)`, `(I)`, `(D)`, `(L)`, `(T)` and
-  similar a regulated publisher sets beside a revised line, and the change
-  bars in its right margin (both visible today in the PG&E schedules' `notes`,
-  e.g. `"BASELINE RATES: ... (L)"`). They are carried verbatim inside cited
-  text today, because stripping them would edit a quotation. Recognising them
-  as furniture rather than content is a profile question too: which letters a
-  publisher uses, and what each means, is a filing convention the page does
-  not define for itself, the same shape of problem `supersession_word`
-  already solved for a cancelled sheet number.
 
 Coverage figures move only when a recognizer genuinely understands more of a
 document. Widening a rule to raise the number is a defect, not progress.

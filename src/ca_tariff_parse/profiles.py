@@ -8,7 +8,7 @@ survives here untouched.
 
 A small residue is left over. It is not geometry and it is not wording; it is
 the meaning a publisher attaches to a convention, which the document uses
-everywhere and states nowhere. Three such things were found by parsing two
+everywhere and states nowhere. Four such things were found by parsing two
 publishers:
 
 * **How the outline is written.** A numbered outline announces itself: ``I.``
@@ -24,12 +24,18 @@ publishers:
 * **Which word announces a supersession.** A page that prints two sheet numbers
   is telling the reader that one of them is withdrawn, but which one is carried
   by a filing word rather than by anything structural on the page.
+* **Which letters flag a revised line.** A regulated publisher marks a changed
+  line with a bracketed capital beside it, ``(N)`` for new, ``(R)`` for
+  revised and so on, and a vertical bar beside a whole changed paragraph. The
+  glyphs read as ordinary text and the page nowhere states that they mean
+  "something here changed" rather than being part of the sentence; that is a
+  filing convention, the same shape of thing as the supersession word above.
 
-A profile supplies those three and nothing else, and it is selected per
+A profile supplies those four and nothing else, and it is selected per
 manifest entry. A document with no profile gets :data:`DEFAULT`, which claims a
-numbered outline, refuses a bracketed amount and treats no word as announcing a
-supersession. That is the fail-closed position: an unprofiled document is
-refused rather than guessed at.
+numbered outline, refuses a bracketed amount, treats no word as announcing a
+supersession and reads no line as a change marker. That is the fail-closed
+position: an unprofiled document is refused rather than guessed at.
 
 A profile deliberately holds no coordinate. The first draft of this seam gave
 it the width of the keyword column, and the three schedules of one publisher
@@ -85,6 +91,18 @@ class DocumentProfile:
     it replaces, as in ``Cancelling Revised Cal. P.U.C. Sheet No. 61247-E``.
     ``None`` means no word is treated as announcing one, and a page asserting
     two sheet numbers records neither."""
+    change_markers: frozenset[str] = frozenset()
+    """The single capital letters this publisher sets in brackets beside a
+    revised line, e.g. ``{"R", "N"}`` for "revised" and "new". A line whose
+    *entire* content is one such bracketed letter, or the literal ``|`` a
+    change bar in the right margin extracts as, carries no information of its
+    own -- it is page furniture, the same category as a running header -- and
+    is excluded from the coverage denominator rather than reported as
+    unrecognised content. A marker attached to an otherwise real line of text
+    is untouched by this: stripping it would edit a quotation, so it stays
+    exactly as printed inside whatever citation quotes that line. The empty
+    default means no line is ever read this way, which is the fail-closed
+    reading for a document naming no profile."""
 
     def __post_init__(self) -> None:
         if not self.name or not self.name.strip():
@@ -95,12 +113,28 @@ class DocumentProfile:
             )
         if self.supersession_word is not None and not self.supersession_word.strip():
             raise ValueError("supersession_word must be None or a non-empty word")
+        if any(len(letter) != 1 or not letter.isupper() for letter in self.change_markers):
+            raise ValueError("change_markers must be single uppercase letters")
 
     def cancels(self, text: str) -> bool:
         """True when this line announces a sheet the publisher has withdrawn."""
         if self.supersession_word is None:
             return False
         return bool(re.search(rf"\b{re.escape(self.supersession_word)}\b", text, re.IGNORECASE))
+
+    def is_change_marker(self, glyph: str) -> bool:
+        """True for a glyph that is nothing but a filing change marker.
+
+        A bracketed capital, e.g. ``(R)``, only counts when this profile
+        names that letter. The literal change bar ``|`` counts as soon as
+        this profile names any letter at all -- both are the same right
+        margin glyph, and a document with no marker letters is a document
+        this profile does not describe as using the convention.
+        """
+        match = re.fullmatch(r"\(([A-Z])\)", glyph)
+        if match:
+            return match.group(1) in self.change_markers
+        return bool(self.change_markers) and glyph == "|"
 
 
 #: Used for any document that names no profile. Everything is refused rather
@@ -119,6 +153,12 @@ _REGISTRY: dict[str, DocumentProfile] = {
         outline=KEYWORD_COLUMN,
         bracket_negative_amounts=True,
         supersession_word="Cancelling",
+        # Observed across the three schedules this profile was written from:
+        # (R)evised, (N)ew, (I)ncrease, (D)ecrease, (L)ine change only and
+        # (T)ransferred, per the CPUC's own filing convention (General Order
+        # 96-B). What each letter means is not read here; only that a line
+        # holding nothing else is furniture rather than content.
+        change_markers=frozenset({"R", "N", "I", "D", "L", "T"}),
     ),
 }
 

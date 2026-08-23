@@ -37,6 +37,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `category_code` in `recognizers/base.py`: the rate-category caption reading
   `rate_table.py` already did, made public and shared with the transition
   table recognizer rather than duplicated.
+- `change_markers` on the document profile: the single capital letters a
+  publisher sets in brackets beside a revised line. A line carrying nothing
+  but one such marker, or the literal change bar a whole changed paragraph is
+  flagged with, is now read as furniture rather than unrecognised content. A
+  marker attached to real text is untouched, since stripping it would edit a
+  quotation. `pge-tariff-book` names the six letters observed across its
+  three schedules (`R`, `N`, `I`, `D`, `L`, `T`); the default names none. See
+  ADR 0010.
+
+### Fixed
+
+- A stray change-bar glyph extracted as a line of its own no longer gets
+  swept into a numbered condition item as spurious trailing text; it is
+  furniture (see `change_markers` above) and no longer part of any
+  recognizer's input.
 
 ## [0.1.0] - 2026-08-18
 
