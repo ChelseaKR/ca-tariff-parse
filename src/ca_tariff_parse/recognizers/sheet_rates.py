@@ -55,6 +55,7 @@ from ..profiles import DocumentProfile
 from ..segment import Section
 from .base import (
     COLUMN_TOLERANCE,
+    ENERGY_UNITS,
     LABEL_MARGIN,
     Citer,
     Emission,
@@ -77,9 +78,6 @@ MARGIN_TOKEN_RE = re.compile(r"\A(?:\([A-Z]\)|[^0-9A-Za-z]+)\Z")
 #: so it is refused rather than read as though the remaining amount were the
 #: whole row.
 UNPRICED_CELL_RE = re.compile(r"\A(?:n/a|na|-{2,}|\u2014+|\u2013+)\Z", re.IGNORECASE)
-#: Squashed units that make a row an energy charge rather than a fixed one.
-#: The publishers here write the same thing three ways.
-ENERGY_UNITS = frozenset({"$/kwh", "$perkwh", "perkwh"})
 #: Fewest priced rows a heading must be followed by before this shape is
 #: claimed. One priced line under a heading is as likely to be a sentence.
 MINIMUM_ROWS = 2

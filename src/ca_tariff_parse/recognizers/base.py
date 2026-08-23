@@ -45,6 +45,10 @@ BRACKET_MONEY_RE = re.compile(
 #: Matches a cell the publisher marked as not applicable.
 NA_RE = re.compile(r"\A(n/a|na|--|—)\Z", re.IGNORECASE)
 
+#: Squashed units that make a row an energy charge rather than a fixed one.
+#: The publishers here write the same thing three ways.
+ENERGY_UNITS = frozenset({"$/kwh", "$perkwh", "perkwh"})
+
 
 def read_amount(token: str, profile: DocumentProfile) -> str | None:
     """The signed decimal a token states, or ``None`` when it states none.
@@ -369,3 +373,31 @@ def money_tokens(words: Iterable[object]) -> bool:
 def strip_item_number(text: str) -> str:
     """Drop a leading ``1.`` / ``A.`` enumerator from an item's text."""
     return re.sub(r"\A(?:\d+|[A-Z])\.\s+", "", text).strip()
+
+
+#: A rate category code written as a caption prefix or standing alone, e.g.
+#: "CITS-0" or "GFN".
+CATEGORY_CODE_RE = r"[A-Z][A-Z0-9]{1,7}(?:-[A-Z0-9]{1,3})?"
+#: Written as a trailing parenthesis, e.g. "Time-of-Day (5-8 p.m.) Rate
+#: (RT02)". Narrower than the prefix and standalone forms below: a caption
+#: parenthesis never carries the hyphenated form, so this does not accept one.
+CATEGORY_IN_CAPTION_RE = re.compile(r"\((?P<code>[A-Z]{2,6}\d{0,2})\)\s*\Z")
+#: Written as a caption prefix, e.g. "CITS-0: C&I Secondary 0-20 kW".
+CATEGORY_IN_PREFIX_RE = re.compile(rf"\A(?P<code>{CATEGORY_CODE_RE}):\s+\S")
+#: Standing alone on its own line, e.g. "GFN".
+CATEGORY_ALONE_RE = re.compile(rf"\A(?P<code>{CATEGORY_CODE_RE})\Z")
+
+
+def category_code(text: str) -> str | None:
+    """Read a rate category code off a caption row, in any of its printed forms.
+
+    Residential sheets put the code in a trailing parenthesis; commercial
+    sheets lead with it, or state it alone. Either way it is a code the
+    document prints, not one this parser assigns, so a line matching none of
+    these forms yields no category rather than one guessed from context.
+    """
+    for pattern in (CATEGORY_IN_CAPTION_RE, CATEGORY_IN_PREFIX_RE, CATEGORY_ALONE_RE):
+        match = pattern.search(text)
+        if match:
+            return match.group("code")
+    return None

@@ -42,18 +42,17 @@ landed rather than repeated here.
   as a new record, `Condition`, that carries no disposition at all rather than
   forcing one from `Applicability`'s scale: see ADR 0009 for why that scale
   does not fit a connection requirement.
+- **The commercial transition table**, which puts the unit in a column of its
+  own rather than in the label, and dates its prices to a bare year carrying a
+  footnote. It has no ruled border the way the proration table does, so this
+  needed its own shape read from column geometry, the way `sheet_rates.py`
+  reads its tables. Shipped as `transition_table.py`; see ADR 0008.
 
 ## Planned
 
 Named in rough order of how much of the remaining unparsed content each would
 account for, and why each is still refused today.
 
-- **The commercial transition table**, which puts the unit in a column of its
-  own rather than in the label, and dates its prices to a bare year carrying a
-  footnote. Both differ from every priced table the parser reads today. It has
-  no ruled border the way the proration table does, so the fix that closed
-  that table does not carry over directly; this one still needs its own shape
-  read from column geometry the way `sheet_rates.py` reads its tables.
 - **A price stated inside a sentence**, as the solar and storage schedule
   states its export compensation rate. Refused because deciding what such a
   price is for is guesswork, and a wrong answer here is a fabricated tariff

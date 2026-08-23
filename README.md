@@ -128,7 +128,7 @@ a claim made here.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | R-TOD, residential time-of-day | SMUD | 125/151 (82.8%) | 42 | 5 | 11 | 1 | 4 |
 | R, residential | SMUD | 94/115 (81.7%) | 30 | 0 | 0 | 3 | 4 |
-| CI-TOD1, commercial and industrial time-of-day | SMUD | 133/201 (66.2%) | 78 | 5 | 11 | 3 | 3 |
+| CI-TOD1, commercial and industrial time-of-day | SMUD | 142/201 (70.6%) | 85 | 5 | 11 | 3 | 3 |
 | SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 | 0 | 0 |
 | E-1, residential | PG&E | 42/269 (15.6%) | 26 | 0 | 0 | 0 | 0 |
 | E-TOU-C, residential time-of-use | PG&E | 18/425 (4.2%) | 3 | 0 | 0 | 0 | 0 |
@@ -223,34 +223,38 @@ not recognised produces nothing rather than something plausible.
 
 What is left unaccounted for on the four SMUD schedules is largely genuine
 narrative: critical peak pricing terms, service voltage definitions, metering
-conditions. Two specific things are structured and still refused, on purpose:
+conditions. One specific thing is structured and still refused, on purpose:
 
 - **A price stated inside a sentence.** SSR gives its export compensation rate
   as "The Export Compensation Rate effective June 1, 2026 will be $0.0960 per
   kWh". Reading a price out of prose means deciding by guesswork what the price
   is for, so SSR emits no charges at all rather than one.
-- **The commercial transition table**, which states its unit in a column of its
-  own and dates its prices to a bare year with a footnote. Both are unlike
-  every other priced table here, and it is not read yet.
 
+Two other shapes that were structured and refused when this section was first
+written are read now. `smud-ci-tod1`'s commercial transition table states its
+unit in a column of its own and dates its prices to a bare year carrying a
+footnote; see
+[ADR 0008](docs/adr/0008-a-column-headed-unit-dates-a-whole-column-at-once.md).
 An enumerated condition list outside any Applicability or Eligibility part,
 such as the Standby Service option's own "Standby Service applies when all of
 the following conditions are met: 1. ... 2. ... 3. ..." on three SMUD
-schedules, is read now, as a new `Condition` record that carries no
-disposition; see
+schedules, is read as a new `Condition` record that carries no disposition;
+see
 [ADR 0009](docs/adr/0009-a-condition-list-carries-no-disposition.md) for why
 `Applicability`'s scale does not fit one item of a conjunction.
 
 ```
 $ uv run ca-tariff-parse coverage sources/CI-TOD1.pdf --id smud-ci-tod1
-content lines   133/201 recognized (66.2%)
+content lines   142/201 recognized (70.6%)
 sections        15/29 fully recognized (51.7%)
 fully recognized False
-emitted         78 charge(s), 5 time-of-use window(s), 11 holiday(s), 5 cross reference(s), 3 proration rule(s), 3 condition(s)
+emitted         85 charge(s), 5 time-of-use window(s), 11 holiday(s), 5 cross reference(s), 3 proration rule(s), 3 condition(s)
 
 unparsed:
-  VIII       p.7 L4 to p.8 L1 (12) 12 of 13 lines in a recognized section matched no rule
-      | Season and Charge Component Unit 2028*
+  VIII       p.7 L13 to p.8 L1 (3) 3 of 13 lines in a recognized section matched no rule
+      | *Subject to future rate increases.
+      | **Time-of-Day periods apply as described in Section VII.
+      | THIS PAGE INTENTIONALLY LEFT BLANK
 ```
 
 ## Source documents

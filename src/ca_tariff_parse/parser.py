@@ -32,6 +32,7 @@ from .recognizers import (
     proration,
     rate_table,
     sheet_rates,
+    transition_table,
 )
 from .recognizers.base import Citer, Emission
 from .segment import Section, segment
@@ -69,6 +70,7 @@ def _run_recognizers(
             lambda s: sheet_rates.claims(s, profile),
             lambda s: sheet_rates.parse(s, citer, profile, effective_by_page),
         ),
+        (transition_table.claims, lambda s: transition_table.parse(s, citer, profile)),
         (dated_charge.claims, lambda s: dated_charge.parse(s, citer)),
         (credit.claims, lambda s: credit.parse(s, citer, effective)),
         (billing_periods.claims, lambda s: billing_periods.parse(s, citer)),
