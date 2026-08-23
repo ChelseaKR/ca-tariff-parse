@@ -8,6 +8,7 @@ parser did not understand rather than having to trust that nothing was missed.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 
 from .audit import assert_fully_cited
@@ -30,6 +31,7 @@ from .recognizers import (
     proration,
     rate_table,
     sheet_rates,
+    transition_table,
 )
 from .recognizers.base import Citer, Emission
 from .segment import Section, segment
@@ -48,6 +50,32 @@ def _reason(consumed: int, total: int) -> str:
     return f"{total - consumed} of {total} lines in a recognized section matched no rule"
 
 
+def _recognizers(
+    citer: Citer,
+    effective: Cited[str] | None,
+    profile: DocumentProfile,
+    effective_by_page: dict[int, Cited[str]],
+    headings: dict[str, str],
+) -> list[tuple[Callable[[Section], bool], Callable[[Section], Emission]]]:
+    """Every recognizer, paired as (claims, parse) and bound to this parse's
+    shared context. One list read by one loop is what keeps adding a
+    recognizer a one-line change instead of a new branch in the engine."""
+    return [
+        (rate_table.claims, lambda s: rate_table.parse(s, citer)),
+        (transition_table.claims, lambda s: transition_table.parse(s, citer)),
+        (
+            lambda s: sheet_rates.claims(s, profile),
+            lambda s: sheet_rates.parse(s, citer, profile, effective_by_page),
+        ),
+        (dated_charge.claims, lambda s: dated_charge.parse(s, citer)),
+        (credit.claims, lambda s: credit.parse(s, citer, effective)),
+        (billing_periods.claims, lambda s: billing_periods.parse(s, citer)),
+        (cross_reference.claims, lambda s: cross_reference.parse(s, citer)),
+        (lambda s: applicability.claims(s, headings), lambda s: applicability.parse(s, citer)),
+        (lambda s: proration.claims(s, citer.doc), lambda s: proration.parse(s, citer)),
+    ]
+
+
 def _run_recognizers(
     sections: list[Section],
     citer: Citer,
@@ -56,24 +84,12 @@ def _run_recognizers(
     effective_by_page: dict[int, Cited[str]],
 ) -> Emission:
     headings = {section.section_id: section.heading for section in sections if section.level == 1}
+    recognizers = _recognizers(citer, effective, profile, effective_by_page, headings)
     combined = Emission()
     for section in sections:
-        if rate_table.claims(section):
-            combined.extend(rate_table.parse(section, citer))
-        if sheet_rates.claims(section, profile):
-            combined.extend(sheet_rates.parse(section, citer, profile, effective_by_page))
-        if dated_charge.claims(section):
-            combined.extend(dated_charge.parse(section, citer))
-        if credit.claims(section):
-            combined.extend(credit.parse(section, citer, effective))
-        if billing_periods.claims(section):
-            combined.extend(billing_periods.parse(section, citer))
-        if cross_reference.claims(section):
-            combined.extend(cross_reference.parse(section, citer))
-        if applicability.claims(section, headings):
-            combined.extend(applicability.parse(section, citer))
-        if proration.claims(section, citer.doc):
-            combined.extend(proration.parse(section, citer))
+        for claims, parse in recognizers:
+            if claims(section):
+                combined.extend(parse(section))
     return combined
 
 

@@ -128,7 +128,7 @@ a claim made here.
 | --- | --- | --- | --- | --- | --- | --- |
 | R-TOD, residential time-of-day | SMUD | 119/151 (78.8%) | 42 | 5 | 11 | 1 |
 | R, residential | SMUD | 88/115 (76.5%) | 30 | 0 | 0 | 3 |
-| CI-TOD1, commercial and industrial time-of-day | SMUD | 128/201 (63.7%) | 78 | 5 | 11 | 3 |
+| CI-TOD1, commercial and industrial time-of-day | SMUD | 137/201 (68.2%) | 85 | 5 | 11 | 3 |
 | SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 | 0 |
 | E-1, residential | PG&E | 42/269 (15.6%) | 26 | 0 | 0 | 0 |
 | E-TOU-C, residential time-of-use | PG&E | 18/425 (4.2%) | 3 | 0 | 0 | 0 |
@@ -193,6 +193,38 @@ being read line by line as before. The full account, including the case that
 originally looked like it needed a spacing threshold and did not, is in
 [ADR 0007](docs/adr/0007-read-a-merged-cell-from-its-own-border.md).
 
+### The commercial transition table
+
+CI-TOD1 prices commercial rates through 2027 in its main tables, each of
+those dated by an "Effective as of" column the way every other SMUD table
+here is. Rates for 2028 and beyond are filed separately, in a small table
+that dates its one price column with nothing but the year itself and a
+footnote mark:
+
+```
+Season and Charge Component                  Unit       2028*
+CITS-0: C&I Secondary 0-20 kW
+    System Infrastructure Fixed Charge        per month  $44.45
+    Maximum Demand Charge                     per kW     $4.101
+    Non-Summer Peak                           per kWh    $0.1506
+*Subject to future rate increases.
+```
+
+Two things distinguish it from the main tables. The unit is not stated once
+for the block, the way `sheet_rates.py` reads it, nor in its own aligned
+column despite the "Unit" heading, the way the table's own layout might
+suggest: it is read the same way `rate_table.py` already reads every other
+priced row here, as the tail of the row's own label. And the season and
+time-of-use period are not split onto a heading row above the block; a row
+reads "Non-Summer Peak", so both are read out of that one label instead.
+
+The header is claimed by requiring both a literal "Unit" and a bare year
+(with an optional footnote mark) at the end of the same line, which is
+specific enough that nothing else in any of the seven schedules here matches
+it. The footnote's asterisk does not reach `effective_from`: the date is
+`"2028"`, and the footnote's own sentence is left where it was, to be carried
+verbatim like any other unrecognised line.
+
 ### What is still refused on the second publisher
 
 Most of it, and each refusal is a case where a value could otherwise be wrong.
@@ -223,26 +255,23 @@ not recognised produces nothing rather than something plausible.
 
 What is left unaccounted for on the four SMUD schedules is largely genuine
 narrative: critical peak pricing terms, service voltage definitions, metering
-conditions. Two specific things are structured and still refused, on purpose:
+conditions. One specific thing is structured and still refused, on purpose:
 
 - **A price stated inside a sentence.** SSR gives its export compensation rate
   as "The Export Compensation Rate effective June 1, 2026 will be $0.0960 per
   kWh". Reading a price out of prose means deciding by guesswork what the price
   is for, so SSR emits no charges at all rather than one.
-- **The commercial transition table**, which states its unit in a column of its
-  own and dates its prices to a bare year with a footnote. Both are unlike
-  every other priced table here, and it is not read yet.
 
 ```
 $ uv run ca-tariff-parse coverage sources/CI-TOD1.pdf --id smud-ci-tod1
-content lines   128/201 recognized (63.7%)
+content lines   137/201 recognized (68.2%)
 sections        15/29 fully recognized (51.7%)
 fully recognized False
-emitted         78 charge(s), 5 time-of-use window(s), 11 holiday(s), 5 cross reference(s), 3 proration rule(s)
+emitted         85 charge(s), 5 time-of-use window(s), 11 holiday(s), 5 cross reference(s), 3 proration rule(s)
 
 unparsed:
-  VIII       p.7 L4 to p.8 L1 (12) 12 of 13 lines in a recognized section matched no rule
-      | Season and Charge Component Unit 2028*
+  II.A       p.2 lines 36-36 (1) 1 of 33 lines in a recognized section matched no rule
+      | Commercial rates beyond 2027 are effective as shown in Section VIII. Transition Schedule.
 ```
 
 ## Source documents

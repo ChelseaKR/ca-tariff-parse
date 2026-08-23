@@ -79,6 +79,25 @@ PERIOD_NAMES = (
 )
 PERIOD_ALTERNATION = "|".join(name.replace(" ", r"\s+") for name in PERIOD_NAMES)
 
+#: A rate category code, e.g. "CITS-0" or "GFN". Written as a caption prefix,
+#: as in "CITS-0: C&I Secondary 0-20 kW", or standing alone on its own line.
+CATEGORY_CODE = r"[A-Z][A-Z0-9]{1,7}(?:-[A-Z0-9]{1,3})?"
+CATEGORY_IN_CAPTION_RE = re.compile(r"\((?P<code>[A-Z]{2,6}\d{0,2})\)\s*\Z")
+CATEGORY_IN_PREFIX_RE = re.compile(rf"\A(?P<code>{CATEGORY_CODE}):\s+\S")
+CATEGORY_ALONE_RE = re.compile(rf"\A(?P<code>{CATEGORY_CODE})\Z")
+
+
+def category_code(text: str) -> str | None:
+    """Read a rate category code off a caption line, in any of its printed
+    forms: a trailing parenthesis, a colon-led prefix, or a line of its own.
+    """
+    for pattern in (CATEGORY_IN_CAPTION_RE, CATEGORY_IN_PREFIX_RE, CATEGORY_ALONE_RE):
+        match = pattern.search(text)
+        if match:
+            return match.group("code")
+    return None
+
+
 #: A unit phrase anchored on a currency sign, e.g. "$/kWh" or "$ per monthly
 #: max kW". When a label carries one, it is the unit, because the publisher
 #: wrote the currency in it.

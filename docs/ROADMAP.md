@@ -36,18 +36,20 @@ landed rather than repeated here.
   against every golden file and every synthetic fixture's output, and, when
   the real source documents are present locally, all seven of those too, so
   the schema cannot drift from what `parse` actually emits.
+- **The commercial transition table**, on `smud-ci-tod1`. It turned out not to
+  need column geometry the way this list originally expected: its unit reads
+  the same way `rate_table.py`'s already does (the tail of the row's own
+  label), and its season and time-of-use period are folded into that same
+  label rather than split onto a heading row. What was new was the header:
+  dated by a bare year and a footnote mark rather than an "Effective as of"
+  column or a sheet footer. Shipped as `recognizers/transition_table.py`; see
+  "The commercial transition table" in the README.
 
 ## Planned
 
 Named in rough order of how much of the remaining unparsed content each would
 account for, and why each is still refused today.
 
-- **The commercial transition table**, which puts the unit in a column of its
-  own rather than in the label, and dates its prices to a bare year carrying a
-  footnote. Both differ from every priced table the parser reads today. It has
-  no ruled border the way the proration table does, so the fix that closed
-  that table does not carry over directly; this one still needs its own shape
-  read from column geometry the way `sheet_rates.py` reads its tables.
 - **Enumerated condition lists** outside an Applicability or Eligibility
   heading, such as the standby service conditions ("Standby Service applies
   when all of the following conditions are met: 1. ... 2. ... 3. ...",

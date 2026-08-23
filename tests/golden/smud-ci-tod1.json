@@ -7690,6 +7690,678 @@
           "locator": "smud-ci-tod1 p.5 sheet CI-TOD1-5 V.C L12"
         }
       }
+    },
+    {
+      "label": {
+        "value": "System Infrastructure Fixed Charge per month",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 6,
+          "end_line": null,
+          "snippet": "System Infrastructure Fixed Charge per month $44.45",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L6"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "44.45",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 6,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month $44.45",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L6"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per month",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 6,
+            "end_line": null,
+            "snippet": "System Infrastructure Fixed Charge per month $44.45",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L6"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "2028",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 4,
+          "end_line": null,
+          "snippet": "Season and Charge Component Unit 2028*",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L4"
+        }
+      },
+      "rate_category": {
+        "value": "CITS-0",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 5,
+          "end_line": null,
+          "snippet": "CITS-0: C&I Secondary 0-20 kW",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L5"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Maximum Demand Charge per kW",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 7,
+          "end_line": null,
+          "snippet": "Maximum Demand Charge per kW $4.101",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L7"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "4.101",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 7,
+            "end_line": null,
+            "snippet": "Maximum Demand Charge per kW $4.101",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L7"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per kW",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 7,
+            "end_line": null,
+            "snippet": "Maximum Demand Charge per kW $4.101",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L7"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "2028",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 4,
+          "end_line": null,
+          "snippet": "Season and Charge Component Unit 2028*",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L4"
+        }
+      },
+      "rate_category": {
+        "value": "CITS-0",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 5,
+          "end_line": null,
+          "snippet": "CITS-0: C&I Secondary 0-20 kW",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L5"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Non-Summer Peak per kWh",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Non-Summer Peak per kWh $0.1506",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L8"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1506",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 8,
+            "end_line": null,
+            "snippet": "Non-Summer Peak per kWh $0.1506",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L8"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per kWh",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 8,
+            "end_line": null,
+            "snippet": "Non-Summer Peak per kWh $0.1506",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "2028",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 4,
+          "end_line": null,
+          "snippet": "Season and Charge Component Unit 2028*",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L4"
+        }
+      },
+      "rate_category": {
+        "value": "CITS-0",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 5,
+          "end_line": null,
+          "snippet": "CITS-0: C&I Secondary 0-20 kW",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L5"
+        }
+      },
+      "season": {
+        "value": "Non-Summer",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Non-Summer Peak per kWh $0.1506",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L8"
+        }
+      },
+      "tou_period": {
+        "value": "Peak",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Non-Summer Peak per kWh $0.1506",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L8"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Non-Summer Off-Peak per kWh",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Non-Summer Off-Peak per kWh $0.1237",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L9"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1237",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 9,
+            "end_line": null,
+            "snippet": "Non-Summer Off-Peak per kWh $0.1237",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L9"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per kWh",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 9,
+            "end_line": null,
+            "snippet": "Non-Summer Off-Peak per kWh $0.1237",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L9"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "2028",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 4,
+          "end_line": null,
+          "snippet": "Season and Charge Component Unit 2028*",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L4"
+        }
+      },
+      "rate_category": {
+        "value": "CITS-0",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 5,
+          "end_line": null,
+          "snippet": "CITS-0: C&I Secondary 0-20 kW",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L5"
+        }
+      },
+      "season": {
+        "value": "Non-Summer",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Non-Summer Off-Peak per kWh $0.1237",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L9"
+        }
+      },
+      "tou_period": {
+        "value": "Off-Peak",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Non-Summer Off-Peak per kWh $0.1237",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L9"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Non-Summer Off-Peak Saver per kWh",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 10,
+          "end_line": null,
+          "snippet": "Non-Summer Off-Peak Saver per kWh $0.1092",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L10"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1092",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 10,
+            "end_line": null,
+            "snippet": "Non-Summer Off-Peak Saver per kWh $0.1092",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L10"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per kWh",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 10,
+            "end_line": null,
+            "snippet": "Non-Summer Off-Peak Saver per kWh $0.1092",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L10"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "2028",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 4,
+          "end_line": null,
+          "snippet": "Season and Charge Component Unit 2028*",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L4"
+        }
+      },
+      "rate_category": {
+        "value": "CITS-0",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 5,
+          "end_line": null,
+          "snippet": "CITS-0: C&I Secondary 0-20 kW",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L5"
+        }
+      },
+      "season": {
+        "value": "Non-Summer",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 10,
+          "end_line": null,
+          "snippet": "Non-Summer Off-Peak Saver per kWh $0.1092",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L10"
+        }
+      },
+      "tou_period": {
+        "value": "Off-Peak Saver",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 10,
+          "end_line": null,
+          "snippet": "Non-Summer Off-Peak Saver per kWh $0.1092",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L10"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Summer Peak per kWh",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 11,
+          "end_line": null,
+          "snippet": "Summer Peak per kWh $0.3558",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L11"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.3558",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 11,
+            "end_line": null,
+            "snippet": "Summer Peak per kWh $0.3558",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L11"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per kWh",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 11,
+            "end_line": null,
+            "snippet": "Summer Peak per kWh $0.3558",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L11"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "2028",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 4,
+          "end_line": null,
+          "snippet": "Season and Charge Component Unit 2028*",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L4"
+        }
+      },
+      "rate_category": {
+        "value": "CITS-0",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 5,
+          "end_line": null,
+          "snippet": "CITS-0: C&I Secondary 0-20 kW",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L5"
+        }
+      },
+      "season": {
+        "value": "Summer",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 11,
+          "end_line": null,
+          "snippet": "Summer Peak per kWh $0.3558",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L11"
+        }
+      },
+      "tou_period": {
+        "value": "Peak",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 11,
+          "end_line": null,
+          "snippet": "Summer Peak per kWh $0.3558",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L11"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Summer Off-Peak per kWh",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Summer Off-Peak per kWh $0.1453",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L12"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.1453",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 12,
+            "end_line": null,
+            "snippet": "Summer Off-Peak per kWh $0.1453",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L12"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per kWh",
+          "provenance": {
+            "document_id": "smud-ci-tod1",
+            "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+            "page": 7,
+            "sheet": "CI-TOD1-7",
+            "section": "VIII",
+            "line": 12,
+            "end_line": null,
+            "snippet": "Summer Off-Peak per kWh $0.1453",
+            "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L12"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "2028",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 4,
+          "end_line": null,
+          "snippet": "Season and Charge Component Unit 2028*",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L4"
+        }
+      },
+      "rate_category": {
+        "value": "CITS-0",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 5,
+          "end_line": null,
+          "snippet": "CITS-0: C&I Secondary 0-20 kW",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L5"
+        }
+      },
+      "season": {
+        "value": "Summer",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Summer Off-Peak per kWh $0.1453",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L12"
+        }
+      },
+      "tou_period": {
+        "value": "Off-Peak",
+        "provenance": {
+          "document_id": "smud-ci-tod1",
+          "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
+          "page": 7,
+          "sheet": "CI-TOD1-7",
+          "section": "VIII",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Summer Off-Peak per kWh $0.1453",
+          "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L12"
+        }
+      }
     }
   ],
   "tou_windows": [
@@ -9519,132 +10191,6 @@
       }
     },
     {
-      "value": "Season and Charge Component Unit 2028*",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 7,
-        "sheet": "CI-TOD1-7",
-        "section": "VIII",
-        "line": 4,
-        "end_line": null,
-        "snippet": "Season and Charge Component Unit 2028*",
-        "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L4"
-      }
-    },
-    {
-      "value": "CITS-0: C&I Secondary 0-20 kW",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 7,
-        "sheet": "CI-TOD1-7",
-        "section": "VIII",
-        "line": 5,
-        "end_line": null,
-        "snippet": "CITS-0: C&I Secondary 0-20 kW",
-        "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L5"
-      }
-    },
-    {
-      "value": "System Infrastructure Fixed Charge per month $44.45",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 7,
-        "sheet": "CI-TOD1-7",
-        "section": "VIII",
-        "line": 6,
-        "end_line": null,
-        "snippet": "System Infrastructure Fixed Charge per month $44.45",
-        "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L6"
-      }
-    },
-    {
-      "value": "Maximum Demand Charge per kW $4.101",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 7,
-        "sheet": "CI-TOD1-7",
-        "section": "VIII",
-        "line": 7,
-        "end_line": null,
-        "snippet": "Maximum Demand Charge per kW $4.101",
-        "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L7"
-      }
-    },
-    {
-      "value": "Non-Summer Peak per kWh $0.1506",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 7,
-        "sheet": "CI-TOD1-7",
-        "section": "VIII",
-        "line": 8,
-        "end_line": null,
-        "snippet": "Non-Summer Peak per kWh $0.1506",
-        "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L8"
-      }
-    },
-    {
-      "value": "Non-Summer Off-Peak per kWh $0.1237",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 7,
-        "sheet": "CI-TOD1-7",
-        "section": "VIII",
-        "line": 9,
-        "end_line": null,
-        "snippet": "Non-Summer Off-Peak per kWh $0.1237",
-        "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L9"
-      }
-    },
-    {
-      "value": "Non-Summer Off-Peak Saver per kWh $0.1092",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 7,
-        "sheet": "CI-TOD1-7",
-        "section": "VIII",
-        "line": 10,
-        "end_line": null,
-        "snippet": "Non-Summer Off-Peak Saver per kWh $0.1092",
-        "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L10"
-      }
-    },
-    {
-      "value": "Summer Peak per kWh $0.3558",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 7,
-        "sheet": "CI-TOD1-7",
-        "section": "VIII",
-        "line": 11,
-        "end_line": null,
-        "snippet": "Summer Peak per kWh $0.3558",
-        "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L11"
-      }
-    },
-    {
-      "value": "Summer Off-Peak per kWh $0.1453",
-      "provenance": {
-        "document_id": "smud-ci-tod1",
-        "document_sha256": "0387da3e461c258ec71ba4a446bf72d27213040d1c7999541be1fda05202e510",
-        "page": 7,
-        "sheet": "CI-TOD1-7",
-        "section": "VIII",
-        "line": 12,
-        "end_line": null,
-        "snippet": "Summer Off-Peak per kWh $0.1453",
-        "locator": "smud-ci-tod1 p.7 sheet CI-TOD1-7 VIII L12"
-      }
-    },
-    {
       "value": "*Subject to future rate increases.",
       "provenance": {
         "document_id": "smud-ci-tod1",
@@ -9924,30 +10470,29 @@
       "heading": "Transition Schedule",
       "page": 7,
       "sheet": "CI-TOD1-7",
-      "first_line": 4,
+      "first_line": 13,
       "last_page": 8,
       "last_sheet": "CI-TOD1-7",
       "last_line": 1,
-      "line_count": 12,
-      "reason": "12 of 13 lines in a recognized section matched no rule",
-      "span": "p.7 L4 to p.8 L1",
+      "line_count": 3,
+      "reason": "3 of 13 lines in a recognized section matched no rule",
+      "span": "p.7 L13 to p.8 L1",
       "sample": [
-        "Season and Charge Component Unit 2028*",
-        "CITS-0: C&I Secondary 0-20 kW",
-        "System Infrastructure Fixed Charge per month $44.45",
-        "Maximum Demand Charge per kW $4.101"
+        "*Subject to future rate increases.",
+        "**Time-of-Day periods apply as described in Section VII.",
+        "THIS PAGE INTENTIONALLY LEFT BLANK"
       ]
     }
   ],
   "coverage": {
     "content_lines": 201,
-    "recognized_lines": 128,
-    "unrecognized_lines": 73,
+    "recognized_lines": 137,
+    "unrecognized_lines": 64,
     "boilerplate_lines": 28,
     "sections_total": 29,
     "sections_recognized": 15,
     "sections_unrecognized": 14,
-    "line_ratio": 0.636816,
+    "line_ratio": 0.681592,
     "section_ratio": 0.517241,
     "fully_recognized": false
   }

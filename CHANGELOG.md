@@ -22,6 +22,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `schemas/parsed-schedule-v1.schema.json`. Validated in the test suite
   against every committed golden file, every synthetic fixture and, when
   present locally, all seven real source documents.
+- The commercial transition table on `smud-ci-tod1` (`recognizers/
+  transition_table.py`): a priced table dated by a bare year and a footnote
+  mark in its own header rather than an "Effective as of" column or a sheet
+  footer, with the unit and the season/time-of-use period both read out of
+  each row's own label. `smud-ci-tod1` moves from 128 to 137 recognized
+  lines and from 78 to 85 emitted charges.
+
+### Changed
+
+- `rate_table.py`'s rate-category-caption parsing (`CATEGORY_CODE` and its
+  patterns) moved to `recognizers/base.py` as `category_code()`, shared with
+  `transition_table.py`.
+- `parser._run_recognizers` reworked from a fixed sequence of `if
+  recognizer.claims(...): ...` branches into a loop over a list of bound
+  (claims, parse) pairs, to stay under the project's complexity ceiling as
+  the recognizer count grows.
 
 ## [0.1.0] - 2026-08-18
 
