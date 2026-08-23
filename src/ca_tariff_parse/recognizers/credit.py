@@ -44,9 +44,9 @@ def parse(section: Section, citer: Citer, effective: Cited[str] | None) -> Emiss
         return emission
 
     lines = section.content_lines
-    window: Cited[str] | None = None
+    windows: list[tuple[int, Cited[str]]] = []
 
-    for line in lines:
+    for pos, line in enumerate(lines):
         match = APPLIES_RE.match(line.text)
         if not match:
             continue
@@ -54,6 +54,7 @@ def parse(section: Section, citer: Citer, effective: Cited[str] | None) -> Emiss
         window_match = WINDOW_RE.search(scope)
         if window_match:
             window = citer.text(line, section.section_id, window_match.group("window").strip())
+            windows.append((pos, window))
         emission.notes.append(citer.text(line, section.section_id, line.text))
         emission.take(line)
 
@@ -62,6 +63,15 @@ def parse(section: Section, citer: Citer, effective: Cited[str] | None) -> Emiss
         match = CREDIT_RE.match(line.text)
         if not match:
             continue
+
+        # Pair each credit row with the nearest preceding applicability window
+        row_window: Cited[str] | None = None
+        for w_pos, w_cited in windows:
+            if w_pos < position:
+                row_window = w_cited
+            else:
+                break
+
         emission.charges.append(
             Charge(
                 label=citer.text(line, section.section_id, match.group("label").strip()),
@@ -75,7 +85,7 @@ def parse(section: Section, citer: Citer, effective: Cited[str] | None) -> Emiss
                     unit=citer.text(line, section.section_id, f"$/{match.group('unit')}"),
                 ),
                 effective_from=effective,
-                tou_period=window,
+                tou_period=row_window,
             )
         )
         emission.take(line)

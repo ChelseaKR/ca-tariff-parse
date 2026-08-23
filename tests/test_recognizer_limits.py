@@ -140,6 +140,47 @@ def test_a_credit_with_no_document_effective_date_is_not_emitted() -> None:
     assert parsed.charges == ()
 
 
+def test_two_credits_in_one_section_keep_their_own_tou_windows() -> None:
+    """A section can have multiple credits, and each credit gets its own preceding window."""
+    parsed = parse(
+        build(
+            {
+                5: [(9, "III. Example Options")],
+                6: [(15, "C. Example Vehicle Credit")],
+                7: [(18, "Credit applies to usage from midnight to 6:00 a.m. daily.")],
+                8: [(26, "Example Vehicle Credit"), (60, "-$0.0100/kWh")],
+                9: [(18, "Credit applies to usage from noon to 6:00 p.m. daily.")],
+                10: [(26, "Example Solar Export Credit"), (60, "-$0.0200/kWh")],
+            }
+        )
+    )
+    assert [
+        (c.label.value, c.price.amount.value, c.tou_period.value if c.tou_period else None)
+        for c in parsed.charges
+        if c.kind == "credit"
+    ] == [
+        ("Example Vehicle Credit", "-0.0100", "midnight to 6:00 a.m. daily"),
+        ("Example Solar Export Credit", "-0.0200", "noon to 6:00 p.m. daily"),
+    ]
+
+
+def test_credit_without_applicability_sentence_has_none_window() -> None:
+    """A credit without a preceding 'Credit applies to' sentence has no tou_period."""
+    parsed = parse(
+        build(
+            {
+                5: [(9, "III. Example Options")],
+                6: [(15, "C. Example Flat Credit")],
+                8: [(26, "Example Flat Credit"), (60, "-$0.0100/kWh")],
+            }
+        )
+    )
+    credit = next(c for c in parsed.charges if c.kind == "credit")
+    assert credit.label.value == "Example Flat Credit"
+    assert credit.price.amount.value == "-0.0100"
+    assert credit.tou_period is None
+
+
 def test_a_holiday_row_missing_a_cell_is_not_completed_by_guessing() -> None:
     parsed = parse(
         build(
