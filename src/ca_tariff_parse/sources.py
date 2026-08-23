@@ -72,7 +72,27 @@ def find(entries: list[SourceEntry], document_id: str) -> SourceEntry:
 
 
 def digest(path: Path) -> str:
+    """Hash a file's bytes. Only call this once ``path.is_file()`` is known to
+    be true: on a FIFO with nothing writing to it, ``read_bytes()`` blocks
+    forever rather than raising, and on a directory it raises. Prefer
+    :func:`safe_digest`, which checks first.
+    """
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def safe_digest(path: Path) -> str | None:
+    """Like :func:`digest`, but never blocks or raises: returns ``None`` if
+    ``path`` is not a readable regular file — a directory, a FIFO or other
+    special file, a permission-denied file, or a path that stopped existing
+    between an earlier check and this call — instead of assuming the caller
+    already validated it.
+    """
+    if not path.is_file():
+        return None
+    try:
+        return digest(path)
+    except OSError:
+        return None
 
 
 def verify(entry: SourceEntry, path: Path) -> str:
@@ -81,12 +101,15 @@ def verify(entry: SourceEntry, path: Path) -> str:
         raise SourceError(
             f"{path} is not present. Fetch it with: ca-tariff-parse fetch --id {entry.id}"
         )
-    actual = digest(path)
-    if actual != entry.sha256:
+    actual = safe_digest(path)
+    # Compared case-insensitively: digest()/hexdigest() always returns
+    # lowercase hex, but a hand-edited manifest entry might not.
+    if actual is None or actual.lower() != entry.sha256.lower():
         raise SourceError(
             f"{path} does not match the manifest.\n"
             f"  expected sha256 {entry.sha256}\n"
-            f"  actual   sha256 {actual}\n"
+            f"  actual   sha256 "
+            f"{actual if actual is not None else '(not a readable regular file)'}\n"
             "The publisher may have revised the document. Do not parse it as though "
             "it were the pinned revision; update the manifest deliberately instead."
         )

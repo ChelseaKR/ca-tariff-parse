@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -113,6 +114,97 @@ def test_sources_distinguishes_missing_present_and_mismatched(
     assert main(["sources", "--manifest", str(manifest), "--dir", str(directory)]) == EXIT_OK
     out = capsys.readouterr().out
     assert "mismatched" in out and "not fetched" not in out
+
+
+def test_sources_reports_mismatched_case_insensitively(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """digest()/hexdigest() always return lowercase hex; a hand-edited
+    manifest entry with an uppercase sha256 must not be reported as
+    `mismatched` for an otherwise byte-identical file."""
+    good_bytes = b"rate schedule bytes"
+    manifest = tmp_path / "sources.toml"
+    manifest.write_text(
+        "[[document]]\n"
+        'id = "doc"\n'
+        'schedule = "R"\n'
+        'title = "Residential"\n'
+        'publisher = "Test Utility"\n'
+        'url = "https://example.com/doc.pdf"\n'
+        'filename = "doc.pdf"\n'
+        f'sha256 = "{hashlib.sha256(good_bytes).hexdigest().upper()}"\n'
+        'retrieved_at = "2026-01-01"\n'
+        "pages = 1\n"
+        "bytes = 19\n",
+        encoding="utf-8",
+    )
+    directory = tmp_path / "sources"
+    directory.mkdir()
+    (directory / "doc.pdf").write_bytes(good_bytes)
+
+    assert main(["sources", "--manifest", str(manifest), "--dir", str(directory)]) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "present" in out and "mismatched" not in out
+
+
+def test_sources_reports_a_directory_as_mismatched_not_a_crash(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A directory sitting at the manifest's filename is not the document
+    the parser was audited against, and is not safe to open as a file — it
+    must read as `mismatched`, not raise IsADirectoryError."""
+    manifest = tmp_path / "sources.toml"
+    manifest.write_text(
+        "[[document]]\n"
+        'id = "doc"\n'
+        'schedule = "R"\n'
+        'title = "Residential"\n'
+        'publisher = "Test Utility"\n'
+        'url = "https://example.com/doc.pdf"\n'
+        'filename = "doc.pdf"\n'
+        f'sha256 = "{hashlib.sha256(b"anything").hexdigest()}"\n'
+        'retrieved_at = "2026-01-01"\n'
+        "pages = 1\n"
+        "bytes = 19\n",
+        encoding="utf-8",
+    )
+    directory = tmp_path / "sources"
+    directory.mkdir()
+    (directory / "doc.pdf").mkdir()  # a directory, not a document
+
+    assert main(["sources", "--manifest", str(manifest), "--dir", str(directory)]) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "mismatched" in out
+
+
+@pytest.mark.skipif(not hasattr(os, "mkfifo"), reason="FIFOs are not available on this platform")
+def test_sources_reports_a_fifo_as_mismatched_without_hanging(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A FIFO with nothing writing to it must never be read: read_bytes()
+    on one blocks forever. It must read as `mismatched`, not hang."""
+    manifest = tmp_path / "sources.toml"
+    manifest.write_text(
+        "[[document]]\n"
+        'id = "doc"\n'
+        'schedule = "R"\n'
+        'title = "Residential"\n'
+        'publisher = "Test Utility"\n'
+        'url = "https://example.com/doc.pdf"\n'
+        'filename = "doc.pdf"\n'
+        f'sha256 = "{hashlib.sha256(b"anything").hexdigest()}"\n'
+        'retrieved_at = "2026-01-01"\n'
+        "pages = 1\n"
+        "bytes = 19\n",
+        encoding="utf-8",
+    )
+    directory = tmp_path / "sources"
+    directory.mkdir()
+    os.mkfifo(directory / "doc.pdf")  # a FIFO, not a document; nothing writes to it
+
+    assert main(["sources", "--manifest", str(manifest), "--dir", str(directory)]) == EXIT_OK
+    out = capsys.readouterr().out
+    assert "mismatched" in out
 
 
 def test_a_missing_manifest_is_an_error(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:

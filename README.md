@@ -298,6 +298,14 @@ publisher that disallows the path is not fetched from at all.
 | `fetch` | Download source documents (the only networked command) |
 | `verify-source` | Check local documents against the manifest digests |
 
+`sources` reports each document as `not fetched`, `present`, or `mismatched`.
+`mismatched` means a file exists at the manifest's filename but its bytes do
+not match the pinned SHA-256 — a truncated download, a publisher revision
+saved under the old filename, or a hand-edited file. `sources` only reports
+the state; it exits 0 either way. `verify-source` raises on a mismatch, so use
+it (or `parse --id` / `coverage --id`, which call it first) where a non-zero
+exit code matters, such as in a script or CI step.
+
 `parse` and `coverage` accept `--id <manifest-id>`, which verifies the file
 against the pinned digest before parsing, records the publisher and retrieval
 date in the output, and reads the document with the profile its manifest entry
