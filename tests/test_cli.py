@@ -98,28 +98,19 @@ def test_sources_distinguishes_missing_present_and_mismatched(
     directory.mkdir()
 
     # Not fetched: no file at all.
-    assert (
-        main(["sources", "--manifest", str(manifest), "--dir", str(directory)])
-        == EXIT_OK
-    )
+    assert main(["sources", "--manifest", str(manifest), "--dir", str(directory)]) == EXIT_OK
     assert "not fetched" in capsys.readouterr().out
 
     # Present and matching.
     target = directory / "doc.pdf"
     target.write_bytes(good_bytes)
-    assert (
-        main(["sources", "--manifest", str(manifest), "--dir", str(directory)])
-        == EXIT_OK
-    )
+    assert main(["sources", "--manifest", str(manifest), "--dir", str(directory)]) == EXIT_OK
     out = capsys.readouterr().out
     assert "present" in out and "mismatched" not in out
 
     # Present but mismatched (truncated / revised / hand-edited bytes).
     target.write_bytes(b"some other bytes")
-    assert (
-        main(["sources", "--manifest", str(manifest), "--dir", str(directory)])
-        == EXIT_OK
-    )
+    assert main(["sources", "--manifest", str(manifest), "--dir", str(directory)]) == EXIT_OK
     out = capsys.readouterr().out
     assert "mismatched" in out and "not fetched" not in out
 
