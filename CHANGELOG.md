@@ -29,6 +29,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Carries no disposition: see ADR 0009 for why `Applicability`'s scale does
   not fit one item of a conjunction. `coverage` reports a `condition(s)`
   count alongside the rest.
+- A recognizer for the commercial transition table on `smud-ci-tod1`, which
+  states its unit in a column of its own and dates its prices to a bare year
+  carrying a footnote instead of a row or a sheet footer. Columns are read
+  from the header's own x positions, the same way every other unruled table
+  here is; see ADR 0008. Gains all seven of that document's post-2027 prices.
+- `category_code` in `recognizers/base.py`: the rate-category caption reading
+  `rate_table.py` already did, made public and shared with the transition
+  table recognizer rather than duplicated.
 
 ## [0.1.0] - 2026-08-18
 

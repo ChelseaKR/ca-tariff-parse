@@ -13,6 +13,7 @@ from . import (
     proration,
     rate_table,
     sheet_rates,
+    transition_table,
 )
 
 __all__ = [
@@ -26,4 +27,5 @@ __all__ = [
     "proration",
     "rate_table",
     "sheet_rates",
+    "transition_table",
 ]

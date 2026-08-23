@@ -34,19 +34,13 @@ from .base import (
     Column,
     Emission,
     assign,
+    category_code,
     columns_from,
     unit_tail,
 )
 
 HEADER_SQUASHED = "effectiveasof"
 CATEGORY_IN_HEADING_RE = re.compile(r"rate\s+categor(?:y|ies)\s+([A-Z0-9]+)", re.IGNORECASE)
-CATEGORY_IN_CAPTION_RE = re.compile(r"\((?P<code>[A-Z]{2,6}\d{0,2})\)\s*\Z")
-#: A rate category written as a caption prefix, e.g. "CITS-0: C&I Secondary
-#: 0-20 kW", or standing alone on its own line, e.g. "GFN". Residential sheets
-#: put the code in a trailing parenthesis; commercial sheets lead with it.
-CATEGORY_CODE = r"[A-Z][A-Z0-9]{1,7}(?:-[A-Z0-9]{1,3})?"
-CATEGORY_IN_PREFIX_RE = re.compile(rf"\A(?P<code>{CATEGORY_CODE}):\s+\S")
-CATEGORY_ALONE_RE = re.compile(rf"\A(?P<code>{CATEGORY_CODE})\Z")
 TOU_PREFIX_RE = re.compile(rf"\A(?P<period>{PERIOD_ALTERNATION})\b", re.IGNORECASE)
 GROUP_LABEL_RE = re.compile(r"charge\s*\Z", re.IGNORECASE)
 #: A row naming the part of the year the rows beneath it apply to. Residential
@@ -77,18 +71,9 @@ class _TableState:
     season: Cited[str] | None = None
 
 
-def _category_code(text: str) -> str | None:
-    """Read a rate category code off a caption row, in any of its printed forms."""
-    for pattern in (CATEGORY_IN_CAPTION_RE, CATEGORY_IN_PREFIX_RE, CATEGORY_ALONE_RE):
-        match = pattern.search(text)
-        if match:
-            return match.group("code")
-    return None
-
-
 def _read_context_row(line: Line, citer: Citer, state: _TableState) -> bool:
     """Absorb a rate category, season, or group heading. False if unrecognised."""
-    code = _category_code(line.text)
+    code = category_code(line.text)
     if code is not None:
         state.category = citer.text(line, state.section, code)
         return True
