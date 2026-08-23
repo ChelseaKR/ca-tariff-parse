@@ -252,6 +252,22 @@ def _mark_furniture(raw: list[tuple[float, tuple[Word, ...]]], height: float) ->
     return flags
 
 
+def _is_bare_change_marker(words: tuple[Word, ...], profile: DocumentProfile) -> bool:
+    """True for a line that carries nothing but a filing change marker.
+
+    A regulated publisher flags a revised line with a bracketed capital
+    beside it, or a whole changed paragraph with a change bar in the right
+    margin; extracted on a line of its own -- no label, no amount, nothing
+    else -- either glyph carries no information beyond "something nearby
+    changed", the same as a running header. Which letters a publisher uses
+    this way is a filing convention the page does not state, so it comes
+    from the profile (:meth:`DocumentProfile.is_change_marker`); a line
+    carrying anything else at all is never treated as furniture by this,
+    however it is printed.
+    """
+    return len(words) == 1 and profile.is_change_marker(words[0].text)
+
+
 def cluster_lines(words: list[tuple[float, Word]]) -> list[tuple[float, tuple[Word, ...]]]:
     """Group words into visual lines by vertical proximity.
 
@@ -280,7 +296,10 @@ def _build_pages(
     for page_no, (height, raw) in enumerate(per_page, start=1):
         raw = [(top, words) for top, words in raw if words]
         raw.sort(key=lambda item: item[0])
-        flags = _mark_furniture(raw, height)
+        flags = [
+            band_flag or _is_bare_change_marker(words, profile)
+            for (_top, words), band_flag in zip(raw, _mark_furniture(raw, height), strict=True)
+        ]
         lines = tuple(
             Line(page=page_no, index=i, top=top, words=words, furniture=flag)
             for i, ((top, words), flag) in enumerate(zip(raw, flags, strict=True), start=1)
