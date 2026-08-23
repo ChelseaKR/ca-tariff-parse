@@ -18,6 +18,7 @@ from .profiles import UnknownProfileError, names, resolve
 from .sources import (
     DEFAULT_MANIFEST,
     SourceError,
+    digest,
     fetch,
     find,
     load_manifest,
@@ -105,7 +106,16 @@ def _cmd_sources(args: argparse.Namespace) -> int:
         return EXIT_OK
     for entry in entries:
         local = entry.path(Path(args.dir))
-        state = "present" if local.exists() else "not fetched"
+        if not local.exists():
+            state = "not fetched"
+        elif digest(local) == entry.sha256:
+            state = "present"
+        else:
+            # A file under the manifest's name is not necessarily the document
+            # the parser was audited against: it may be truncated, replaced by
+            # a publisher revision, or hand-edited. Say so instead of calling
+            # it present. verify-source still raises on this.
+            state = "mismatched"
         sys.stdout.write(
             f"{entry.id:<14} {entry.schedule:<8} {state:<12} {entry.publisher}\n"
             f"{'':<14} {entry.url}\n"
