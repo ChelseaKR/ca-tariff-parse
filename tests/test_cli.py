@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -70,6 +71,57 @@ def test_sources_reports_an_empty_manifest(
     manifest.write_text("", encoding="utf-8")
     assert main(["sources", "--manifest", str(manifest)]) == EXIT_OK
     assert "no documents registered" in capsys.readouterr().out
+
+
+def test_sources_distinguishes_missing_present_and_mismatched(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A file at the manifest's filename is only `present` if it matches the
+    pinned SHA-256; a corrupted or revised download must read `mismatched`."""
+    good_bytes = b"rate schedule bytes"
+    manifest = tmp_path / "sources.toml"
+    manifest.write_text(
+        "[[document]]\n"
+        'id = "doc"\n'
+        'schedule = "R"\n'
+        'title = "Residential"\n'
+        'publisher = "Test Utility"\n'
+        'url = "https://example.com/doc.pdf"\n'
+        'filename = "doc.pdf"\n'
+        f'sha256 = "{hashlib.sha256(good_bytes).hexdigest()}"\n'
+        'retrieved_at = "2026-01-01"\n'
+        "pages = 1\n"
+        "bytes = 19\n",
+        encoding="utf-8",
+    )
+    directory = tmp_path / "sources"
+    directory.mkdir()
+
+    # Not fetched: no file at all.
+    assert (
+        main(["sources", "--manifest", str(manifest), "--dir", str(directory)])
+        == EXIT_OK
+    )
+    assert "not fetched" in capsys.readouterr().out
+
+    # Present and matching.
+    target = directory / "doc.pdf"
+    target.write_bytes(good_bytes)
+    assert (
+        main(["sources", "--manifest", str(manifest), "--dir", str(directory)])
+        == EXIT_OK
+    )
+    out = capsys.readouterr().out
+    assert "present" in out and "mismatched" not in out
+
+    # Present but mismatched (truncated / revised / hand-edited bytes).
+    target.write_bytes(b"some other bytes")
+    assert (
+        main(["sources", "--manifest", str(manifest), "--dir", str(directory)])
+        == EXIT_OK
+    )
+    out = capsys.readouterr().out
+    assert "mismatched" in out and "not fetched" not in out
 
 
 def test_a_missing_manifest_is_an_error(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
