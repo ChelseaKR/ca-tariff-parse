@@ -1,0 +1,296 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/ChelseaKR/ca-tariff-parse/main/schemas/parsed-schedule-v1.schema.json",
+  "title": "ca-tariff-parse parsed-schedule/v1",
+  "description": "Structured, fully cited representation of one published California electricity rate schedule, as emitted by `ca-tariff-parse parse`. Every value read from the source document is wrapped in a `Cited` envelope naming exactly where it came from; this schema does not by itself validate that citation logic (see `ca_tariff_parse.audit`), only the output shape. This is a representation of a published document, not a calculation of what any customer owes, and not rate advice.",
+  "type": "object",
+  "required": [
+    "schema",
+    "parser_version",
+    "disclaimer",
+    "source",
+    "identity",
+    "applicability",
+    "charges",
+    "tou_windows",
+    "holidays",
+    "cross_references",
+    "proration",
+    "notes",
+    "unparsed",
+    "coverage"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "ca-tariff-parse/parsed-schedule/v1" },
+    "parser_version": { "type": "string" },
+    "disclaimer": { "type": "string" },
+    "source": { "$ref": "#/$defs/sourceDocument" },
+    "identity": { "$ref": "#/$defs/scheduleIdentity" },
+    "applicability": { "type": "array", "items": { "$ref": "#/$defs/applicability" } },
+    "charges": { "type": "array", "items": { "$ref": "#/$defs/charge" } },
+    "tou_windows": { "type": "array", "items": { "$ref": "#/$defs/touWindow" } },
+    "holidays": { "type": "array", "items": { "$ref": "#/$defs/holiday" } },
+    "cross_references": { "type": "array", "items": { "$ref": "#/$defs/crossReference" } },
+    "proration": { "type": "array", "items": { "$ref": "#/$defs/prorationRule" } },
+    "notes": { "type": "array", "items": { "$ref": "#/$defs/citedString" } },
+    "unparsed": { "type": "array", "items": { "$ref": "#/$defs/unparsedSection" } },
+    "coverage": { "$ref": "#/$defs/coverage" }
+  },
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "description": "Where in the source document a single value was read: document, page, sheet, section, line and the verbatim text it was read from. `Cited` (the Python model) refuses to construct without one, and an independent audit walk fails the parse if any emitted value is reachable without one.",
+      "required": [
+        "document_id",
+        "document_sha256",
+        "page",
+        "sheet",
+        "section",
+        "line",
+        "end_line",
+        "snippet",
+        "locator"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "document_id": { "type": "string", "minLength": 1 },
+        "document_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "page": { "type": "integer", "minimum": 1 },
+        "sheet": { "type": ["string", "null"], "minLength": 1 },
+        "section": {
+          "type": "string",
+          "description": "A dotted section id, e.g. \"II.A\" or \"header\" or \"preamble\".",
+          "pattern": "^[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*$"
+        },
+        "line": { "type": "integer", "minimum": 1 },
+        "end_line": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Last line of a citation spanning several lines; null when it is the same as `line`."
+        },
+        "snippet": { "type": "string", "minLength": 1 },
+        "locator": {
+          "type": "string",
+          "description": "Human readable citation, e.g. \"smud-r-tod p.2 sheet R-TOD-2 II.A L14\"."
+        }
+      }
+    },
+    "citedString": {
+      "type": "object",
+      "description": "A single string value together with the citation that justifies it. The only way any fact reaches this output.",
+      "required": ["value", "provenance"],
+      "additionalProperties": false,
+      "properties": {
+        "value": { "type": "string" },
+        "provenance": { "$ref": "#/$defs/provenance" }
+      }
+    },
+    "money": {
+      "type": "object",
+      "description": "A price or credit read from a rate table cell. `amount` is the printed decimal string, never a float, so an exact printed price is never rounded on the way through.",
+      "required": ["amount", "currency", "unit"],
+      "additionalProperties": false,
+      "properties": {
+        "amount": { "$ref": "#/$defs/citedString" },
+        "currency": { "const": "USD" },
+        "unit": { "$ref": "#/$defs/citedString" }
+      }
+    },
+    "charge": {
+      "type": "object",
+      "description": "One priced line item within a rate schedule.",
+      "required": ["label", "kind", "price", "effective_from"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "$ref": "#/$defs/citedString" },
+        "kind": { "enum": ["energy_usage", "fixed_charge", "credit"] },
+        "price": { "$ref": "#/$defs/money" },
+        "effective_from": { "$ref": "#/$defs/citedString" },
+        "rate_category": { "$ref": "#/$defs/citedString" },
+        "season": { "$ref": "#/$defs/citedString" },
+        "tou_period": { "$ref": "#/$defs/citedString" },
+        "applies_to": {
+          "$ref": "#/$defs/citedString",
+          "description": "The column heading this price sat under, when one charge is priced across several categories at once."
+        },
+        "group": {
+          "$ref": "#/$defs/citedString",
+          "description": "The heading of the block of rows this price was read from, carried verbatim."
+        }
+      }
+    },
+    "touWindow": {
+      "type": "object",
+      "description": "One time-of-use period as the document defines it. `residual` marks a period defined by exclusion (\"All other hours\"); no start or end time is invented for one, and `start`/`end` are absent.",
+      "required": ["season", "period", "definition", "residual"],
+      "additionalProperties": false,
+      "properties": {
+        "season": { "$ref": "#/$defs/citedString" },
+        "period": { "$ref": "#/$defs/citedString" },
+        "definition": { "$ref": "#/$defs/citedString" },
+        "residual": { "type": "boolean" },
+        "day_type": { "$ref": "#/$defs/citedString" },
+        "start": { "$ref": "#/$defs/citedString" },
+        "end": { "$ref": "#/$defs/citedString" }
+      }
+    },
+    "holiday": {
+      "type": "object",
+      "description": "A named holiday on which the document says off-peak pricing applies.",
+      "required": ["name", "month", "day_rule"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "$ref": "#/$defs/citedString" },
+        "month": { "$ref": "#/$defs/citedString" },
+        "day_rule": { "$ref": "#/$defs/citedString" }
+      }
+    },
+    "applicability": {
+      "type": "object",
+      "description": "One eligibility or exclusion statement, carried verbatim. `disposition` is a coarse label that never replaces the text it summarises.",
+      "required": ["text", "disposition"],
+      "additionalProperties": false,
+      "properties": {
+        "text": { "$ref": "#/$defs/citedString" },
+        "disposition": { "enum": ["included", "excluded", "required"] }
+      }
+    },
+    "crossReference": {
+      "type": "object",
+      "description": "A pointer from this schedule to another published schedule.",
+      "required": ["target", "context"],
+      "additionalProperties": false,
+      "properties": {
+        "target": { "$ref": "#/$defs/citedString" },
+        "context": { "$ref": "#/$defs/citedString" }
+      }
+    },
+    "prorationRule": {
+      "type": "object",
+      "description": "One row of a billing-proration table: a circumstance and the basis on which a charge is prorated under it, read from the table's own ruled cells. A basis the publisher drew to span several circumstances appears once per circumstance, each citing the same basis cell.",
+      "required": ["circumstance", "basis"],
+      "additionalProperties": false,
+      "properties": {
+        "circumstance": { "$ref": "#/$defs/citedString" },
+        "basis": { "$ref": "#/$defs/citedString" }
+      }
+    },
+    "unparsedSection": {
+      "type": "object",
+      "description": "A stretch of the source document the parser did not understand. Never dropped: the underlying text is still carried verbatim in the top level `notes` array.",
+      "required": [
+        "section",
+        "heading",
+        "page",
+        "sheet",
+        "first_line",
+        "last_page",
+        "last_sheet",
+        "last_line",
+        "line_count",
+        "reason",
+        "span",
+        "sample"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "section": { "type": "string" },
+        "heading": { "type": "string" },
+        "page": { "type": "integer", "minimum": 1 },
+        "sheet": { "type": ["string", "null"] },
+        "first_line": { "type": "integer", "minimum": 1 },
+        "last_page": { "type": "integer", "minimum": 1 },
+        "last_sheet": { "type": ["string", "null"] },
+        "last_line": { "type": "integer", "minimum": 1 },
+        "line_count": { "type": "integer", "minimum": 1 },
+        "reason": { "type": "string" },
+        "span": {
+          "type": "string",
+          "description": "Human readable location, e.g. \"p.2 L35 to p.3 L5\" or \"p.5 lines 5-10\"."
+        },
+        "sample": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Up to a small fixed number of the unparsed lines' own text, verbatim."
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "description": "How much of the source document the parser accounted for, published as an output rather than claimed implicitly.",
+      "required": [
+        "content_lines",
+        "recognized_lines",
+        "unrecognized_lines",
+        "boilerplate_lines",
+        "sections_total",
+        "sections_recognized",
+        "sections_unrecognized",
+        "line_ratio",
+        "section_ratio",
+        "fully_recognized"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "content_lines": { "type": "integer", "minimum": 0 },
+        "recognized_lines": { "type": "integer", "minimum": 0 },
+        "unrecognized_lines": { "type": "integer", "minimum": 0 },
+        "boilerplate_lines": { "type": "integer", "minimum": 0 },
+        "sections_total": { "type": "integer", "minimum": 0 },
+        "sections_recognized": { "type": "integer", "minimum": 0 },
+        "sections_unrecognized": { "type": "integer", "minimum": 0 },
+        "line_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "section_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "fully_recognized": { "type": "boolean" }
+      }
+    },
+    "sourceDocument": {
+      "type": "object",
+      "description": "Identity of the exact bytes that were parsed.",
+      "required": [
+        "document_id",
+        "sha256",
+        "page_count",
+        "byte_size",
+        "filename",
+        "publisher",
+        "retrieved_from",
+        "retrieved_at",
+        "synthetic"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "document_id": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "page_count": { "type": "integer", "minimum": 0 },
+        "byte_size": { "type": "integer", "minimum": 0 },
+        "filename": { "type": "string" },
+        "publisher": { "type": ["string", "null"] },
+        "retrieved_from": { "type": ["string", "null"] },
+        "retrieved_at": { "type": ["string", "null"] },
+        "synthetic": {
+          "type": "boolean",
+          "description": "True for a text fixture read through layout_from_monospace rather than a real PDF."
+        }
+      }
+    },
+    "scheduleIdentity": {
+      "type": "object",
+      "description": "The schedule's own self description, read off the document. Any field the document does not state, or the parser could not read with confidence, is null rather than guessed at.",
+      "required": ["schedule_code", "title", "resolution", "adopted", "effective", "sheets"],
+      "additionalProperties": false,
+      "properties": {
+        "schedule_code": { "$ref": "#/$defs/citedStringOrNull" },
+        "title": { "$ref": "#/$defs/citedStringOrNull" },
+        "resolution": { "$ref": "#/$defs/citedStringOrNull" },
+        "adopted": { "$ref": "#/$defs/citedStringOrNull" },
+        "effective": { "$ref": "#/$defs/citedStringOrNull" },
+        "sheets": { "type": "array", "items": { "$ref": "#/$defs/citedString" } }
+      }
+    },
+    "citedStringOrNull": {
+      "oneOf": [{ "$ref": "#/$defs/citedString" }, { "type": "null" }]
+    }
+  }
+}

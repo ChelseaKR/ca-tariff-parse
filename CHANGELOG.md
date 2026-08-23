@@ -7,7 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- The billing-proration table on three of the four SMUD schedules, read from
+  the table's own ruled border rather than from line order, so a basis cell
+  the publisher drew to span more than one circumstance is captured as the
+  merge it is. See ADR 0007. Emitted as a new `proration` array in
+  `parsed-schedule/v1`; `coverage` reports a `proration rule(s)` count
+  alongside charges, windows and holidays.
+- `ExtractedTable`/`TableCell` in the extraction layer, and `Page.tables`:
+  general support for reading a ruled table's real cell structure, available
+  to future recognizers.
+- A stable JSON Schema for `parsed-schedule/v1`, published at
+  `schemas/parsed-schedule-v1.schema.json`. Validated in the test suite
+  against every committed golden file, every synthetic fixture and, when
+  present locally, all seven real source documents.
 
 ## [0.1.0] - 2026-08-18
 

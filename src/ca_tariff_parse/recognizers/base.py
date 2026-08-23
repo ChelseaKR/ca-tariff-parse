@@ -24,6 +24,7 @@ from ..model import (
     Cited,
     CrossReference,
     Holiday,
+    ProrationRule,
     Provenance,
     TouWindow,
 )
@@ -129,11 +130,22 @@ class Emission:
     tou_windows: list[TouWindow] = field(default_factory=list)
     holidays: list[Holiday] = field(default_factory=list)
     cross_references: list[CrossReference] = field(default_factory=list)
+    proration: list[ProrationRule] = field(default_factory=list)
     notes: list[Cited[str]] = field(default_factory=list)
 
     def take(self, *lines: Line) -> None:
         for line in lines:
             self.consumed.add((line.page, line.index))
+
+    def take_span(self, page: int, first_line: int, last_line: int) -> None:
+        """Mark every line in ``[first_line, last_line]`` on ``page`` consumed.
+
+        For a table cell read off a ruled border, whose span is a pair of
+        integers rather than a run of :class:`Line` objects on hand to pass
+        to :meth:`take`.
+        """
+        for index in range(first_line, last_line + 1):
+            self.consumed.add((page, index))
 
     def extend(self, other: Emission) -> None:
         self.consumed |= other.consumed
@@ -142,6 +154,7 @@ class Emission:
         self.tou_windows += other.tou_windows
         self.holidays += other.holidays
         self.cross_references += other.cross_references
+        self.proration += other.proration
         self.notes += other.notes
 
     def __bool__(self) -> bool:
@@ -151,6 +164,7 @@ class Emission:
             or self.tou_windows
             or self.holidays
             or self.cross_references
+            or self.proration
             or self.notes
         )
 
@@ -193,6 +207,29 @@ class Citer:
 
     def text(self, line: Line, section: str, value: str) -> Cited[str]:
         return Cited(value=value, provenance=self.cite(line, section))
+
+    def cite_cell(
+        self, page: int, section: str, first_line: int, last_line: int, snippet: str
+    ) -> Provenance:
+        """Cite a table cell whose span was read off a ruled table, not a Line.
+
+        A cell built from :class:`~ca_tariff_parse.extract.ExtractedTable`
+        carries its line span as bare integers rather than :class:`Line`
+        objects, because a merged cell's span was measured from its own
+        border and does not necessarily match one contiguous run of lines
+        assigned to it elsewhere. This is otherwise identical to
+        :meth:`cite_span`.
+        """
+        return Provenance(
+            document_id=self.doc.document_id,
+            document_sha256=self.doc.sha256,
+            page=page,
+            sheet=self.doc.sheet_for(page),
+            section=section,
+            line=first_line,
+            snippet=snippet,
+            end_line=last_line if last_line != first_line else None,
+        )
 
 
 #: Horizontal gap, in points, that separates two column headings.

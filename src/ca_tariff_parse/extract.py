@@ -20,6 +20,7 @@ from __future__ import annotations
 import hashlib
 import re
 from dataclasses import dataclass
+from dataclasses import replace as dataclass_replace
 from itertools import pairwise
 from pathlib import Path
 
@@ -110,11 +111,47 @@ class Line:
 
 
 @dataclass(frozen=True, slots=True)
+class TableCell:
+    """One cell of a bordered table, read from the page's own drawn grid.
+
+    ``top``/``bottom`` are the cell's true vertical extent as the publisher
+    drew it, which is what lets a caller tell a genuinely merged cell (one
+    that spans more than one row of the column beside it) from an ordinary
+    one: the merge is read off the border lines, never inferred from spacing.
+    """
+
+    text: str
+    first_line: int
+    last_line: int
+    top: float
+    bottom: float
+
+
+@dataclass(frozen=True, slots=True)
+class ExtractedTable:
+    """A table whose cells are bounded by ruled lines drawn on the page.
+
+    Only a table with a real border is captured here: the position of every
+    divider is read from the page's own drawing, not guessed from column
+    alignment. A table with no ruled lines produces nothing, on purpose,
+    which sends its rows through ordinary line-based recognition instead.
+    """
+
+    header: tuple[TableCell, ...]
+    columns: tuple[tuple[TableCell, ...], ...]
+    """One tuple of cells per column, top to bottom. A column holds only the
+    cells that genuinely start in it: a cell whose border spans what would
+    otherwise be several rows appears once, at its own height, rather than
+    being repeated or truncated to fit a row grid that does not apply to it."""
+
+
+@dataclass(frozen=True, slots=True)
 class Page:
     number: int
     height: float
     lines: tuple[Line, ...]
     sheet: str | None
+    tables: tuple[ExtractedTable, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -259,6 +296,84 @@ def _build_pages(
     return tuple(pages)
 
 
+#: Vertical and horizontal tolerance, in points, when matching a word to a
+#: ruled cell's bounding box. Wider than :data:`LINE_TOLERANCE` because a
+#: cell's border sits a few points clear of the text it encloses.
+CELL_TOLERANCE = 1.0
+
+
+def _cell_span(
+    lines: tuple[Line, ...], bbox: tuple[float, float, float, float]
+) -> TableCell | None:
+    """The cell at ``bbox``, read from the words already placed on the page.
+
+    Returns ``None`` for a cell with no text in it: a table cell the
+    publisher left blank is not a value to guess at, so it simply is not
+    reported rather than being invented as an empty string.
+    """
+    x0, top, x1, bottom = bbox
+    matched: dict[int, list[Word]] = {}
+    for line in lines:
+        if line.top < top - CELL_TOLERANCE or line.top > bottom + CELL_TOLERANCE:
+            continue
+        words = [
+            word
+            for word in line.words
+            if word.x0 >= x0 - CELL_TOLERANCE and word.x1 <= x1 + CELL_TOLERANCE
+        ]
+        if words:
+            matched[line.index] = words
+    if not matched:
+        return None
+    ordered = sorted(matched)
+    text = normalize(" ".join(" ".join(w.text for w in matched[i]) for i in ordered))
+    if not text:
+        return None
+    return TableCell(
+        text=text, first_line=ordered[0], last_line=ordered[-1], top=top, bottom=bottom
+    )
+
+
+def _extract_tables(pdf_page: object, lines: tuple[Line, ...]) -> tuple[ExtractedTable, ...]:
+    """Read every ruled table on a page, keyed to the lines already extracted.
+
+    Only ``pdfplumber``'s own line-drawing detection decides where a table or
+    a cell begins and ends; this function does no layout inference of its
+    own. A table whose rows do not resolve to at least two columns of text is
+    dropped, because a table with an unreadable header is not one a
+    recognizer downstream could identify.
+    """
+    tables: list[ExtractedTable] = []
+    for table in pdf_page.find_tables():  # type: ignore[attr-defined]
+        rows = table.rows
+        if len(rows) < 2:
+            continue
+        ncols = len(rows[0].cells)
+        if ncols < 2:
+            continue
+        header_bboxes = rows[0].cells
+        if any(bbox is None for bbox in header_bboxes):
+            continue
+        header = tuple(_cell_span(lines, bbox) for bbox in header_bboxes)
+        if any(cell is None for cell in header):
+            continue
+        columns: list[list[TableCell]] = [[] for _ in range(ncols)]
+        for row in rows[1:]:
+            for col_index, bbox in enumerate(row.cells):
+                if bbox is None:
+                    continue
+                cell = _cell_span(lines, bbox)
+                if cell is not None:
+                    columns[col_index].append(cell)
+        tables.append(
+            ExtractedTable(
+                header=header,  # type: ignore[arg-type]
+                columns=tuple(tuple(column) for column in columns),
+            )
+        )
+    return tuple(tables)
+
+
 def layout_from_pdf(
     path: Path, document_id: str | None = None, *, profile: DocumentProfile = DEFAULT
 ) -> LayoutDoc:
@@ -273,6 +388,7 @@ def layout_from_pdf(
     digest = hashlib.sha256(data).hexdigest()
 
     per_page: list[tuple[float, list[tuple[float, tuple[Word, ...]]]]] = []
+    pdf_pages: list[object] = []
     with pdfplumber.open(path) as pdf:
         for page in pdf.pages:
             collected: list[tuple[float, Word]] = [
@@ -288,13 +404,23 @@ def layout_from_pdf(
                 )
             ]
             per_page.append((float(page.height), cluster_lines(collected)))
+            pdf_pages.append(page)
+
+        built = _build_pages(per_page, profile)
+        # Ruled tables are read in a second pass, against the lines the first
+        # pass already built, so a cell's citation always names a real line of
+        # the document rather than a bare coordinate.
+        pages = tuple(
+            dataclass_replace(built_page, tables=_extract_tables(pdf_page, built_page.lines))
+            for built_page, pdf_page in zip(built, pdf_pages, strict=True)
+        )
 
     return LayoutDoc(
         document_id=document_id or path.stem,
         sha256=digest,
         filename=path.name,
         byte_size=len(data),
-        pages=_build_pages(per_page, profile),
+        pages=pages,
         synthetic=False,
     )
 

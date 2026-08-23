@@ -27,6 +27,7 @@ from .recognizers import (
     cross_reference,
     dated_charge,
     header,
+    proration,
     rate_table,
     sheet_rates,
 )
@@ -71,6 +72,8 @@ def _run_recognizers(
             combined.extend(cross_reference.parse(section, citer))
         if applicability.claims(section, headings):
             combined.extend(applicability.parse(section, citer))
+        if proration.claims(section, citer.doc):
+            combined.extend(proration.parse(section, citer))
     return combined
 
 
@@ -165,6 +168,7 @@ def parse_document(
         tou_windows=tuple(emission.tou_windows),
         holidays=tuple(emission.holidays),
         cross_references=tuple(emission.cross_references),
+        proration=tuple(emission.proration),
         notes=tuple(emission.notes),
         unparsed=tuple(unparsed),
         coverage=coverage,

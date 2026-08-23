@@ -5360,6 +5360,38 @@
       }
     }
   ],
+  "proration": [
+    {
+      "circumstance": {
+        "value": "Bill period is shorter than 27 days",
+        "provenance": {
+          "document_id": "smud-r-tod",
+          "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
+          "page": 5,
+          "sheet": "R-TOD-5",
+          "section": "VI.A",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Bill period is shorter than 27 days",
+          "locator": "smud-r-tod p.5 sheet R-TOD-5 VI.A L9"
+        }
+      },
+      "basis": {
+        "value": "Relationship between the length of the billing period and 30 days.",
+        "provenance": {
+          "document_id": "smud-r-tod",
+          "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
+          "page": 5,
+          "sheet": "R-TOD-5",
+          "section": "VI.A",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Relationship between the length of the billing period and 30 days.",
+          "locator": "smud-r-tod p.5 sheet R-TOD-5 VI.A L9"
+        }
+      }
+    }
+  ],
   "notes": [
     {
       "value": "Credit applies to all electricity usage charges from midnight to 6:00 a.m. daily.",
@@ -5824,34 +5856,6 @@
       }
     },
     {
-      "value": "Billing Circumstance Basis for Proration",
-      "provenance": {
-        "document_id": "smud-r-tod",
-        "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
-        "page": 5,
-        "sheet": "R-TOD-5",
-        "section": "VI.A",
-        "line": 8,
-        "end_line": null,
-        "snippet": "Billing Circumstance Basis for Proration",
-        "locator": "smud-r-tod p.5 sheet R-TOD-5 VI.A L8"
-      }
-    },
-    {
-      "value": "Bill period is shorter than 27 days Relationship between the length of the billing period and 30 days.",
-      "provenance": {
-        "document_id": "smud-r-tod",
-        "document_sha256": "9be2f188d4bb39b4bb6436a9a37035457d0e0ab51f769fe995f58ca35422accd",
-        "page": 5,
-        "sheet": "R-TOD-5",
-        "section": "VI.A",
-        "line": 9,
-        "end_line": null,
-        "snippet": "Bill period is shorter than 27 days Relationship between the length of the billing period and 30 days.",
-        "locator": "smud-r-tod p.5 sheet R-TOD-5 VI.A L9"
-      }
-    },
-    {
       "value": "(End)",
       "provenance": {
         "document_id": "smud-r-tod",
@@ -5999,26 +6003,26 @@
       "last_page": 5,
       "last_sheet": "R-TOD-5",
       "last_line": 10,
-      "line_count": 6,
-      "reason": "6 of 7 lines in a recognized section matched no rule",
+      "line_count": 4,
+      "reason": "4 of 7 lines in a recognized section matched no rule",
       "span": "p.5 lines 5-10",
       "sample": [
         "The electricity usage charge will not be prorated, regardless of the number of days in the billing period or the spanning of",
         "multiple seasons. The monthly System Infrastructure Fixed Charge will be prorated when the bill period is shorter than 27 days",
         "as shown in the following table. The monthly System Infrastructure Fixed Charge is determined by the billing period end date.",
-        "Billing Circumstance Basis for Proration"
+        "(End)"
       ]
     }
   ],
   "coverage": {
     "content_lines": 151,
-    "recognized_lines": 117,
-    "unrecognized_lines": 34,
+    "recognized_lines": 119,
+    "unrecognized_lines": 32,
     "boilerplate_lines": 20,
     "sections_total": 24,
     "sections_recognized": 16,
     "sections_unrecognized": 8,
-    "line_ratio": 0.774834,
+    "line_ratio": 0.788079,
     "section_ratio": 0.666667,
     "fully_recognized": false
   }

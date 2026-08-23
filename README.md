@@ -68,6 +68,15 @@ them also carries a `provenance` block:
 }
 ```
 
+The full shape is published as a JSON Schema at
+[`schemas/parsed-schedule-v1.schema.json`](schemas/parsed-schedule-v1.schema.json),
+so a downstream consumer can validate against the shape rather than against
+this document's prose description of it. `tests/test_schema.py` validates
+every committed golden file and every synthetic fixture's output against it,
+and, when the real source documents are present locally, all seven of those
+too, so the schema and the code that emits `parse`'s output cannot drift
+apart unnoticed.
+
 ## The rule that outranks everything else
 
 **Never invent a rate, a rate structure, a time window, or a citation.**
@@ -115,15 +124,15 @@ Seven published schedules from two publishers are in the manifest. None of them
 parses completely, and the figure for each is an output of the tool rather than
 a claim made here.
 
-| Schedule | Publisher | Lines recognized | Charges | Windows | Holidays |
-| --- | --- | --- | --- | --- | --- |
-| R-TOD, residential time-of-day | SMUD | 117/151 (77.5%) | 42 | 5 | 11 |
-| R, residential | SMUD | 79/115 (68.7%) | 30 | 0 | 0 |
-| CI-TOD1, commercial and industrial time-of-day | SMUD | 121/201 (60.2%) | 78 | 5 | 11 |
-| SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 |
-| E-1, residential | PG&E | 42/269 (15.6%) | 26 | 0 | 0 |
-| E-TOU-C, residential time-of-use | PG&E | 18/425 (4.2%) | 3 | 0 | 0 |
-| B-1, small general service | PG&E | 106/507 (20.9%) | 18 | 0 | 0 |
+| Schedule | Publisher | Lines recognized | Charges | Windows | Holidays | Proration rules |
+| --- | --- | --- | --- | --- | --- | --- |
+| R-TOD, residential time-of-day | SMUD | 119/151 (78.8%) | 42 | 5 | 11 | 1 |
+| R, residential | SMUD | 88/115 (76.5%) | 30 | 0 | 0 | 3 |
+| CI-TOD1, commercial and industrial time-of-day | SMUD | 128/201 (63.7%) | 78 | 5 | 11 | 3 |
+| SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 | 0 |
+| E-1, residential | PG&E | 42/269 (15.6%) | 26 | 0 | 0 | 0 |
+| E-TOU-C, residential time-of-use | PG&E | 18/425 (4.2%) | 3 | 0 | 0 | 0 |
+| B-1, small general service | PG&E | 106/507 (20.9%) | 18 | 0 | 0 | 0 |
 
 `make coverage-real` reproduces the table from the fetched documents.
 
@@ -157,6 +166,33 @@ Coverage of the four SMUD schedules did not move and their golden output is
 byte for byte unchanged. That is the test that this is a seam rather than a
 second branch: the first publisher takes the default for all three fields.
 
+### The proration table
+
+Three of the four SMUD schedules carry a small table pairing a billing
+circumstance ("Bill period is shorter than 27 days") with the basis on which
+a charge is prorated under it. Reading it in line order does not work: the
+"Basis for Proration" cell is sometimes one row tall and sometimes drawn to
+span two or three circumstances at once, and text extracted in reading order
+cannot tell those apart. Two circumstances that share one basis print as one
+paragraph starting a line late, which looks exactly like an unrelated basis
+misattributed to the wrong circumstance.
+
+The two cases are told apart by going around the text entirely: `pdfplumber`
+reports the ruled lines a table's own cells are drawn with, and a cell whose
+border spans two rows *is* a merge, not a guess about one. Reading that
+border directly, rather than inferring row breaks from spacing, is what lets
+`Bill period is shorter than 27 days` and `Bill period is longer than 34
+days` share one basis while a third circumstance keeps its own — exactly what
+the published page shows, and unrelated to how any of the three sentences
+happens to wrap. A circumstance whose cell does not sit inside exactly one
+basis cell's border is left unparsed rather than paired at a guess.
+
+Only a table with a real ruled border is read this way. A schedule with no
+such table, or one under a different header, is untouched by this and keeps
+being read line by line as before. The full account, including the case that
+originally looked like it needed a spacing threshold and did not, is in
+[ADR 0007](docs/adr/0007-read-a-merged-cell-from-its-own-border.md).
+
 ### What is still refused on the second publisher
 
 Most of it, and each refusal is a case where a value could otherwise be wrong.
@@ -186,28 +222,23 @@ coverage accounting, and above all the refusals. A rate table whose shape is
 not recognised produces nothing rather than something plausible.
 
 What is left unaccounted for on the four SMUD schedules is largely genuine
-narrative: proration wording, critical peak pricing terms, service voltage
-definitions, metering conditions. Three specific things are structured and
-still refused, on purpose:
+narrative: critical peak pricing terms, service voltage definitions, metering
+conditions. Two specific things are structured and still refused, on purpose:
 
 - **A price stated inside a sentence.** SSR gives its export compensation rate
   as "The Export Compensation Rate effective June 1, 2026 will be $0.0960 per
   kWh". Reading a price out of prose means deciding by guesswork what the price
   is for, so SSR emits no charges at all rather than one.
-- **The proration table**, on three of the four documents. Its second column is
-  a merged cell whose text interleaves with the rows beside it, so pairing a
-  circumstance with a basis line by line attaches the wrong rule to the wrong
-  circumstance.
 - **The commercial transition table**, which states its unit in a column of its
   own and dates its prices to a bare year with a footnote. Both are unlike
-  every other priced table here, and neither is read yet.
+  every other priced table here, and it is not read yet.
 
 ```
 $ uv run ca-tariff-parse coverage sources/CI-TOD1.pdf --id smud-ci-tod1
-content lines   121/201 recognized (60.2%)
+content lines   128/201 recognized (63.7%)
 sections        15/29 fully recognized (51.7%)
 fully recognized False
-emitted         78 charge(s), 5 time-of-use window(s), 11 holiday(s), 5 cross reference(s)
+emitted         78 charge(s), 5 time-of-use window(s), 11 holiday(s), 5 cross reference(s), 3 proration rule(s)
 
 unparsed:
   VIII       p.7 L4 to p.8 L1 (12) 12 of 13 lines in a recognized section matched no rule
@@ -252,7 +283,10 @@ for a file that is not in the manifest.
 
 1. **Extract.** `pdfplumber` gives the position of every word. Positions are
    kept, because which price belongs to which effective date is carried
-   entirely by horizontal alignment.
+   entirely by horizontal alignment. Where a table has a ruled border,
+   `pdfplumber`'s own line-drawing detection is read too, so a cell a
+   publisher drew to span several rows is captured as the single merged cell
+   it is rather than guessed at from spacing.
 2. **Segment.** Lines are grouped into the document's own outline, so every
    value can cite a part and an unrecognised part can be named rather than
    lost. Two outlines are known: statute-style numbering (roman parts, lettered
