@@ -1,0 +1,57 @@
+name: Bug report
+description: Report an incorrect, unparsed, or mis-cited value from a tariff document
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A wrong or uncited value is the most serious kind of bug here. Every emitted
+        number must trace back to a specific published document, page, section, and line.
+
+        If this is a security issue, please do not report it here. See SECURITY.md
+        for instructions on private reporting.
+  - type: input
+    id: document-id
+    attributes:
+      label: Document ID / Manifest entry
+      description: Which schedule or source manifest entry produced this issue?
+      placeholder: "e.g., pge-res-e1, pge-b1, sdge-dr, sce-tou-d-prime"
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Page and Section
+      description: Specific page number and section heading in the published document.
+      placeholder: "e.g., Page 3, Section 'RATES - TOTAL ENERGY RATES'"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction-command
+    attributes:
+      label: Command run
+      description: What exact CLI command was executed to reproduce this?
+      placeholder: "ca-tariff-parse parse sources/pge/electric/sched_e1.pdf ..."
+    validations:
+      required: true
+  - type: textarea
+    id: emitted-json
+    attributes:
+      label: Emitted JSON snippet
+      description: What was emitted by the parser?
+    validations:
+      required: true
+  - type: textarea
+    id: actual-text
+    attributes:
+      label: Actual document text
+      description: What does the published schedule document actually say?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Environment, Python version, or related recognizer observations.
+    validations:
+      required: false

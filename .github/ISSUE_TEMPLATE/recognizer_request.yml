@@ -1,0 +1,39 @@
+name: Feature / Recognizer request
+description: Request support for a tariff document structure the parser does not read yet
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Per CONTRIBUTING.md, recognizers must refuse rather than guess. A guess is never
+        better than a gap. New recognizers must cite exact page and line locations and
+        never extrapolate missing units, dates, or time windows.
+  - type: input
+    id: schedule-name
+    attributes:
+      label: Tariff schedule name and publisher
+      description: The official name of the schedule and utility publisher.
+      placeholder: "e.g., PG&E Schedule BEV, SCE Schedule TOU-GS-1"
+    validations:
+      required: true
+  - type: textarea
+    id: structure-description
+    attributes:
+      label: Unrecognized document structure
+      description: What specific layout or table structure does the current parser fail to parse?
+    validations:
+      required: true
+  - type: textarea
+    id: sample-text
+    attributes:
+      label: Representative text excerpt
+      description: An excerpt of the tariff text illustrating the unrecognized structure.
+    validations:
+      required: true
+  - type: textarea
+    id: refusal-boundaries
+    attributes:
+      label: Refusal criteria
+      description: Under what conditions should this recognizer decline to emit rather than guess?
+    validations:
+      required: true
