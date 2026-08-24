@@ -63,38 +63,65 @@ def _cmd_parse(args: argparse.Namespace) -> int:
 def _cmd_coverage(args: argparse.Namespace) -> int:
     parsed = _load(args)
     coverage = parsed.coverage
-    out = sys.stdout
-    out.write(f"document        {parsed.source.document_id}\n")
-    out.write(f"sha256          {parsed.source.sha256}\n")
-    out.write(f"pages           {parsed.source.page_count}\n")
-    if parsed.source.synthetic:
-        out.write("SYNTHETIC       this document is a synthetic fixture, not a real tariff\n")
-    out.write(
-        f"content lines   {coverage.recognized_lines}/{coverage.content_lines} "
-        f"recognized ({coverage.line_ratio:.1%})\n"
-    )
-    out.write(
-        f"sections        {coverage.sections_recognized}/{coverage.sections_total} "
-        f"fully recognized ({coverage.section_ratio:.1%})\n"
-    )
-    out.write(f"fully recognized {coverage.fully_recognized}\n")
-    out.write(
-        f"emitted         {len(parsed.charges)} charge(s), "
-        f"{len(parsed.tou_windows)} time-of-use window(s), "
-        f"{len(parsed.holidays)} holiday(s), "
-        f"{len(parsed.cross_references)} cross reference(s), "
-        f"{len(parsed.proration)} proration rule(s), "
-        f"{len(parsed.conditions)} condition(s)\n"
-    )
-    if parsed.unparsed:
-        out.write("\nunparsed:\n")
-        for item in parsed.unparsed:
-            out.write(f"  {item.section:<10} {item.span} ({item.line_count}) {item.reason}\n")
-            for sample in item.sample:
-                out.write(f"      | {sample[:96]}\n")
-    out.write(f"\n{DISCLAIMER}\n")
+    if getattr(args, "json", False):
+        payload: dict[str, object] = {
+            "document": parsed.source.document_id,
+            "sha256": parsed.source.sha256,
+            "pages": parsed.source.page_count,
+            "synthetic": parsed.source.synthetic,
+            "coverage": coverage.to_json(),
+            "emitted": {
+                "charges": len(parsed.charges),
+                "tou_windows": len(parsed.tou_windows),
+                "holidays": len(parsed.holidays),
+                "cross_references": len(parsed.cross_references),
+                "proration": len(parsed.proration),
+                "conditions": len(parsed.conditions),
+            },
+            "unparsed": [item.to_json() for item in parsed.unparsed],
+            "disclaimer": DISCLAIMER,
+        }
+        text = json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=False)
+        sys.stdout.write(text + "\n")
+    else:
+        out = sys.stdout
+        out.write(f"document        {parsed.source.document_id}\n")
+        out.write(f"sha256          {parsed.source.sha256}\n")
+        out.write(f"pages           {parsed.source.page_count}\n")
+        if parsed.source.synthetic:
+            out.write("SYNTHETIC       this document is a synthetic fixture, not a real tariff\n")
+        out.write(
+            f"content lines   {coverage.recognized_lines}/{coverage.content_lines} "
+            f"recognized ({coverage.line_ratio:.1%})\n"
+        )
+        out.write(
+            f"sections        {coverage.sections_recognized}/{coverage.sections_total} "
+            f"fully recognized ({coverage.section_ratio:.1%})\n"
+        )
+        out.write(f"fully recognized {coverage.fully_recognized}\n")
+        out.write(
+            f"emitted         {len(parsed.charges)} charge(s), "
+            f"{len(parsed.tou_windows)} time-of-use window(s), "
+            f"{len(parsed.holidays)} holiday(s), "
+            f"{len(parsed.cross_references)} cross reference(s), "
+            f"{len(parsed.proration)} proration rule(s), "
+            f"{len(parsed.conditions)} condition(s)\n"
+        )
+        if parsed.unparsed:
+            out.write("\nunparsed:\n")
+            for item in parsed.unparsed:
+                out.write(f"  {item.section:<10} {item.span} ({item.line_count}) {item.reason}\n")
+                for sample in item.sample:
+                    out.write(f"      | {sample[:96]}\n")
+        out.write(f"\n{DISCLAIMER}\n")
 
     if args.min_coverage is not None and coverage.line_ratio < args.min_coverage:
+        if getattr(args, "json", False):
+            ratio = coverage.line_ratio
+            sys.stderr.write(
+                f"coverage {ratio:.1%} is below the required {args.min_coverage:.1%}; "
+                f"{coverage.unrecognized_lines} content line(s) unrecognized\n"
+            )
         return EXIT_COVERAGE
     return EXIT_OK
 
@@ -199,6 +226,7 @@ def build_parser() -> argparse.ArgumentParser:
         "coverage", help="report how much of a document the parser accounted for"
     )
     add_document(p_coverage)
+    p_coverage.add_argument("--json", action="store_true", help="write coverage report as JSON")
     p_coverage.set_defaults(func=_cmd_coverage)
 
     p_sources = subparsers.add_parser("sources", help="list documents in the manifest")

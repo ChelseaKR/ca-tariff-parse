@@ -58,6 +58,30 @@ def test_coverage_gate_returns_its_own_exit_code(unknown_fixture: Path) -> None:
     assert main(["coverage", str(unknown_fixture), "--min-coverage", "1.0"]) == EXIT_COVERAGE
 
 
+def test_coverage_writes_json_to_stdout(
+    complete_fixture: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert main(["coverage", str(complete_fixture), "--json"]) == EXIT_OK
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["document"] == "SYNTHETIC-example-schedule-complete"
+    assert payload["coverage"]["fully_recognized"] is True
+    assert payload["emitted"]["charges"] > 0
+    assert payload["unparsed"] == []
+    assert "not rate advice" in payload["disclaimer"]
+
+
+def test_coverage_json_reports_unparsed_sections_and_gates(
+    unknown_fixture: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    code = main(["coverage", str(unknown_fixture), "--json", "--min-coverage", "0.99"])
+    captured = capsys.readouterr()
+    assert code == EXIT_COVERAGE
+    payload = json.loads(captured.out)
+    assert len(payload["unparsed"]) > 0
+    assert payload["coverage"]["line_ratio"] < 0.99
+    assert "below the required" in captured.err
+
+
 def test_sources_lists_the_manifest(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["sources"]) == EXIT_OK
     out = capsys.readouterr().out
