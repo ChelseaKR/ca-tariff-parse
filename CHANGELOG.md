@@ -64,6 +64,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `verify-source` and `sources` no longer disagree about one file. The
+  listing reads the manifest's pinned length to decide whether a present
+  document is the pinned one, and nothing checked that length on the way in,
+  so a manifest entry whose `bytes` was wrong and whose `sha256` was right
+  made `sources` report `mismatched` while `verify-source` reported `matches
+  manifest` for the same bytes. `verify` now checks both pinned facts, which
+  also makes `fetch` catch the disagreement when a document arrives instead of
+  leaving it to surface later as two commands contradicting each other.
+
 - A credit now takes the applicability window of the sentence above it rather
   than the last such sentence in its section. Where one section stated two
   differently windowed credits, the first was published with the second one's

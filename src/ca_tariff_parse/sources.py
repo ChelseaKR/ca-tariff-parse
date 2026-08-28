@@ -115,7 +115,17 @@ def safe_digest(path: Path) -> str | None:
 
 
 def verify(entry: SourceEntry, path: Path) -> str:
-    """Confirm a local file is byte for byte the document the manifest pins."""
+    """Confirm a local file is byte for byte the document the manifest pins.
+
+    Both pinned facts are checked, the digest and the length. The digest is
+    what settles whether the bytes are the right ones; the length is checked
+    because :func:`local_state` reads it to decide the same question, and two
+    commands reading one manifest entry against one file have to reach the
+    same verdict. A length the manifest states and the file does not have is
+    a manifest defect, and ``fetch`` verifies through here, so it is caught
+    when the document arrives rather than becoming a disagreement between two
+    commands later.
+    """
     if not path.exists():
         raise SourceError(
             f"{path} is not present. Fetch it with: ca-tariff-parse fetch --id {entry.id}"
@@ -131,6 +141,16 @@ def verify(entry: SourceEntry, path: Path) -> str:
             f"{actual if actual is not None else '(not a readable regular file)'}\n"
             "The publisher may have revised the document. Do not parse it as though "
             "it were the pinned revision; update the manifest deliberately instead."
+        )
+    # Readable, because safe_digest has just read it.
+    size = path.stat().st_size
+    if size != entry.bytes:
+        raise SourceError(
+            f"{path} matches the manifest digest but not its pinned length.\n"
+            f"  expected {entry.bytes} bytes\n"
+            f"  actual   {size} bytes\n"
+            "The manifest entry disagrees with itself about one file. Correct the "
+            "entry deliberately rather than relaxing either check."
         )
     return actual
 
