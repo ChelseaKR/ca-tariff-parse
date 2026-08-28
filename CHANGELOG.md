@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- The schedule code and title of the second publisher's schedules, read from
+  the running head every one of their sheets prints: `ELECTRIC SCHEDULE B-1
+  Sheet 4`, with the schedule's title on the line under it. Both are quoted
+  from the line they were read from and neither is taken from the manifest. The
+  title is read only where the head repeats across sheets, because on one sheet
+  the line under it is indistinguishable from the first line of the body. A
+  document printing neither publisher's form keeps a null code and a null
+  title. Coverage rises by the two lines per sheet that head accounts for:
+  `pge-e-1` 42/247 to 56/247, `pge-e-tou-c` 18/346 to 38/346, `pge-b-1` 104/477
+  to 126/477. No price moves and the four SMUD schedules are byte for byte
+  unchanged. See ADR 0015.
+- ADR 0015 records which identity fields those sheets state and which they do
+  not. `resolution` and `adopted` stay null because the sheets print
+  `Decision` and `Resolution` as labels with nothing beside them, and
+  `effective` stays null because that publisher files sheet by sheet, so there
+  is no one date the document states about itself. The README's refusal list
+  says so rather than listing the identity fields as unread.
+
 - The billing-proration table on three of the four SMUD schedules, read from
   the table's own ruled border rather than from line order, so a basis cell
   the publisher drew to span more than one circumstance is captured as the

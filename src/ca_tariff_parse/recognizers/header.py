@@ -1,10 +1,23 @@
-"""Read the schedule's own identity off the page furniture."""
+"""Read the schedule's own identity off the lines the document prints.
+
+A schedule states which schedule it is, in a sentence of its own, at a fixed
+place on its sheets. Two publishers write that sentence differently::
+
+    Rate Schedule R-TOD                      (with the title on the line above)
+    ELECTRIC SCHEDULE B-1 Sheet 4            (with the title on the line below)
+
+Both are read here, and neither is inferred. Each pattern is anchored to a
+whole line, so a sentence mentioning a schedule in passing is not one, and a
+document printing neither form comes back with a null code and a null title
+rather than one taken from its filename or its manifest entry. See
+[ADR 0015](../../../docs/adr/0015-a-schedule-names-itself-in-its-own-words.md).
+"""
 
 from __future__ import annotations
 
 import re
 
-from ..extract import LayoutDoc, sheet_numbers
+from ..extract import LayoutDoc, Line, sheet_numbers
 from ..model import Cited, ScheduleIdentity
 from ..profiles import DEFAULT, DocumentProfile
 from .base import Citer, LineKey
@@ -23,6 +36,21 @@ RESOLUTION_RE = re.compile(
     re.IGNORECASE,
 )
 SHEET_RE = re.compile(r"Sheet\s*No\.?\s*(?P<sheet>[A-Za-z0-9][A-Za-z0-9\-]*)", re.IGNORECASE)
+#: The other published form of the same sentence: a schedule naming itself and
+#: the sheet it is printed on, in the running head of every sheet. The trailing
+#: sheet number is required because it is what makes the line a running head
+#: rather than a sentence that mentions a schedule. Only the code is read from
+#: it: the sheet numbers this parser records are the ones the page furniture
+#: asserts as its own, and this line's count is the publisher's own pagination
+#: of the schedule, which is a different thing.
+SHEET_SCHEDULE_RE = re.compile(
+    r"\AELECTRIC SCHEDULE\s+(?P<code>[A-Za-z0-9][A-Za-z0-9\-]*)\s+Sheet\s+[0-9]+\Z"
+)
+#: Fewest sheets a line has to repeat on before the line under it is read as a
+#: running title. On one sheet there is nothing to tell a running head from the
+#: first line of the body, and reading it would name the schedule after a
+#: sentence.
+MINIMUM_RUNNING_SHEETS = 2
 
 _MONTH_NAME = (
     r"(?:January|February|March|April|May|June|July|August|September|October|November|December)"
@@ -63,6 +91,57 @@ def sheet_effective_dates(doc: LayoutDoc, citer: Citer) -> dict[int, Cited[str]]
         for number, dates in found.items()
         if len({date.value for date in dates}) == 1
     }
+
+
+def _running_heads(doc: LayoutDoc) -> list[tuple[Line, str, Line | None]]:
+    """Every line that names the schedule and its sheet, with the line under it.
+
+    The line under it is carried but not yet read: whether it is the running
+    title or the first line of the body is settled by
+    :func:`_read_running_head`, from whether it repeats.
+    """
+    found: list[tuple[Line, str, Line | None]] = []
+    for page in doc.pages:
+        lines = page.lines
+        for position, line in enumerate(lines):
+            match = SHEET_SCHEDULE_RE.match(line.text)
+            if match is None:
+                continue
+            below = lines[position + 1] if position + 1 < len(lines) else None
+            found.append((line, match.group("code"), below))
+    return found
+
+
+def _read_running_head(
+    doc: LayoutDoc, citer: Citer
+) -> tuple[Cited[str] | None, Cited[str] | None, set[LineKey]]:
+    """The schedule code and title a document prints in the head of its sheets.
+
+    The code is refused outright when the sheets disagree about it, because a
+    document whose own sheets name two schedules is described correctly by
+    neither. The title is refused when the line under the schedule line is not
+    the same line on every sheet, because what makes that line a title rather
+    than the first sentence of the body is that it runs.
+    """
+    heads = _running_heads(doc)
+    if not heads:
+        return None, None, set()
+    if len({code for _, code, _ in heads}) != 1:
+        return None, None, set()
+
+    consumed = {(line.page, line.index) for line, _, _ in heads}
+    first_line, first_code, _ = heads[0]
+    code = citer.text(first_line, FRONT, first_code)
+
+    titles = [below for _, _, below in heads]
+    if len(titles) < MINIMUM_RUNNING_SHEETS or any(below is None for below in titles):
+        return code, None, consumed
+    running = [below for below in titles if below is not None]
+    if len({below.text for below in running}) != 1:
+        return code, None, consumed
+    title = citer.text(running[0], FRONT, running[0].text)
+    consumed |= {(below.page, below.index) for below in running}
+    return code, title, consumed
 
 
 def parse_identity(
@@ -118,6 +197,13 @@ def parse_identity(
                 sheets.extend(
                     citer.text(line, FRONT, number) for number in sheet_numbers(line, profile)
                 )
+
+    if schedule_code is None:
+        # The other published form of the same sentence. It is looked at only
+        # when the first found nothing, so a document printing both is
+        # described by the one its own furniture states.
+        schedule_code, title, head_consumed = _read_running_head(doc, citer)
+        consumed |= head_consumed
 
     identity = ScheduleIdentity(
         schedule_code=schedule_code,

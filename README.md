@@ -130,9 +130,9 @@ a claim made here.
 | R, residential | SMUD | 94/115 (81.7%) | 30 | 0 | 0 | 3 | 4 |
 | CI-TOD1, commercial and industrial time-of-day | SMUD | 142/201 (70.6%) | 85 | 5 | 11 | 3 | 3 |
 | SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 | 0 | 0 |
-| E-1, residential | PG&E | 42/247 (17.0%) | 26 | 0 | 0 | 0 | 0 |
-| E-TOU-C, residential time-of-use | PG&E | 18/346 (5.2%) | 3 | 0 | 0 | 0 | 0 |
-| B-1, small general service | PG&E | 104/477 (21.8%) | 18 | 0 | 0 | 0 | 0 |
+| E-1, residential | PG&E | 56/247 (22.7%) | 26 | 0 | 0 | 0 | 0 |
+| E-TOU-C, residential time-of-use | PG&E | 38/346 (11.0%) | 3 | 0 | 0 | 0 | 0 |
+| B-1, small general service | PG&E | 126/477 (26.4%) | 18 | 0 | 0 | 0 | 0 |
 
 `make coverage-real` reproduces the table from the fetched documents.
 
@@ -206,10 +206,27 @@ Most of it, and each refusal is a case where a value could otherwise be wrong.
   nothing about what it prices.
 - **A row carrying a cell the publisher marked with dashes**, which prices a
   column the block does not name.
-- **The identity fields, the cross-reference wording and the credit form.**
-  Each is a statement about how one publisher writes, not a thing a document
-  cannot state about itself, so none of them belongs in a profile. Closing them
-  means finding the shape, not adding a field.
+- **The cross-reference wording and the credit form.** Each is a statement
+  about how one publisher writes, not a thing a document cannot state about
+  itself, so neither belongs in a profile. Closing them means finding the
+  shape, not adding a field.
+- **The resolution number and the adopted date of the second publisher's
+  schedules**, which those sheets print as labels with nothing beside them.
+  These stay null because the document states them nowhere, which is a
+  different thing from this parser not reading them. So does the
+  schedule-wide effective date: that publisher files sheet by sheet, so the
+  sheets of one schedule take effect on different days and there is no one
+  date the document states about itself. Each price carries its own sheet's
+  date. See [ADR 0015](docs/adr/0015-a-schedule-names-itself-in-its-own-words.md).
+
+**The identity fields** are no longer among these. Every one of the second
+publisher's sheets prints the schedule's own name in its running head, as
+`ELECTRIC SCHEDULE B-1 Sheet 4`, with the schedule's title on the line under
+it. That is the document stating what it is, in its own words, and it is read
+the same way the first publisher's `Rate Schedule R-TOD` already was: as a
+whole line, matched exactly, with no profile involved. A document printing
+neither form still comes back with a null code and a null title.
+See [ADR 0015](docs/adr/0015-a-schedule-names-itself-in-its-own-words.md).
 
 A **filing change marker** -- a bracketed capital such as `(R)` beside a
 revised line, or a change bar in the right margin -- is no longer one of

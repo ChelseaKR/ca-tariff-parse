@@ -289,3 +289,54 @@ def test_no_citation_names_a_sheet_the_publisher_cancelled() -> None:
     assert sheets == ["61362-E", "61097-E", "61098-E", "61099-E", "61100-E", "61101-E", "61102-E"]
     assert "61247-E" not in sheets
     assert all(note.provenance.sheet in sheets for note in parsed.notes)
+
+
+#: What each of the second publisher's schedules calls itself, quoted from the
+#: line every one of its sheets prints under the sheet number.
+SECOND_PUBLISHER_IDENTITY = [
+    ("pge-e-1", "ELEC_SCHEDS_E-1.pdf", "E-1", "RESIDENTIAL SERVICES"),
+    (
+        "pge-e-tou-c",
+        "ELEC_SCHEDS_E-TOU-C.pdf",
+        "E-TOU-C",
+        "RESIDENTIAL TIME-OF-USE (PEAK PRICING 4 - 9 p.m. EVERY DAY)",
+    ),
+    ("pge-b-1", "ELEC_SCHEDS_B-1.pdf", "B-1", "SMALL GENERAL SERVICE"),
+]
+
+
+@pytest.mark.parametrize(("document_id", "filename", "code", "title"), SECOND_PUBLISHER_IDENTITY)
+def test_the_second_publisher_names_its_own_schedule(
+    document_id: str, filename: str, code: str, title: str
+) -> None:
+    """Both halves are quotes from the running head, not from the manifest.
+
+    The code the manifest records for each of these is the same string, which
+    is exactly why it is worth asserting that the parser reads it off the page:
+    a code copied from the manifest would look identical and cite nothing.
+    """
+    parsed = _parse(document_id, filename)
+    identity = parsed.identity
+    assert identity.schedule_code is not None
+    assert identity.schedule_code.value == code
+    assert identity.schedule_code.value in identity.schedule_code.provenance.snippet
+    assert identity.title is not None
+    assert identity.title.value == title
+    assert identity.title.value in identity.title.provenance.snippet
+
+
+@pytest.mark.parametrize(("document_id", "filename"), SECOND_PUBLISHER_CASES)
+def test_the_second_publisher_states_no_resolution_and_none_is_invented(
+    document_id: str, filename: str
+) -> None:
+    """These sheets print "Resolution" and "Decision" as labels with no value.
+
+    The schedule-wide effective date stays null for a different reason: this
+    publisher files sheet by sheet, so the sheets of one schedule take effect
+    on different days and there is no one date the document states about
+    itself. Each price carries its own sheet's date instead.
+    """
+    parsed = _parse(document_id, filename)
+    assert parsed.identity.resolution is None
+    assert parsed.identity.adopted is None
+    assert parsed.identity.effective is None
