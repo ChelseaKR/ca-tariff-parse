@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `coverage --json`, writing the same figures as JSON instead of the text
+  report, for a CI step gating one document or a script tracking coverage over
+  time. Every value is selected out of `parse`'s own payload rather than
+  computed a second time, and `--min-coverage` gates identically either way.
+- A test binding the README's "Coverage today" table to the parser: with the
+  pinned documents present, every published figure has to be the one the tool
+  reports, and every pinned document has to appear in the table. Skips where
+  the documents have not been fetched, like the other real-document tests.
 - The billing-proration table on three of the four SMUD schedules, read from
   the table's own ruled border rather than from line order, so a basis cell
   the publisher drew to span more than one circumstance is captured as the
