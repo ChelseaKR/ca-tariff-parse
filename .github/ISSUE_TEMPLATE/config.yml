@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: A security or data-exposure defect
+    url: https://github.com/ChelseaKR/ca-tariff-parse/blob/main/SECURITY.md
+    about: Report it the way SECURITY.md describes rather than in a public issue.
+  - name: How a change gets reviewed here
+    url: https://github.com/ChelseaKR/ca-tariff-parse/blob/main/CONTRIBUTING.md
+    about: The rule that outranks everything else, and what a pull request has to have done.
