@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from ca_tariff_parse.cli import EXIT_COVERAGE, EXIT_ERROR, EXIT_OK, main
+from ca_tariff_parse.cli import EMITTED_KEYS, EXIT_COVERAGE, EXIT_ERROR, EXIT_OK, main
 
 
 def test_parse_writes_json_to_stdout(
@@ -265,3 +265,49 @@ def test_an_unknown_profile_is_rejected_by_the_command_line(keyword_fixture: Pat
     """A misspelled profile is an error, never a silent fall back to the default."""
     with pytest.raises(SystemExit):
         main(["parse", str(keyword_fixture), "--profile", "no-such-publisher"])
+
+
+def test_coverage_json_reports_the_figures_the_text_report_prints(
+    complete_fixture: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert main(["coverage", str(complete_fixture)]) == EXIT_OK
+    text = capsys.readouterr().out
+    assert main(["coverage", str(complete_fixture), "--json"]) == EXIT_OK
+    payload = json.loads(capsys.readouterr().out)
+
+    coverage = payload["coverage"]
+    assert (
+        f"content lines   {coverage['recognized_lines']}/{coverage['content_lines']} "
+        f"recognized ({coverage['line_ratio']:.1%})" in text
+    )
+    assert (
+        f"sections        {coverage['sections_recognized']}/{coverage['sections_total']} "
+        f"fully recognized ({coverage['section_ratio']:.1%})" in text
+    )
+    assert f"emitted         {payload['emitted']['charges']} charge(s)" in text
+
+
+def test_coverage_json_is_selected_from_the_parse_report_rather_than_recomputed(
+    complete_fixture: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A second computation of the same figures is a second thing to be wrong."""
+    assert main(["parse", str(complete_fixture)]) == EXIT_OK
+    full = json.loads(capsys.readouterr().out)
+    assert main(["coverage", str(complete_fixture), "--json"]) == EXIT_OK
+    payload = json.loads(capsys.readouterr().out)
+
+    for key in ("schema", "parser_version", "disclaimer", "source", "coverage", "unparsed"):
+        assert payload[key] == full[key], key
+    assert payload["emitted"] == {key: len(full[key]) for key in EMITTED_KEYS}
+
+
+def test_coverage_json_gates_on_min_coverage_the_same_way(
+    unknown_fixture: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """The gate is about the document, not about how the report is written."""
+    text_code = main(["coverage", str(unknown_fixture), "--min-coverage", "0.99"])
+    capsys.readouterr()
+    json_code = main(["coverage", str(unknown_fixture), "--min-coverage", "0.99", "--json"])
+    payload = json.loads(capsys.readouterr().out)
+    assert text_code == json_code == EXIT_COVERAGE
+    assert payload["unparsed"]
