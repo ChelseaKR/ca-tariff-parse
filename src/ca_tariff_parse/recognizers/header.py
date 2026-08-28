@@ -4,14 +4,30 @@ from __future__ import annotations
 
 import re
 
-from ..extract import LayoutDoc, sheet_numbers
+from ..extract import LayoutDoc, Line, sheet_numbers
 from ..model import Cited, ScheduleIdentity
 from ..profiles import DEFAULT, DocumentProfile
 from .base import Citer, LineKey
 
 FRONT = "front"
 
-SCHEDULE_RE = re.compile(r"\ARate Schedule\s+(?P<code>[A-Za-z0-9][A-Za-z0-9\-]*)\Z")
+#: The line a schedule names itself on. One publisher prints "Rate Schedule
+#: R-TOD" in the header band; another prints "ELECTRIC SCHEDULE B-1 Sheet 3" in
+#: the body, over the title. What they have in common is the shape: some words,
+#: the word Schedule, the code, and optionally the sheet number printed after
+#: it. Which publisher writes which way is not something a profile should hold,
+#: because the page states it.
+SCHEDULE_RE = re.compile(
+    r"\A(?:[A-Za-z.&\' ]+\s)?Schedule\s+(?P<code>[A-Za-z0-9][A-Za-z0-9\-]*)"
+    r"(?:\s+Sheet\s+[0-9]+)?\Z",
+    re.IGNORECASE,
+)
+#: Fewest sheets a schedule line has to appear on before it is read as one.
+#: A running head runs: this is what tells the line naming the schedule from a
+#: sentence that happens to end "... for which a residential or agricultural
+#: schedule is", which is a real line of one of these documents and matches the
+#: shape exactly once.
+MINIMUM_RUNNING_SHEETS = 2
 #: The footer line that dates the schedule. A schedule amended since it was
 #: first adopted prints the amending resolution inside brackets, as in
 #: "(as amended by Resolution No. 26-04-04 adopted April 16, 2026) Effective:
@@ -65,6 +81,84 @@ def sheet_effective_dates(doc: LayoutDoc, citer: Citer) -> dict[int, Cited[str]]
     }
 
 
+def _schedule_lines(doc: LayoutDoc) -> list[tuple[Line, str, Line | None, Line | None]]:
+    """Every line naming a schedule, with the lines above and below it."""
+    found: list[tuple[Line, str, Line | None, Line | None]] = []
+    for page in doc.pages:
+        lines = page.lines
+        for position, line in enumerate(lines):
+            match = SCHEDULE_RE.match(line.text)
+            if match is None:
+                continue
+            above = lines[position - 1] if position else None
+            below = lines[position + 1] if position + 1 < len(lines) else None
+            found.append((line, match.group("code"), above, below))
+    return found
+
+
+def _running_schedule(
+    doc: LayoutDoc, citer: Citer
+) -> tuple[Cited[str] | None, Cited[str] | None, set[LineKey]]:
+    """The schedule code and title the document prints on every one of its sheets.
+
+    **The code** is read from the line that names it, wherever the publisher
+    sets that line: in the header band, or in the body over the title. What
+    settles which line that is, rather than a sentence ending in the word
+    schedule, is that a running head runs. The code has to be named on more
+    sheets than any other candidate and on at least two, or nothing is read.
+
+    **The title** is the neighbouring line that repeats on every one of those
+    sheets, and only when exactly one of the two does. One publisher sets the
+    title above the schedule line and the line below it is body text, which
+    changes sheet to sheet; that is what says which is the title. Another sets
+    the title below and a regulatory identifier above, and both repeat, so the
+    page does not say which of them names the schedule and neither is read.
+    """
+    hits = _schedule_lines(doc)
+    if not hits:
+        return None, None, set()
+
+    pages: dict[str, set[int]] = {}
+    for line, candidate, _, _ in hits:
+        pages.setdefault(candidate, set()).add(line.page)
+    ranked = sorted(pages.items(), key=lambda item: len(item[1]), reverse=True)
+    code_text, on_pages = ranked[0]
+    if len(on_pages) < MINIMUM_RUNNING_SHEETS:
+        return None, None, set()
+    if len(ranked) > 1 and len(ranked[1][1]) == len(on_pages):
+        # Two candidates run equally: the document names two schedules and is
+        # described correctly by neither.
+        return None, None, set()
+
+    running = [hit for hit in hits if hit[1] == code_text]
+    consumed = {(line.page, line.index) for line, _, _, _ in running}
+    code = citer.text(running[0][0], FRONT, code_text)
+
+    sides: dict[str, list[Line | None]] = {
+        "above": [above for _, _, above, _ in running],
+        "below": [below for _, _, _, below in running],
+    }
+    repeating: dict[str, list[Line]] = {}
+    for name, neighbours in sides.items():
+        if any(neighbour is None for neighbour in neighbours):
+            continue
+        present = [neighbour for neighbour in neighbours if neighbour is not None]
+        if not present[0].text.strip():
+            continue
+        if len({neighbour.text for neighbour in present}) != 1:
+            continue
+        repeating[name] = present
+    if len(repeating) != 1:
+        # Neither neighbour runs, or both do. A publisher that sets a
+        # regulatory identifier above the schedule line and the title below it
+        # repeats both, and nothing on the page says which one names it.
+        return code, None, consumed
+    title_lines = next(iter(repeating.values()))
+    title = citer.text(title_lines[0], FRONT, title_lines[0].text)
+    consumed |= {(line.page, line.index) for line in title_lines}
+    return code, title, consumed
+
+
 def parse_identity(
     doc: LayoutDoc, citer: Citer, profile: DocumentProfile = DEFAULT
 ) -> tuple[ScheduleIdentity, set[LineKey]]:
@@ -73,31 +167,17 @@ def parse_identity(
     Nothing here is inferred. If the document does not print a field, the field
     stays ``None`` rather than being guessed from the filename or the date.
     """
-    consumed: set[LineKey] = set()
-    schedule_code: Cited[str] | None = None
-    title: Cited[str] | None = None
+    schedule_code, title, consumed = _running_schedule(doc, citer)
     resolution: Cited[str] | None = None
     adopted: Cited[str] | None = None
     effective: Cited[str] | None = None
     sheets: list[Cited[str]] = []
 
     for page in doc.pages:
-        furniture = [line for line in page.lines if line.furniture]
-        for position, line in enumerate(furniture):
-            text = line.text
-
-            match = SCHEDULE_RE.match(text)
-            if match:
-                consumed.add((line.page, line.index))
-                if schedule_code is None:
-                    schedule_code = citer.text(line, FRONT, match.group("code"))
-                    # The running title is the line directly above the schedule
-                    # line in the header band.
-                    if position > 0 and furniture[position - 1].top < line.top:
-                        above = furniture[position - 1]
-                        title = citer.text(above, FRONT, above.text)
-                        consumed.add((above.page, above.index))
+        for line in page.lines:
+            if not line.furniture:
                 continue
+            text = line.text
 
             match = RESOLUTION_RE.search(text)
             if match:

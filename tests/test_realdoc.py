@@ -422,3 +422,52 @@ def test_the_rows_a_component_table_sets_level_with_its_own_heading_stay_unread(
     # Nothing is dropped: what no recognizer claimed is still carried verbatim.
     reported = " ".join(note.value for note in parsed.notes)
     assert "Transmission* (all usage)" in reported
+
+
+def test_the_second_publisher_names_its_own_schedule() -> None:
+    """Its schedule line sits in the body, over the title, not in the header band.
+
+    What identifies it is that it runs: on `pge-b-1` a body sentence ends "...
+    or agricultural schedule is" and matches the same shape, on one sheet only.
+    """
+    for document_id, filename, code in (
+        ("pge-b-1", "ELEC_SCHEDS_B-1.pdf", "B-1"),
+        ("pge-e-1", "ELEC_SCHEDS_E-1.pdf", "E-1"),
+        ("pge-e-tou-c", "ELEC_SCHEDS_E-TOU-C.pdf", "E-TOU-C"),
+    ):
+        parsed = _parse(document_id, filename)
+        assert parsed.identity.schedule_code is not None, document_id
+        assert parsed.identity.schedule_code.value == code
+        assert code in parsed.identity.schedule_code.provenance.snippet
+
+
+def test_a_title_is_read_only_where_one_neighbour_runs_and_the_other_does_not() -> None:
+    """Two of the second publisher's documents repeat both neighbours.
+
+    They print a regulatory identifier above the schedule line and the title
+    below it, and both are the same on every sheet, so nothing on the page says
+    which of them names the schedule. The third prints two different cities
+    above, so only one neighbour runs and that one is the title.
+    """
+    assert _parse("pge-b-1", "ELEC_SCHEDS_B-1.pdf").identity.title is not None
+    assert _parse("pge-b-1", "ELEC_SCHEDS_B-1.pdf").identity.title.value == "SMALL GENERAL SERVICE"
+    assert _parse("pge-e-1", "ELEC_SCHEDS_E-1.pdf").identity.title is None
+    assert _parse("pge-e-tou-c", "ELEC_SCHEDS_E-TOU-C.pdf").identity.title is None
+
+
+def test_the_second_publisher_states_no_resolution_and_none_is_invented() -> None:
+    """Its footer prints the word Resolution with nothing after it.
+
+    The schedule-level effective date is null for the same kind of reason: the
+    sheets of one schedule take effect on different days, and this document
+    states no single date for the schedule as a whole.
+    """
+    parsed = _parse("pge-e-1", "ELEC_SCHEDS_E-1.pdf")
+    assert parsed.identity.resolution is None
+    assert parsed.identity.adopted is None
+    assert parsed.identity.effective is None
+    # It does state a date per sheet, and those are read.
+    assert {charge.effective_from.value for charge in parsed.charges} == {
+        "June 1, 2026",
+        "March 1, 2026",
+    }
