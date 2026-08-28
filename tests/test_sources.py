@@ -5,6 +5,7 @@ from __future__ import annotations
 import dataclasses
 import hashlib
 import os
+import urllib.error
 from pathlib import Path
 
 import pytest
@@ -12,6 +13,7 @@ import pytest
 from ca_tariff_parse.sources import (
     SourceError,
     digest,
+    fetch,
     find,
     load_manifest,
     local_state,
@@ -21,6 +23,22 @@ from ca_tariff_parse.sources import (
 )
 
 from .conftest import REPO_ROOT
+
+
+class _FakeResponse:
+    """A stand-in for the object ``urllib.request.urlopen`` hands a ``with``."""
+
+    def __init__(self, data: bytes) -> None:
+        self._data = data
+
+    def read(self) -> bytes:
+        return self._data
+
+    def __enter__(self) -> _FakeResponse:
+        return self
+
+    def __exit__(self, *exc: object) -> None:
+        return None
 
 
 @pytest.fixture
@@ -195,3 +213,67 @@ def test_the_pinned_document_reports_present(entries, tmp_path: Path) -> None:
 
 def test_an_absent_document_reports_not_fetched(entries, tmp_path: Path) -> None:
     assert local_state(_entry(entries, "smud-r-tod"), tmp_path) == "not fetched"
+def test_fetch_refuses_a_path_robots_txt_disallows(entries, tmp_path: Path, monkeypatch) -> None:
+    """The README promises retrieval honours robots.txt; ``fetch`` must too.
+
+    A host whose robots.txt disallows every path must never reach the second
+    request that would download the document itself.
+    """
+    entry = find(entries, "smud-r-tod")
+    requested: list[str] = []
+
+    def fake_urlopen(request, timeout=None):  # noqa: ARG001
+        requested.append(request.full_url)
+        if request.full_url.endswith("/robots.txt"):
+            return _FakeResponse(b"User-agent: *\nDisallow: /\n")
+        raise AssertionError("the document itself must not be requested")
+
+    monkeypatch.setattr("ca_tariff_parse.sources.urllib.request.urlopen", fake_urlopen)
+
+    with pytest.raises(SourceError, match=r"robots\.txt"):
+        fetch(entry, tmp_path, timeout=5.0)
+    assert requested == ["https://www.smud.org/robots.txt"]
+    assert not (tmp_path / entry.filename).exists()
+
+
+def test_fetch_proceeds_when_robots_txt_allows_the_path(
+    entries, tmp_path: Path, monkeypatch
+) -> None:
+    entry = find(entries, "smud-r-tod")
+    payload = b"a stand-in for the published document, not the real bytes"
+    matching = dataclasses.replace(entry, sha256=hashlib.sha256(payload).hexdigest())
+
+    def fake_urlopen(request, timeout=None):  # noqa: ARG001
+        if request.full_url.endswith("/robots.txt"):
+            return _FakeResponse(b"User-agent: *\nDisallow: /mobile/\n")
+        assert request.full_url == matching.url
+        return _FakeResponse(payload)
+
+    monkeypatch.setattr("ca_tariff_parse.sources.urllib.request.urlopen", fake_urlopen)
+
+    path = fetch(matching, tmp_path, timeout=5.0)
+    assert path.read_bytes() == payload
+
+
+def test_fetch_proceeds_when_robots_txt_is_unreachable(
+    entries, tmp_path: Path, monkeypatch
+) -> None:
+    """A host with no robots.txt (or one that cannot be reached) allows everything.
+
+    robots.txt is an opt-out the publisher has to publish; a network hiccup
+    fetching it must not be read as a disallow.
+    """
+    entry = find(entries, "smud-r-tod")
+    payload = b"a stand-in for the published document, not the real bytes"
+    matching = dataclasses.replace(entry, sha256=hashlib.sha256(payload).hexdigest())
+
+    def fake_urlopen(request, timeout=None):  # noqa: ARG001
+        if request.full_url.endswith("/robots.txt"):
+            raise urllib.error.HTTPError(request.full_url, 404, "Not Found", None, None)
+        assert request.full_url == matching.url
+        return _FakeResponse(payload)
+
+    monkeypatch.setattr("ca_tariff_parse.sources.urllib.request.urlopen", fake_urlopen)
+
+    path = fetch(matching, tmp_path, timeout=5.0)
+    assert path.read_bytes() == payload

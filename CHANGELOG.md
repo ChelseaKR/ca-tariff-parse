@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `coverage --json`, writing the same figures as JSON instead of the text
+  report, for a CI step gating one document or a script tracking coverage over
+  time. Every value is selected out of `parse`'s own payload rather than
+  computed a second time, and `--min-coverage` gates identically either way.
+- A test binding the README's "Coverage today" table to the parser: with the
+  pinned documents present, every published figure has to be the one the tool
+  reports, and every pinned document has to appear in the table. Skips where
+  the documents have not been fetched, like the other real-document tests.
 - The billing-proration table on three of the four SMUD schedules, read from
   the table's own ruled border rather than from line order, so a basis cell
   the publisher drew to span more than one circumstance is captured as the
@@ -75,6 +83,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `sha256` is now compared case-insensitively, so a hand-edited manifest
   entry with an uppercase digest no longer reads a byte-identical file as
   `mismatched`.
+- `fetch` now actually checks the host's `robots.txt` before downloading a
+  document, refusing a path the publisher has disallowed. The README already
+  documented this as retrieval's behaviour; the code did not do it — a
+  manifest entry pointing at a newly disallowed path would have been fetched
+  anyway. A host with no reachable `robots.txt` is still read as allowing
+  everything, so this adds no new failure mode for the documents already in
+  the manifest.
 
 ## [0.1.0] - 2026-08-18
 

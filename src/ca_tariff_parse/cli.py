@@ -60,9 +60,48 @@ def _cmd_parse(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+#: The arrays of ``parse``'s report whose lengths the coverage report counts.
+EMITTED_KEYS = (
+    "charges",
+    "tou_windows",
+    "holidays",
+    "cross_references",
+    "proration",
+    "conditions",
+)
+
+
+def _coverage_payload(parsed: ParsedSchedule) -> dict[str, object]:
+    """The coverage report as JSON, selected from the full report.
+
+    Every value here is lifted out of ``parse``'s own payload rather than
+    recomputed, so this cannot come to disagree with the document it describes.
+    The counts are the lengths of that payload's arrays, which is what the text
+    report prints.
+    """
+    full = parsed.to_json()
+    return {
+        "schema": full["schema"],
+        "parser_version": full["parser_version"],
+        "disclaimer": full["disclaimer"],
+        "source": full["source"],
+        "coverage": full["coverage"],
+        "emitted": {key: len(full[key]) for key in EMITTED_KEYS},  # type: ignore[arg-type]
+        "unparsed": full["unparsed"],
+    }
+
+
 def _cmd_coverage(args: argparse.Namespace) -> int:
     parsed = _load(args)
     coverage = parsed.coverage
+    if args.json:
+        sys.stdout.write(
+            json.dumps(_coverage_payload(parsed), indent=2, ensure_ascii=False, sort_keys=False)
+            + "\n"
+        )
+        if args.min_coverage is not None and coverage.line_ratio < args.min_coverage:
+            return EXIT_COVERAGE
+        return EXIT_OK
     out = sys.stdout
     out.write(f"document        {parsed.source.document_id}\n")
     out.write(f"sha256          {parsed.source.sha256}\n")
@@ -191,6 +230,11 @@ def build_parser() -> argparse.ArgumentParser:
         "coverage", help="report how much of a document the parser accounted for"
     )
     add_document(p_coverage)
+    p_coverage.add_argument(
+        "--json",
+        action="store_true",
+        help="write the same figures as JSON instead of the text report",
+    )
     p_coverage.set_defaults(func=_cmd_coverage)
 
     p_sources = subparsers.add_parser("sources", help="list documents in the manifest")

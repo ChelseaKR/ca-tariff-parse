@@ -134,7 +134,11 @@ a claim made here.
 | E-TOU-C, residential time-of-use | PG&E | 18/346 (5.2%) | 3 | 0 | 0 | 0 | 0 |
 | B-1, small general service | PG&E | 104/477 (21.8%) | 18 | 0 | 0 | 0 | 0 |
 
-`make coverage-real` reproduces the table from the fetched documents.
+`make coverage-real` reproduces the table from the fetched documents, and
+`tests/test_published_figures.py` asserts that every figure in it is the one
+the parser reports, so the table cannot drift away from the tool while the
+documents are present. It skips where they are not, like the other real
+document tests.
 
 ### The document profile
 
@@ -313,6 +317,13 @@ names. They also accept `--min-coverage`, which exits non-zero when too little
 of the document was understood, and `--profile`, which names a document profile
 for a file that is not in the manifest.
 
+`coverage --json` writes the same figures as JSON instead of the text report,
+for a CI step gating one document, a script tracking coverage over time, or
+anything else that wants the numbers rather than the prose. Every value in it
+is selected out of `parse`'s own report rather than computed a second time, so
+the two cannot come to disagree, and `--min-coverage` gates identically either
+way.
+
 ## How it works
 
 1. **Extract.** `pdfplumber` gives the position of every word. Positions are
@@ -373,6 +384,10 @@ make fmt           # apply formatting and safe fixes
 make golden        # regenerate golden output (review every changed price)
 make coverage-real # report parse coverage of every fetched document
 ```
+
+`docs/ROADMAP.md` holds the plan: what is being read next, what each phase
+would have to prove before it lands, and what has already been decided
+against.
 
 ## Licence
 
