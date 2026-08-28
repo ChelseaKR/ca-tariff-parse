@@ -13,8 +13,10 @@ from __future__ import annotations
 
 import hashlib
 import tomllib
+import urllib.error
 import urllib.parse
 import urllib.request
+import urllib.robotparser
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -129,9 +131,44 @@ def require_https(url: str) -> None:
         raise SourceError(f"source URLs must use https, got {scheme or 'no'} scheme in {url!r}")
 
 
+def _robots_allowed(url: str, *, timeout: float) -> bool:
+    """True unless this host's own ``robots.txt`` disallows fetching ``url``.
+
+    ``robots.txt`` is an opt-out a publisher has to publish: a host that has
+    none, or one that cannot be reached at all, is read as allowing
+    everything rather than blocking a fetch on a network hiccup that has
+    nothing to do with the publisher's actual policy. Only a ``robots.txt``
+    that is reached and that names the path as disallowed refuses the fetch.
+    """
+    # Same host and scheme as url, which the caller has already required to be
+    # https before calling this, so the "permitted schemes" concern behind
+    # S310 and B310 is handled exactly as it is for the document fetch below.
+    parsed = urllib.parse.urlparse(url)
+    robots_url = urllib.parse.urlunparse((parsed.scheme, parsed.netloc, "/robots.txt", "", "", ""))
+    request = urllib.request.Request(robots_url, headers={"User-Agent": USER_AGENT})  # noqa: S310
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310  # nosec B310
+            body = response.read()
+    except (urllib.error.URLError, OSError, ValueError):
+        return True
+    parser = urllib.robotparser.RobotFileParser()
+    parser.parse(body.decode("utf-8", errors="replace").splitlines())
+    return parser.can_fetch(USER_AGENT, url)
+
+
 def fetch(entry: SourceEntry, root: Path, *, timeout: float = 60.0) -> Path:
-    """Download one document and verify it against the manifest."""
+    """Download one document and verify it against the manifest.
+
+    Honours the host's own ``robots.txt`` first, as documented in the
+    project README: a path the publisher has disallowed is never fetched,
+    whatever the manifest says.
+    """
     require_https(entry.url)
+    if not _robots_allowed(entry.url, timeout=timeout):
+        raise SourceError(
+            f"{entry.url} is disallowed by robots.txt for this host; refusing to "
+            "fetch it. Update the manifest deliberately if this document has moved."
+        )
     root.mkdir(parents=True, exist_ok=True)
     target = entry.path(root)
     # The scheme is pinned to https by require_https above, so the audited

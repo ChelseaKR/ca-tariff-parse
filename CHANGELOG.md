@@ -59,6 +59,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `sha256` is now compared case-insensitively, so a hand-edited manifest
   entry with an uppercase digest no longer reads a byte-identical file as
   `mismatched`.
+- `fetch` now actually checks the host's `robots.txt` before downloading a
+  document, refusing a path the publisher has disallowed. The README already
+  documented this as retrieval's behaviour; the code did not do it — a
+  manifest entry pointing at a newly disallowed path would have been fetched
+  anyway. A host with no reachable `robots.txt` is still read as allowing
+  everything, so this adds no new failure mode for the documents already in
+  the manifest.
 
 ## [0.1.0] - 2026-08-18
 
