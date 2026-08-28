@@ -374,6 +374,10 @@ make golden        # regenerate golden output (review every changed price)
 make coverage-real # report parse coverage of every fetched document
 ```
 
+`docs/ROADMAP.md` holds the plan: what is being read next, what each phase
+would have to prove before it lands, and what has already been decided
+against.
+
 ## Licence
 
 Apache-2.0. See `LICENSE`.

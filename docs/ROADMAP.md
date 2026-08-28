@@ -12,6 +12,313 @@ except in the explicit `fetch` command.
 The operator-facing signal is the `coverage` command, which reports what the
 parser accounted for and what it did not.
 
+## The plan, 2026 to 2028
+
+This section is the forward half of the roadmap. Everything below it is the
+record of what has already been settled, and nothing here overrules that
+record: an item listed under *Decided against* is a decision, not a gap, and
+reopening one means overturning its reasoning rather than restating the idea.
+
+Every phase below is bounded by the rule `CONTRIBUTING.md` puts above
+everything else: **never invent a rate, a rate structure, a time window, or a
+citation.** Three consequences shape the whole plan.
+
+- **A refusal is a deliverable.** A phase that reads its shape and a phase
+  that proves the shape cannot be read without guessing both close honestly.
+  The second closes with an ADR and a test asserting the refusal, the way
+  ADR 0011 closed the price stated inside a sentence.
+- **Coverage is a measurement, not a target.** Each phase states the figure it
+  expects to move, because a phase that moves no figure and adds no refusal
+  did nothing. It never states a figure it intends to reach, because a rule
+  widened to hit a number is the defect this project exists to avoid.
+- **The four SMUD schedules are the regression.** `tests/golden/` holds their
+  full parsed output. A phase that leaves those four files byte for byte
+  unchanged has demonstrated it added a seam rather than a second branch,
+  which is the test ADR 0006 used when the second publisher arrived. A phase
+  that does change them changes them deliberately, price by price.
+
+The coverage figures each phase is measured against are the ones in the
+README's "Coverage today" table, reproducible with `make coverage-real`
+against the documents `sources/sources.toml` pins.
+
+### Phase 1: The values already published
+
+**Delivers.** Two defects in what the parser emits today, both filed:
+
+- A credit's `tou_period` is resolved once per section and attached to every
+  credit row in it, so the first of two differently windowed credits is
+  published with the second one's applicability sentence (issue #13). The
+  citation is real and the provenance walk cannot catch it, because the quote
+  is genuine and attached to the wrong charge. `dated_charge.py` and
+  `condition_list.py` each already carry a test proving two same-shape items
+  in one section keep their own local context; `credit.py` has neither the
+  test nor the discipline.
+- `SourceEntry.path()` joins a manifest filename onto the sources root with
+  nothing keeping the result under that root, and `sources` now reads and
+  hashes every present document's full bytes on every invocation even though
+  the manifest already records the size that would settle a mismatch without
+  reading anything (issue #16).
+
+**Depends on.** Nothing.
+
+**Done when.** Each fix has a test that fails against the tree as it stands
+and passes after, `tests/golden/` is byte for byte unchanged, and the
+`coverage` figures for all seven documents are unmoved. This phase is about
+values already published being right, not about publishing more of them.
+
+### Phase 2: Coverage as a checked output, not a written claim
+
+**Delivers.** The README says coverage is "a published output, not an implicit
+claim", and it is: the parser computes it. But the table in the README is
+typed by hand, so the claim and the measurement can drift apart silently, and
+the only thing standing between them is whoever remembers to rerun
+`make coverage-real`.
+
+- `coverage --json`, emitting the figures already sitting on `parsed.coverage`
+  and `parsed.unparsed` rather than the prose report, so a script, a CI step
+  or a coverage-over-time record can read them (issue #10). `--min-coverage`
+  gates identically either way. This is a formatting change, not a new
+  computation.
+- A `realdoc`-marked test that reads the README's own table and asserts every
+  figure in it equals what the parser reports for that document. It skips
+  where the pinned documents are absent, exactly as the existing realdoc spot
+  checks do, and fails where a figure in the README does not match the tool.
+
+**Depends on.** Nothing. It comes second because every later phase claims a
+coverage movement, and a claim is worth more when a test binds it to the
+measurement.
+
+**Done when.** `coverage --json` parses as JSON carrying the same numbers the
+text report prints, editing any figure in the README's table fails the suite
+where the documents are present, and the table's figures are unchanged,
+because this phase reads no new content.
+
+### Phase 3: The contribution surface
+
+**Delivers.** `CONTRIBUTING.md` states precisely what a good report of a wrong
+value contains and precisely what a pull request has to have done. Neither is
+visible from the screen where someone actually files one.
+
+- `.github/ISSUE_TEMPLATE/`: a wrong-or-uncited-value report prompting for the
+  manifest id, page and section, the emitted JSON and the document's actual
+  text; an unread-shape report pointing at the rule that a recognizer refuses
+  rather than guesses; and a `config.yml` routing anything with a security
+  dimension to `SECURITY.md` (issue #11).
+- `.github/PULL_REQUEST_TEMPLATE.md`: the checklist `CONTRIBUTING.md` already
+  states, including that a golden diff was read price by price and that a new
+  refusal has a test proving the refusal (issue #12).
+
+**Depends on.** Nothing.
+
+**Done when.** The templates parse as the GitHub form schemas they claim to
+be, every prompt in them traces to a sentence already in `CONTRIBUTING.md`,
+and no source file changed.
+
+### Phase 4: A column that names itself
+
+This is the largest single piece of unread content in the project, and the
+first of the three shape refusals the README lists under "What is still
+refused on the second publisher".
+
+**Delivers.** Today a page that sets amounts in more than one column is
+refused whole: `_page_has_one_amount_column` in `sheet_rates.py` reads nothing
+from such a page, because "a block that has no column headings of its own
+cannot" say which column an amount sits under. That reasoning is right, and it
+is about a block that has no column headings. Some blocks have them. The
+second publisher's unbundling sheets head their table with the columns' own
+names on the heading line:
+
+```
+Energy Rates by Component ($ per kWh)          PEAK      OFF-PEAK
+Generation:
+   Summer (all usage)                       $0.20782    $0.10482
+   Winter (all usage)                       $0.13710    $0.11042
+```
+
+Where the document names its columns, which column an amount sits under is
+read off the page the way ADR 0004 requires, from the heading words set over
+it. The machinery exists: `Column`, `columns_from` and `assign` in
+`recognizers/base.py`, and `dated_charge.py` already carries exactly this
+reading for a commercial sheet that prices one charge across three service
+voltage levels, putting the column's own heading in the charge's `applies_to`
+field. Phase 4 gives `sheet_rates.py` the same reading, on the same field, for
+a block whose heading line names its columns.
+
+The refusals narrow rather than disappear, and the narrowing is the design:
+
+- A block whose heading names no columns is refused on a multi-column page,
+  exactly as now.
+- A row is committed whole or not at all. It carries one cell per named
+  column, each aligned with exactly one of them, or it is refused. A row
+  carrying fewer amounts than the table has columns is refused, because a
+  single price on a two column row may be either column's or the whole row's
+  and the page does not say which. That refusal is load-bearing: it is what
+  keeps `Transmission* (all usage) $0.04638` from being published as a peak
+  rate.
+- A cell the publisher marked with dashes stays unread, but stops refusing the
+  row that carries it. Under a named column a dash says which column has no
+  price for that row, which is the fact the second README refusal says the
+  page could not state.
+
+**Depends on.** Phase 2, for the test that binds the coverage claim to the
+measurement.
+
+**Done when.** ADR 0012 records the decision and its fences; `pge-e-tou-c`
+gains the unbundling sheets' priced rows with `applies_to` naming the column
+each was read from; a synthetic fixture proves a row that does not line up one
+to one with the named columns is refused, and proves a block whose heading
+names no columns is still refused on a multi-column page; `tests/golden/` is
+byte for byte unchanged; and the README's table and its refusal list say what
+became true.
+
+### Phase 5: A column heading standing over a whole table
+
+**Delivers.** The same publisher's other rate sheets name their columns once,
+on a header line over a table whose blocks each state their own unit
+underneath:
+
+```
+Total Bundled Time-of-Use Rates              B-1 Rates    B1-ST Rates
+Total Customer Charge Rates
+   Customer Charge Single-phase               $0.32854      $0.32854
+Total TOU Energy Rates ($ per kWh)
+   Peak Summer                                $0.47087      $0.49377
+   Partial-Peak Winter (for B1-ST only)            ---      $0.36632
+```
+
+Phase 4 reads a block whose own heading line names its columns. This phase
+reads a header line that names them for several blocks below it, which needs
+one thing Phase 4 does not: a rule for how far such a header reaches, derived
+from the page rather than assumed. A header whose reach cannot be established
+names nothing, and its table is refused.
+
+**Depends on.** Phase 4, whose column reading and one-cell-per-column refusal
+this reuses.
+
+**Done when.** ADR 0013 records the reach rule and what refuses under it;
+`pge-b-1`'s rate sheets emit their priced rows with `applies_to` naming the
+rate option; a fixture proves a header line whose reach is ambiguous refuses
+its table rather than attributing across it; `tests/golden/` is byte for byte
+unchanged; README updated.
+
+### Phase 6: A unit stated over a table rather than beside a block
+
+**Delivers.** The third shape refusal in the README's list: "a block whose
+heading states no unit, because a number with no unit says nothing about what
+it prices". That refusal is sound as written, and there is a case it currently
+catches that it should not, because the unit is stated, over the table rather
+than on the block:
+
+```
+Base Services Charge Rates by Component ($ per
+customer per day)
+   Distribution
+      Income Tier 1                            ($0.10751)
+      Income Tier 2                            ($0.02710)
+```
+
+Two things stand between that unit and the rows it prices. The publisher's own
+parenthesis is broken across a line ending, so `TRAILING_UNIT_RE` sees no unit
+on either line; and a component sub-heading sits between the heading and its
+rows, so the block the rows open is headed by a line that states nothing.
+Whether either can be read without guessing is the phase's question, and the
+answer may be no: the reach of a unit over intervening headings is exactly the
+kind of thing a page can leave unstated.
+
+**Depends on.** Phase 4 and Phase 5, whose reach reasoning this either reuses
+or contradicts.
+
+**Done when.** Either the shape is read and the component tables are gained,
+with a fixture proving a sub-heading that separates a unit from its rows by
+more than the rule allows is refused; or an ADR records why the unit's reach
+cannot be established from the page, with a test asserting the refusal. Both
+outcomes close this phase. Only silence does not.
+
+### Phase 7: The second publisher's identity
+
+**Delivers.** The last item in the README's refusal list is "the identity
+fields, the cross-reference wording and the credit form", each "a statement
+about how one publisher writes, not a thing a document cannot state about
+itself, so none of them belongs in a profile. Closing them means finding the
+shape, not adding a field."
+
+The identity half is measurable today: parse any of the three PG&E schedules
+and `identity` comes back with `schedule_code`, `title`, `resolution`,
+`adopted` and `effective` all null, and only `sheets` populated. The document
+states some of those plainly in its own furniture, and prints beside every
+sheet number the number that sheet cancels.
+
+This phase reads what the furniture states and stops there. A field the second
+publisher does not print stays null, because a null is a true statement about
+a document that does not carry the field, and a borrowed value is not.
+
+**Depends on.** Nothing in Phases 4 to 6, though it comes after them because
+they move more.
+
+**Done when.** The identity fields the PG&E furniture states are read and
+cited, the ones it does not are still null, a fixture proves a document that
+prints neither publisher's shape still parses with a null identity rather than
+a guessed one, `tests/golden/` is byte for byte unchanged, and an ADR records
+which fields were found to be unstated rather than merely unread.
+
+### Phase 8: Release and distribution
+
+**Delivers.** The README's Standards Conformance table says Release and
+Versioning applies, "SemVer with a signed-tag release workflow that separates
+verification from publication". `.github/workflows/release.yml` implements it
+and has never run: there is no tag and no release. Installation is
+clone-and-`make install`.
+
+The work is a signed annotated tag verified against
+`.github/allowed_signers`, the release workflow's first real end-to-end run,
+and a decision about whether this belongs on a package index at all.
+
+**Blocked, and on whom.** Signing a tag needs the owner's key, and publishing
+under a name on an index is the owner's decision about a name only the owner
+can hold. Neither is delegable to a contributor, and neither should be worked
+around. This phase stays open, and stays honestly described as blocked, until
+the owner does the two things only the owner can do.
+
+**Depends on.** Phases 1 to 3 at minimum, since a release should carry the
+correctness fixes.
+
+**Done when.** `v0.1.0` exists as a signed annotated tag, the release workflow
+has run green from it, and the README's install section describes whatever
+distribution the owner chose, including "clone it" if that is the answer.
+
+### Sequencing
+
+| Order | Phase | Depends on | Moves |
+| --- | --- | --- | --- |
+| 1 | The values already published | nothing | no figure; two wrong outputs |
+| 2 | Coverage as a checked output | nothing | no figure; binds the claim |
+| 3 | The contribution surface | nothing | no figure |
+| 4 | A column that names itself | 2 | `pge-e-tou-c`, `pge-b-1` |
+| 5 | A column heading over a table | 4 | `pge-b-1` |
+| 6 | A unit stated over a table | 4, 5 | the component tables, or a refusal |
+| 7 | The second publisher's identity | nothing | identity fields, no coverage figure |
+| 8 | Release and distribution | 1 to 3 | nothing in the parser; blocked on the owner |
+
+Phases 1 to 3 are independent of each other and of everything after them.
+Phases 4 to 6 are one line of work cut into three, and each one's refusals are
+what make the next one safe. Phase 7 could be done at any point and is placed
+last among the reading phases because it moves the least.
+
+### Not in this plan
+
+Stated so that the plan's silence is not read as an omission.
+
+- **A third publisher.** ADR 0005 designed the document profile so that a
+  second publisher would not become a second special case, and a third would
+  test that. It is not planned here because the second publisher is not
+  finished: three of its schedules are pinned and most of two of them is still
+  unread. Adding a third document before then would widen the surface rather
+  than the understanding.
+- **Anything reached by fetching.** The manifest pins seven documents by
+  digest. Adding to it is a deliberate act with a retrieval date and a
+  publisher's `robots.txt` behind it, not something a phase assumes.
+- **The refusals under *Decided against*.** They are decisions. See ADR 0011.
+
 ## Done
 
 These were the largest items on this roadmap. Each is described where it
