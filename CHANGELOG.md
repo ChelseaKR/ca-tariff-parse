@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A page that names its columns is now read across them. `sheet_rates.py`
+  refused any page setting amounts in more than one column, because a block
+  with no column headings cannot say which column its amount belongs to. Where
+  the page prints the names over the amounts, it can: the names are read off
+  the page the way every other column reading here is, and each price carries
+  the column's own name in `applies_to`, cited to the line that names it. See
+  ADR 0012. `pge-b-1` goes from 104 of 477 content lines to 113, and from 18
+  charges to 31; the four SMUD schedules are byte for byte unchanged.
+- On such a page, a cell the publisher marked with a run of dashes is read as
+  that column carrying no price for that row, rather than as a reason to refuse
+  the row. It still emits nothing itself.
 - `coverage --json`, writing the same figures as JSON instead of the text
   report, for a CI step gating one document or a script tracking coverage over
   time. Every value is selected out of `parse`'s own payload rather than
@@ -61,6 +72,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   quotation. `pge-tariff-book` names the six letters observed across its
   three schedules (`R`, `N`, `I`, `D`, `L`, `T`); the default names none. See
   ADR 0010.
+
+### Changed
+
+- The multi-column refusal is now per row rather than per page. A row that does
+  not fill every column its table names is refused, because its single price
+  may be one column's or the whole row's and the page does not say which; a
+  page that names no columns is refused whole, exactly as before. The rows this
+  keeps unread are named in ADR 0012.
 
 ### Fixed
 

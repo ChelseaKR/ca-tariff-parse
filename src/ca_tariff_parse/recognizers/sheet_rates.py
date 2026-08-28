@@ -26,10 +26,13 @@ What this refuses is most of what it sees, on purpose.
 * **A block with no heading stating its unit.** A run of prices under
   "Conservation Incentive Adjustment:" says nothing about what it is a price
   per, and the heading two blocks above may be for another unit entirely.
-* **A page setting amounts in more than one column.** A row carrying one amount
-  in a two column table has to say which column it sits under, and a block that
-  has no column headings of its own cannot. This is the ADR 0004 standby charge
-  again: three prices on one row, one of them published as the whole.
+* **A page setting amounts in more than one column and naming none of them.**
+  A row carrying one amount in a two column table has to say which column it
+  sits under, and a page that sets no words over its columns cannot. This is
+  the ADR 0004 standby charge again: three prices on one row, one of them
+  published as the whole. Where the page does name them, the names are read
+  off it and each amount is attributed to the column it sits under; see
+  ADR 0012, and the refusals that come with it below.
 * **A row dating itself.** "Effective May 1, 2025 $8.597" is a dated row and
   belongs to the dated-charge shape. Read here it would be labelled with its
   own date and then dated a second time from the footer.
@@ -42,6 +45,26 @@ The right margin is not the value area. These sheets flag a changed line there
 with a bracketed capital and a change bar, so the tokens right of the amount
 are neither read nor treated as cells; they are checked to be sure none of them
 is a price, and the row is refused if any is.
+
+On a page that names its columns, a row is read across them, and what it
+refuses is the point of it::
+
+    Total Bundled Time-of-Use Rates          B-1 Rates    B1-ST Rates
+    Total TOU Energy Rates ($ per kWh)
+        Peak Summer                           $0.47087       $0.49377
+        Partial-Peak Winter (for B1-ST only)       ---       $0.36632
+
+* A row carries one cell per named column, each sitting under exactly one of
+  them, or it is refused whole. A row holding fewer cells than the table has
+  columns is refused, because its single price may be one column's or the whole
+  row's and the page does not say which.
+* A cell the publisher marked with dashes is read as that column having no
+  price for that row, rather than as a reason to refuse the row. It emits
+  nothing itself; a row of nothing but dashes prices nothing and is refused.
+* The filing markers a regulated publisher sets beside a changed cell are
+  skipped inside the value area for the same reason they are skipped at the end
+  of it, and under the same rule (ADR 0010). They are not cells and are never
+  read as prices.
 """
 
 from __future__ import annotations
@@ -58,7 +81,10 @@ from .base import (
     ENERGY_UNITS,
     LABEL_MARGIN,
     Citer,
+    Column,
     Emission,
+    assign,
+    columns_from,
     read_amount,
     unit_tail,
 )
@@ -81,6 +107,10 @@ UNPRICED_CELL_RE = re.compile(r"\A(?:n/a|na|-{2,}|\u2014+|\u2013+)\Z", re.IGNORE
 #: Fewest priced rows a heading must be followed by before this shape is
 #: claimed. One priced line under a heading is as likely to be a sentence.
 MINIMUM_ROWS = 2
+#: Fewest columns a line has to set words over before it is read as naming a
+#: table's columns. One is a heading over a single column of amounts, which
+#: this module already reads without needing anything named.
+MINIMUM_NAMED_COLUMNS = 2
 
 
 def _without_margin(words: tuple[Word, ...]) -> list[Word]:
@@ -260,6 +290,157 @@ def _blocks(lines: list[Line], profile: DocumentProfile) -> list[tuple[_Heading,
     return found
 
 
+#: One cell of a row read across named columns: the column it sits under, the
+#: amount it states, and the word it was read from. ``amount`` is ``None`` for
+#: a cell the publisher marked as carrying no price.
+@dataclass(frozen=True, slots=True)
+class _Cell:
+    column: Column
+    amount: str | None
+    word: Word
+
+
+@dataclass(frozen=True, slots=True)
+class _WideRow:
+    """One row of a table whose columns the page names."""
+
+    line: Line
+    label: str
+    cells: tuple[_Cell, ...]
+    label_words: tuple[Word, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class _Naming:
+    """The line a page sets its column names on, and the columns it names."""
+
+    line: Line
+    columns: tuple[Column, ...]
+
+
+def _cell_kind(word: Word, profile: DocumentProfile) -> str | None:
+    """What a word is inside a row's value area, or ``None`` if it is not in one.
+
+    The unpriced cell is tested before the filing marker because a run of
+    dashes matches both, and it is a cell: it says this column has no price for
+    this row, which is a fact the publisher printed.
+    """
+    if read_amount(word.text, profile) is not None:
+        return "amount"
+    if UNPRICED_CELL_RE.match(word.text):
+        return "unpriced"
+    if MARGIN_TOKEN_RE.match(word.text):
+        return "marker"
+    return None
+
+
+def _naming_line(lines: list[Line], profile: DocumentProfile) -> _Naming | None:
+    """The first line on this page that sets words over the amounts below it.
+
+    A table names its columns by printing their names above them, so the line
+    that names them is the one whose words sit over the amounts. Which words
+    those are is read off the page: a group of the line is a column name when
+    an amount on the page sits closer to it than to any other group, and within
+    the tolerance every other column reading here uses.
+
+    A line carrying an amount itself is never a naming line: it is a row of some
+    table rather than a heading over one. The first such line wins, because a
+    table's own header is the nearest thing above its rows that sits over its
+    columns, and a page that sets two of them names its columns twice and is
+    left alone rather than guessed at.
+    """
+    amounts = [
+        word for line in lines for word in line.words if read_amount(word.text, profile) is not None
+    ]
+    if not amounts:
+        return None
+    for line in lines:
+        if _priced(line, profile):
+            continue
+        groups = columns_from(line.words)
+        if len(groups) < MINIMUM_NAMED_COLUMNS:
+            continue
+        named = [
+            group for group in groups if any(assign(word, groups) is group for word in amounts)
+        ]
+        if len(named) >= MINIMUM_NAMED_COLUMNS:
+            return _Naming(line=line, columns=tuple(named))
+    return None
+
+
+def _read_wide_row(
+    line: Line, profile: DocumentProfile, columns: tuple[Column, ...]
+) -> _WideRow | None:
+    """Read a row of ``label`` and one cell per named column, or refuse it.
+
+    Everything this returns ``None`` for is a row that could otherwise be
+    published with a price under a heading the publisher did not put it under.
+    """
+    words = list(line.words)
+    at = len(words)
+    while at > 0 and _cell_kind(words[at - 1], profile) is not None:
+        at -= 1
+    label_words = words[:at]
+    values = [word for word in words[at:] if _cell_kind(word, profile) != "marker"]
+    if not label_words or len(values) != len(columns):
+        # Fewer cells than the table has columns: this row's price could be one
+        # column's or the whole row's, and the page does not say which.
+        return None
+    cells: list[_Cell] = []
+    for word, column in zip(values, columns, strict=True):
+        if assign(word, columns) is not column:
+            # A cell that does not sit under the column its position in the row
+            # would give it. Reading it anyway is attribution by counting.
+            return None
+        cells.append(_Cell(column=column, amount=read_amount(word.text, profile), word=word))
+    if not any(cell.amount is not None for cell in cells):
+        # Every column marked as carrying no price. There is nothing to emit,
+        # and the line is left for the unparsed report.
+        return None
+    boundary = min(cell.word.x0 for cell in cells) - LABEL_MARGIN
+    if any(word.x1 > boundary for word in label_words):
+        return None
+    label = normalize(" ".join(word.text for word in label_words))
+    if not label or DATED_ROW_RE.match(label):
+        return None
+    return _WideRow(
+        line=line,
+        label=label,
+        cells=tuple(cells),
+        label_words=tuple(label_words),
+    )
+
+
+def _wide_blocks(
+    lines: list[Line], profile: DocumentProfile, columns: tuple[Column, ...]
+) -> list[tuple[_Heading, list[_WideRow]]]:
+    """Cut a page of one section into heading-and-rows blocks, read across columns.
+
+    The same cut as :func:`_blocks`, over rows that carry one cell per named
+    column instead of one amount.
+    """
+    found: list[tuple[_Heading, list[_WideRow]]] = []
+    position = 0
+    while position < len(lines):
+        row = _read_wide_row(lines[position], profile, columns)
+        if row is None:
+            position += 1
+            continue
+        start = position
+        rows = [row]
+        position += 1
+        while position < len(lines):
+            following = _read_wide_row(lines[position], profile, columns)
+            if following is None:
+                break
+            rows.append(following)
+            position += 1
+        heading = _read_heading(lines, start, profile)
+        if heading is not None and len(rows) >= MINIMUM_ROWS:
+            found.append((heading, rows))
+    return found
+
+
 def _by_page(section: Section) -> list[list[Line]]:
     """The section's content lines, split at every page break.
 
@@ -283,8 +464,29 @@ def _candidates(section: Section, profile: DocumentProfile) -> list[tuple[_Headi
     ]
 
 
+def _wide_candidates(
+    section: Section, profile: DocumentProfile
+) -> list[tuple[_Naming, _Heading, list[_WideRow]]]:
+    """The blocks on pages that set amounts in more than one column and name them.
+
+    A page setting them in one column is left to :func:`_candidates`, whose
+    reading of it does not change: there is nothing there for a column name to
+    settle. A page setting them in several and naming none is read by neither.
+    """
+    found: list[tuple[_Naming, _Heading, list[_WideRow]]] = []
+    for lines in _by_page(section):
+        if _page_has_one_amount_column(lines, profile):
+            continue
+        naming = _naming_line(lines, profile)
+        if naming is None:
+            continue
+        for heading, rows in _wide_blocks(lines, profile, naming.columns):
+            found.append((naming, heading, rows))
+    return found
+
+
 def claims(section: Section, profile: DocumentProfile) -> bool:
-    return bool(_candidates(section, profile))
+    return bool(_candidates(section, profile)) or bool(_wide_candidates(section, profile))
 
 
 def parse(
@@ -322,4 +524,38 @@ def parse(
             )
             emission.take(row.line)
         emission.take(*heading.lines)
+
+    for naming, heading, wide_rows in _wide_candidates(section, profile):
+        effective = effective_by_page.get(wide_rows[0].line.page)
+        if effective is None:
+            continue
+        label = citer.text(heading.label, section.section_id, heading.label_text)
+        unit = citer.text(heading.label, section.section_id, heading.unit)
+        kind = "energy_usage" if squash(heading.unit) in ENERGY_UNITS else "fixed_charge"
+        for wide_row in wide_rows:
+            for cell in wide_row.cells:
+                if cell.amount is None:
+                    # The publisher marked this column as carrying no price for
+                    # this row, which is a fact about the row rather than a
+                    # price to publish.
+                    continue
+                emission.charges.append(
+                    Charge(
+                        label=citer.text(wide_row.line, section.section_id, wide_row.label),
+                        kind=kind,
+                        price=Money(
+                            amount=Cited(
+                                value=cell.amount,
+                                provenance=citer.cite(wide_row.line, section.section_id),
+                            ),
+                            currency="USD",
+                            unit=unit,
+                        ),
+                        effective_from=effective,
+                        applies_to=citer.text(naming.line, section.section_id, cell.column.label),
+                        group=label,
+                    )
+                )
+            emission.take(wide_row.line)
+        emission.take(naming.line, *heading.lines)
     return emission

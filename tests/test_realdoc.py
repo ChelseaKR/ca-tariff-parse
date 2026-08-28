@@ -265,16 +265,50 @@ def test_the_sheets_of_one_schedule_are_dated_one_by_one() -> None:
     assert by_page[2] == "March 1, 2026"
 
 
-def test_a_two_column_sheet_yields_no_price_at_all() -> None:
-    """B-1 prices two rate options side by side and names neither in the block.
+def test_a_two_column_sheet_prices_the_rows_that_fill_both_columns() -> None:
+    """B-1 prices two rate options side by side and names them over the table.
 
-    Every price on those sheets is refused rather than attributed to a column
-    the block does not state. The eighteen it does emit all come from the
-    single column table on the billing sheet.
+    A row carrying one cell per named column is read across them, and every
+    price says which column it came from. A row carrying fewer is still
+    refused: its single amount may be one column's or the whole row's, and the
+    page does not say which. That is what keeps the PDP tables further down the
+    same sheet, which price one amount under a two column table, unread.
     """
     parsed = _parse("pge-b-1", "ELEC_SCHEDS_B-1.pdf")
-    assert {charge.price.amount.provenance.page for charge in parsed.charges} == {6}
-    assert all(charge.price.unit.value == "per kWh" for charge in parsed.charges)
+    wide = [charge for charge in parsed.charges if charge.applies_to is not None]
+    assert {charge.price.amount.provenance.page for charge in wide} == {3}
+    assert {charge.applies_to.value for charge in wide if charge.applies_to} == {
+        "B-1 Rates",
+        "B1-ST Rates",
+    }
+    assert {charge.group.value for charge in wide if charge.group} == {"Total TOU Energy Rates"}
+
+    # The single column table on the billing sheet reads exactly as before.
+    single = [charge for charge in parsed.charges if charge.applies_to is None]
+    assert {charge.price.amount.provenance.page for charge in single} == {6}
+    assert all(charge.price.unit.value == "per kWh" for charge in single)
+
+    # Still refused on the same sheet: a row with one amount under two columns.
+    assert "All Usage During PDP Event" not in {charge.label.value for charge in parsed.charges}
+
+
+def test_a_row_whose_column_carries_no_price_prices_only_the_other() -> None:
+    """B-1's winter partial-peak rate is published for one rate option only.
+
+    The publisher marks the other column with dashes. Reading that row as
+    though its single amount were the whole row would price a rate option the
+    sheet does not price at all.
+    """
+    parsed = _parse("pge-b-1", "ELEC_SCHEDS_B-1.pdf")
+    partial = [
+        charge
+        for charge in parsed.charges
+        if charge.label.value == "Partial-Peak Winter (for B1-ST only)"
+    ]
+    assert [
+        (charge.price.amount.value, charge.applies_to.value if charge.applies_to else None)
+        for charge in partial
+    ] == [("0.36632", "B1-ST Rates")]
 
 
 def test_no_citation_names_a_sheet_the_publisher_cancelled() -> None:
