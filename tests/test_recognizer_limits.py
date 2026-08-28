@@ -606,3 +606,141 @@ def test_a_named_column_price_cites_the_line_that_named_it() -> None:
     assert "Alpha Rates" in charge.applies_to.provenance.snippet
     # Cited to the line that names the columns, not to the row it prices.
     assert charge.applies_to.provenance.line != charge.price.amount.provenance.line
+
+
+#: A table that states its unit once and then names each component of it on a
+#: line of its own, the way both publishers set an unbundling sheet. The unit
+#: heading is set left of the component names, and they are set left of the
+#: rows they group; that nesting is the whole of what says which rows a unit
+#: reaches. Synthetic throughout.
+COMPONENT_TABLE = {
+    5: [(9, "II. Example Rates")],
+    6: [(15, "A. Example Table")],
+    8: [(9, "Example Table Rates"), (45, "Alpha Rates"), (62, "Beta Rates")],
+    9: [(9, "Example Component Rates ($ per kWh)")],
+    10: [(12, "Example First Component:")],
+    11: [(15, "Example Peak Summer"), (47, "$0.1000"), (64, "$0.2000")],
+    12: [(15, "Example Off-Peak Summer"), (47, "$0.3000"), (64, "$0.4000")],
+    13: [(12, "Example Second Component:")],
+    14: [(15, "Example Peak Winter"), (47, "$0.5000"), (64, "$0.6000")],
+    15: [(15, "Example Off-Peak Winter"), (47, "$0.7000"), (64, "$0.8000")],
+}
+
+
+def _components(**changes: list[tuple[int, str]] | None) -> dict[int, list[tuple[int, str]]]:
+    page = {row: list(cells) for row, cells in COMPONENT_TABLE.items()}
+    for key, value in changes.items():
+        row = int(key.removeprefix("row"))
+        if value is None:
+            page.pop(row, None)
+        else:
+            page[row] = value
+    return page
+
+
+def _grouped(parsed) -> list[tuple[str, str, str]]:
+    return [
+        (c.group.value if c.group else "", c.label.value, c.price.amount.value)
+        for c in parsed.charges
+    ]
+
+
+def test_a_unit_reaches_over_the_components_of_its_own_table() -> None:
+    parsed = parse(build(_components()))
+    assert _grouped(parsed) == [
+        ("Example First Component:", "Example Peak Summer", "0.1000"),
+        ("Example First Component:", "Example Peak Summer", "0.2000"),
+        ("Example First Component:", "Example Off-Peak Summer", "0.3000"),
+        ("Example First Component:", "Example Off-Peak Summer", "0.4000"),
+        ("Example Second Component:", "Example Peak Winter", "0.5000"),
+        ("Example Second Component:", "Example Peak Winter", "0.6000"),
+        ("Example Second Component:", "Example Off-Peak Winter", "0.7000"),
+        ("Example Second Component:", "Example Off-Peak Winter", "0.8000"),
+    ]
+    assert {c.price.unit.value for c in parsed.charges} == {"$ per kWh"}
+
+
+def test_the_unit_is_cited_to_the_line_that_states_it() -> None:
+    """Not to the component name, which does not contain the words quoted."""
+    parsed = parse(build(_components()))
+    unit = parsed.charges[0].price.unit
+    assert unit.value == "$ per kWh"
+    assert unit.value in unit.provenance.snippet
+
+
+def test_a_heading_level_with_the_component_names_does_not_reach_them() -> None:
+    """A heading set level with them is their sibling, not their parent."""
+    parsed = parse(build(_components(row9=[(12, "Example Component Rates ($ per kWh)")])))
+    assert parsed.charges == ()
+
+
+def test_a_heading_set_right_of_the_component_names_does_not_reach_them() -> None:
+    parsed = parse(build(_components(row9=[(13, "Example Component Rates ($ per kWh)")])))
+    assert parsed.charges == ()
+
+
+def test_two_lines_that_are_not_rows_end_the_reach() -> None:
+    """One line above a block is its heading. Two are prose, and end the reach."""
+    page = _components(
+        row13=[(12, "Example sentence about the table.")],
+        row14=[(12, "Example Second Component:")],
+        row15=[(15, "Example Peak Winter"), (47, "$0.5000"), (64, "$0.6000")],
+        row16=[(15, "Example Off-Peak Winter"), (47, "$0.7000"), (64, "$0.8000")],
+    )
+    labels = {label for _, label, _ in _grouped(parse(build(page)))}
+    assert "Example Peak Summer" in labels
+    assert "Example Peak Winter" not in labels
+
+
+def test_a_row_outdented_from_the_rows_above_it_leaves_their_component() -> None:
+    """The unbundled components a sheet sets level with the table's own heading.
+
+    Read as part of the block above, every one of them would be published under
+    a component name the publisher gave to something else.
+    """
+    page = _components(
+        row16=[(12, "Example Outdented Row"), (47, "$0.9000"), (64, "$0.9500")],
+        row17=[(12, "Example Second Outdented Row"), (47, "$0.9600"), (64, "$0.9700")],
+    )
+    grouped = _grouped(parse(build(page)))
+    assert "Example Outdented Row" not in {label for _, label, _ in grouped}
+    assert ("Example Second Component:", "Example Off-Peak Winter", "0.7000") in grouped
+
+
+def test_a_component_name_level_with_its_rows_groups_nothing() -> None:
+    """A line set level with the rows below it is not a heading over them."""
+    parsed = parse(build(_components(row10=[(15, "Example First Component:")])))
+    assert "Example Peak Summer" not in {label for _, label, _ in _grouped(parsed)}
+
+
+def test_a_heading_line_carrying_both_the_unit_and_the_column_names() -> None:
+    """One publisher heads an unbundling sheet this way, on a single line.
+
+    The words naming the columns are not part of the heading's own text. Read
+    as though they were, the unit comes out as "$ per kWh) Alpha Rates Beta
+    Rates" or not at all.
+    """
+    page = {
+        5: [(9, "II. Example Rates")],
+        6: [(15, "A. Example Table")],
+        8: [
+            (9, "Example Component Rates ($ per kWh)"),
+            (47, "Alpha Rates"),
+            (64, "Beta Rates"),
+        ],
+        9: [(12, "Example First Component:")],
+        10: [(15, "Example Peak Summer"), (47, "$0.1000"), (64, "$0.2000")],
+        11: [(15, "Example Off-Peak Summer"), (47, "$0.3000"), (64, "$0.4000")],
+    }
+    parsed = parse(build(page))
+    assert _grouped(parsed) == [
+        ("Example First Component:", "Example Peak Summer", "0.1000"),
+        ("Example First Component:", "Example Peak Summer", "0.2000"),
+        ("Example First Component:", "Example Off-Peak Summer", "0.3000"),
+        ("Example First Component:", "Example Off-Peak Summer", "0.4000"),
+    ]
+    assert {c.price.unit.value for c in parsed.charges} == {"$ per kWh"}
+    assert {c.applies_to.value for c in parsed.charges if c.applies_to} == {
+        "Alpha Rates",
+        "Beta Rates",
+    }

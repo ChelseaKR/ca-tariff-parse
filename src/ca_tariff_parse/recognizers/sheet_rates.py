@@ -70,6 +70,7 @@ refuses is the point of it::
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from ..extract import Line, Word, normalize, squash
@@ -140,6 +141,17 @@ class _Heading:
     label_text: str
     unit: str
     lines: tuple[Line, ...]
+    unit_line: Line | None = None
+    """The line the unit was read from, when it is not the label's own line.
+
+    A table can head its components with one unit and then name each component
+    on a line of its own, in which case the block's label and its unit are on
+    different lines and the unit has to be cited to the line that states it.
+    """
+
+    @property
+    def unit_source(self) -> Line:
+        return self.unit_line if self.unit_line is not None else self.label
 
 
 def _read_row(line: Line, profile: DocumentProfile) -> _Row | None:
@@ -178,19 +190,33 @@ def _priced(line: Line, profile: DocumentProfile) -> bool:
     return any(read_amount(word.text, profile) is not None for word in line.words)
 
 
-def _heading_text(line: Line, profile: DocumentProfile) -> str | None:
+def _heading_text(
+    line: Line, profile: DocumentProfile, naming: _Naming | None = None
+) -> str | None:
     """A heading line's text, or ``None`` when the line carries a price.
 
     A line holding an amount is a row of some table, not a heading over one.
     Reading one as a heading would label a whole block with another block's
     priced row.
+
+    A page can set its column names on the same line as the heading that states
+    the unit, which is how one of these publishers heads its unbundling sheets.
+    Those words name the columns, not the table, so where this line is the one
+    naming them they are not part of its text: without that, the unit ends up
+    read as "$ per kWh) PEAK OFF-PEAK" or not read at all.
     """
     if _priced(line, profile):
         return None
-    return normalize(" ".join(word.text for word in _without_margin(line.words)))
+    words = _without_margin(line.words)
+    if naming is not None and line is naming.line:
+        edge = min(column.x0 for column in naming.columns)
+        words = [word for word in words if word.x1 <= edge]
+    return normalize(" ".join(word.text for word in words))
 
 
-def _read_heading(lines: list[Line], at: int, profile: DocumentProfile) -> _Heading | None:
+def _read_heading(
+    lines: list[Line], at: int, profile: DocumentProfile, naming: _Naming | None = None
+) -> _Heading | None:
     """Read the heading that opens a block of rows starting at ``lines[at]``.
 
     The heading is the line above, either as "<label> (<unit>)" or as a bare
@@ -200,7 +226,7 @@ def _read_heading(lines: list[Line], at: int, profile: DocumentProfile) -> _Head
     if at == 0:
         return None
     above = lines[at - 1]
-    text = _heading_text(above, profile)
+    text = _heading_text(above, profile, naming)
     if text is None:
         return None
     match = TRAILING_UNIT_RE.search(text)
@@ -215,10 +241,108 @@ def _read_heading(lines: list[Line], at: int, profile: DocumentProfile) -> _Head
     if at < 2:
         return None
     label_line = lines[at - 2]
-    label_text = _heading_text(label_line, profile) or ""
+    label_text = _heading_text(label_line, profile, naming) or ""
     if not label_text or TRAILING_UNIT_RE.search(label_text):
         return None
-    return _Heading(label=label_line, label_text=label_text, unit=unit, lines=(label_line, above))
+    # The unit is stated on ``above`` and the label on the line over it, so the
+    # unit is cited to the line that prints it. Cited to the label's line, the
+    # snippet would not contain the words the citation is for.
+    return _Heading(
+        label=label_line,
+        label_text=label_text,
+        unit=unit,
+        lines=(label_line, above),
+        unit_line=above,
+    )
+
+
+def _is_sub_heading(line: Line, text: str, row_start: float) -> bool:
+    """True when this line heads the rows below it rather than being one of them.
+
+    Read off the indentation the publisher set: a component's name starts left
+    of the rows it groups, which is how the page says the rows are under it. A
+    line starting level with its rows, or right of them, groups nothing.
+    """
+    return bool(text) and bool(line.words) and line.words[0].x0 < row_start
+
+
+def _reaching_heading(
+    lines: list[Line],
+    at: int,
+    profile: DocumentProfile,
+    row_start: float,
+    is_row: Callable[[Line], bool],
+    naming: _Naming | None = None,
+) -> _Heading | None:
+    """The heading of a block whose own line above it states no unit.
+
+    A rate sheet heads a table once, with its unit, and then names each
+    component of it on a line of its own::
+
+        Energy Rates by Component ($ per kWh)          PEAK      OFF-PEAK
+        Generation:
+            Summer (all usage)                      $0.20782    $0.10482
+        Distribution**:
+            Summer (all usage)                      $0.20388    $0.18388
+
+    The unit reaches over the table it heads, and the table is what sits under
+    it: its own rows, and the lines that name the components grouping them.
+    Anything else ends the reach, and the block is refused rather than priced
+    in a unit stated over something else.
+
+    The nearest of those component lines is the block's own label. The unit
+    comes from the first line above that states one, and it has to be set left
+    of every component line it reaches over: a heading level with them is
+    another heading like them rather than one over them, and taking its unit
+    would price a block under a unit stated for a different table.
+    """
+    label_line: Line | None = None
+    label_text = ""
+    passed: list[Line] = []
+    position = at - 1
+    previous_was_heading = False
+    while position >= 0:
+        line = lines[position]
+        text = _heading_text(line, profile, naming)
+        if text is None:
+            # A priced line. It belongs to this table, or the reach ends here.
+            if not is_row(line):
+                return None
+            previous_was_heading = False
+            position -= 1
+            continue
+        match = TRAILING_UNIT_RE.search(text)
+        if match is not None:
+            unit = unit_tail(match.group("unit").strip())
+            stem = text[: match.start()].strip()
+            if unit is None or not stem or label_line is None:
+                return None
+            if line.words and line.words[0].x0 >= min(
+                heading.words[0].x0 for heading in passed if heading.words
+            ):
+                # A heading that groups the component names below it is set
+                # left of them. One set level with them is their sibling, not
+                # their parent, and its unit is a statement about its own rows.
+                return None
+            return _Heading(
+                label=label_line,
+                label_text=label_text,
+                unit=unit,
+                lines=(line, label_line),
+                unit_line=line,
+            )
+        if previous_was_heading or not _is_sub_heading(line, text, row_start):
+            # Two lines running that are neither rows nor a unit heading are
+            # prose or another table's furniture, and a line that does not sit
+            # left of the rows heads nothing. Either way the reach stops rather
+            # than being guessed past.
+            return None
+        if label_line is None:
+            label_line, label_text = line, text
+        passed.append(line)
+        previous_was_heading = True
+        position -= 1
+    return None
 
 
 def _one_amount_column(rows: list[_Row]) -> bool:
@@ -279,7 +403,13 @@ def _blocks(lines: list[Line], profile: DocumentProfile) -> list[tuple[_Heading,
                 break
             rows.append(following)
             position += 1
-        heading = _read_heading(lines, start, profile)
+        heading = _read_heading(lines, start, profile) or _reaching_heading(
+            lines,
+            start,
+            profile,
+            min(row.label_words[0].x0 for row in rows if row.label_words),
+            lambda line: _read_row(line, profile) is not None,
+        )
         if (
             heading is not None
             and len(rows) >= MINIMUM_ROWS
@@ -411,14 +541,22 @@ def _read_wide_row(
     )
 
 
+def _outdented(row: _WideRow, first: _WideRow) -> bool:
+    """True when ``row`` starts left of the first row of its run."""
+    if not row.label_words or not first.label_words:
+        return False
+    return row.label_words[0].x0 < first.label_words[0].x0
+
+
 def _wide_blocks(
-    lines: list[Line], profile: DocumentProfile, columns: tuple[Column, ...]
+    lines: list[Line], profile: DocumentProfile, naming: _Naming
 ) -> list[tuple[_Heading, list[_WideRow]]]:
     """Cut a page of one section into heading-and-rows blocks, read across columns.
 
     The same cut as :func:`_blocks`, over rows that carry one cell per named
     column instead of one amount.
     """
+    columns = naming.columns
     found: list[tuple[_Heading, list[_WideRow]]] = []
     position = 0
     while position < len(lines):
@@ -431,11 +569,23 @@ def _wide_blocks(
         position += 1
         while position < len(lines):
             following = _read_wide_row(lines[position], profile, columns)
-            if following is None:
+            if following is None or _outdented(following, row):
+                # A row set further left than the rows above it is not one of
+                # them. On a table naming its components, that outdent is how
+                # the page leaves one component's rows and starts something
+                # else, and reading them as one block would file every row
+                # under the first component's name.
                 break
             rows.append(following)
             position += 1
-        heading = _read_heading(lines, start, profile)
+        heading = _read_heading(lines, start, profile, naming) or _reaching_heading(
+            lines,
+            start,
+            profile,
+            min(row.label_words[0].x0 for row in rows if row.label_words),
+            lambda line: _read_wide_row(line, profile, columns) is not None,
+            naming,
+        )
         if heading is not None and len(rows) >= MINIMUM_ROWS:
             found.append((heading, rows))
     return found
@@ -480,7 +630,7 @@ def _wide_candidates(
         naming = _naming_line(lines, profile)
         if naming is None:
             continue
-        for heading, rows in _wide_blocks(lines, profile, naming.columns):
+        for heading, rows in _wide_blocks(lines, profile, naming):
             found.append((naming, heading, rows))
     return found
 
@@ -503,7 +653,7 @@ def parse(
             # is nothing to date these prices from and none is emitted.
             continue
         label = citer.text(heading.label, section.section_id, heading.label_text)
-        unit = citer.text(heading.label, section.section_id, heading.unit)
+        unit = citer.text(heading.unit_source, section.section_id, heading.unit)
         kind = "energy_usage" if squash(heading.unit) in ENERGY_UNITS else "fixed_charge"
         for row in rows:
             emission.charges.append(
@@ -530,7 +680,7 @@ def parse(
         if effective is None:
             continue
         label = citer.text(heading.label, section.section_id, heading.label_text)
-        unit = citer.text(heading.label, section.section_id, heading.unit)
+        unit = citer.text(heading.unit_source, section.section_id, heading.unit)
         kind = "energy_usage" if squash(heading.unit) in ENERGY_UNITS else "fixed_charge"
         for wide_row in wide_rows:
             for cell in wide_row.cells:

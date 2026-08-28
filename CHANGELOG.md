@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A unit stated over a table now reaches the components of that table. Both
+  publishers' unbundling sheets state the unit once and then name each
+  component on a line of its own, so the line above each block of rows states
+  no unit and every block was refused. The reach is fenced by the indentation
+  the page itself sets, and stops at prose, at a heading level with the
+  component names, and at a row set further left than the rows above it. See
+  ADR 0013. `pge-b-1` goes from 113 of 477 content lines to 131 and from 31
+  charges to 57; `pge-e-tou-c` from 18 of 346 to 25 and from 3 charges to 11.
+- A test asserting that every cited value appears on the line its citation
+  names, across all seven pinned documents, with the one composition in the
+  parser named rather than skipped.
 - A page that names its columns is now read across them. `sheet_rates.py`
   refused any page setting amounts in more than one column, because a block
   with no column headings cannot say which column its amount belongs to. Where
@@ -108,6 +119,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   another length is reported `mismatched` without being read. A file of
   exactly the pinned length is still hashed, because that is what a digest is
   for.
+- A unit read from a line of its own is now cited to that line rather than to
+  the label above it. Thirty nine charges across the three second-publisher
+  documents carried a unit citation whose snippet did not contain the unit,
+  which a reader had no way to check without finding the page by hand.
 - A stray change-bar glyph extracted as a line of its own no longer gets
   swept into a numbered condition item as spurious trailing text; it is
   furniture (see `change_markers` above) and no longer part of any

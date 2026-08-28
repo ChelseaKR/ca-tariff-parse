@@ -131,8 +131,8 @@ a claim made here.
 | CI-TOD1, commercial and industrial time-of-day | SMUD | 142/201 (70.6%) | 85 | 5 | 11 | 3 | 3 |
 | SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 | 0 | 0 |
 | E-1, residential | PG&E | 42/247 (17.0%) | 26 | 0 | 0 | 0 | 0 |
-| E-TOU-C, residential time-of-use | PG&E | 18/346 (5.2%) | 3 | 0 | 0 | 0 | 0 |
-| B-1, small general service | PG&E | 113/477 (23.7%) | 31 | 0 | 0 | 0 | 0 |
+| E-TOU-C, residential time-of-use | PG&E | 25/346 (7.2%) | 11 | 0 | 0 | 0 | 0 |
+| B-1, small general service | PG&E | 131/477 (27.5%) | 57 | 0 | 0 | 0 | 0 |
 
 `make coverage-real` reproduces the table from the fetched documents, and
 `tests/test_published_figures.py` asserts that every figure in it is the one
@@ -209,8 +209,17 @@ Most of it, and each refusal is a case where a value could otherwise be wrong.
   amount between two columns, and the PDP tables, which set one under the first
   of two, unread. A page that names no columns at all is still refused whole,
   exactly as before.
-- **A block whose heading states no unit**, because a number with no unit says
-  nothing about what it prices.
+- **A block whose heading states no unit**, and no heading over it states one
+  either. A table can state its unit once and then name each component of it on
+  a line of its own, and the unit reaches over the components of its own table:
+  its rows, and the lines naming them. It reaches no further. A heading set
+  level with those component names is another heading like them rather than one
+  over them, and a block under it prices nothing.
+- **A row set further left than the rows above it.** Below the components, the
+  same sheets set component rows at the table's own indentation, with the unit
+  heading a whole sub-table above. Read as part of the block above them, every
+  one would be published under a component name the publisher gave to something
+  else. See [ADR 0013](docs/adr/0013-a-unit-reaches-over-the-table-it-heads.md).
 - **The identity fields, the cross-reference wording and the credit form.**
   Each is a statement about how one publisher writes, not a thing a document
   cannot state about itself, so none of them belongs in a profile. Closing them
