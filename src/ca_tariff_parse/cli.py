@@ -21,7 +21,7 @@ from .sources import (
     fetch,
     find,
     load_manifest,
-    safe_digest,
+    local_state,
     verify,
 )
 
@@ -105,19 +105,11 @@ def _cmd_sources(args: argparse.Namespace) -> int:
         sys.stdout.write("no documents registered\n")
         return EXIT_OK
     for entry in entries:
-        local = entry.path(Path(args.dir))
-        if not local.exists():
-            state = "not fetched"
-        else:
-            # A file under the manifest's name is not necessarily the document
-            # the parser was audited against: it may be truncated, replaced by
-            # a publisher revision, hand-edited, or not even a regular file
-            # (a directory, a FIFO). safe_digest() never blocks or raises on
-            # any of that — it just reports no match. verify-source still
-            # raises on this.
-            actual = safe_digest(local)
-            matches = actual is not None and actual.lower() == entry.sha256.lower()
-            state = "present" if matches else "mismatched"
+        # local_state() reports rather than raises: a truncated download, a
+        # publisher revision saved under the old filename, a hand-edited file
+        # or something that is not a regular file at all (a directory, a FIFO)
+        # all read as "mismatched" here. verify-source still raises on them.
+        state = local_state(entry, Path(args.dir))
         sys.stdout.write(
             f"{entry.id:<14} {entry.schedule:<8} {state:<12} {entry.publisher}\n"
             f"{'':<14} {entry.url}\n"

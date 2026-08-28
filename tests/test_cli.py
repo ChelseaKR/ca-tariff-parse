@@ -265,3 +265,73 @@ def test_an_unknown_profile_is_rejected_by_the_command_line(keyword_fixture: Pat
     """A misspelled profile is an error, never a silent fall back to the default."""
     with pytest.raises(SystemExit):
         main(["parse", str(keyword_fixture), "--profile", "no-such-publisher"])
+
+
+def _never_hash(path: Path) -> str | None:
+    raise AssertionError(f"hashed {path} although its size already disagreed")
+
+
+def _refuse_hashing(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Make any digest of a local document fail loudly, wherever it is called from."""
+    import ca_tariff_parse.cli
+    import ca_tariff_parse.sources
+
+    for module in (ca_tariff_parse.cli, ca_tariff_parse.sources):
+        if hasattr(module, "safe_digest"):
+            monkeypatch.setattr(module, "safe_digest", _never_hash)
+
+
+def _one_document_manifest(tmp_path: Path, body: bytes) -> Path:
+    manifest = tmp_path / "sources.toml"
+    manifest.write_text(
+        "[[document]]\n"
+        'id = "doc"\n'
+        'schedule = "R"\n'
+        'title = "Residential"\n'
+        'publisher = "Test Utility"\n'
+        'url = "https://example.com/doc.pdf"\n'
+        'filename = "doc.pdf"\n'
+        f'sha256 = "{hashlib.sha256(body).hexdigest()}"\n'
+        'retrieved_at = "2026-01-01"\n'
+        "pages = 1\n"
+        f"bytes = {len(body)}\n",
+        encoding="utf-8",
+    )
+    return manifest
+
+
+def test_sources_settles_a_size_mismatch_without_hashing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """The manifest pins the length, and a file of another length cannot match.
+
+    Hashing it reads every byte of a document to learn what its size already
+    said, on every listing, for every document present.
+    """
+    manifest = _one_document_manifest(tmp_path, b"rate schedule bytes")
+    directory = tmp_path / "sources"
+    directory.mkdir()
+    (directory / "doc.pdf").write_bytes(b"truncated")
+
+    _refuse_hashing(monkeypatch)
+    assert main(["sources", "--manifest", str(manifest), "--dir", str(directory)]) == EXIT_OK
+    assert "mismatched" in capsys.readouterr().out
+
+
+def test_sources_still_hashes_a_document_of_the_pinned_size(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Control case: the size screens, it never decides.
+
+    A file of exactly the pinned length still has to be read, because two
+    different documents of one length are exactly what a digest is for.
+    """
+    body = b"rate schedule bytes"
+    manifest = _one_document_manifest(tmp_path, body)
+    directory = tmp_path / "sources"
+    directory.mkdir()
+    (directory / "doc.pdf").write_bytes(b"x" * len(body))
+
+    _refuse_hashing(monkeypatch)
+    with pytest.raises(AssertionError, match="hashed"):
+        main(["sources", "--manifest", str(manifest), "--dir", str(directory)])

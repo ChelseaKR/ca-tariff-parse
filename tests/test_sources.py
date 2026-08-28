@@ -14,6 +14,7 @@ from ca_tariff_parse.sources import (
     digest,
     find,
     load_manifest,
+    local_state,
     require_https,
     safe_digest,
     verify,
@@ -123,3 +124,74 @@ def test_fetch_refuses_a_non_https_url(url: str) -> None:
     """A manifest entry must not be able to make the fetcher read a local path."""
     with pytest.raises(SourceError, match="must use https"):
         require_https(url)
+
+
+def _entry(entries, document_id: str, **changes):
+    return dataclasses.replace(find(entries, document_id), **changes)
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["../outside.pdf", "nested/../../outside.pdf", "/etc/hosts"],
+)
+def test_a_filename_that_leaves_the_sources_root_is_refused(
+    entries, tmp_path: Path, filename: str
+) -> None:
+    """A manifest entry names a document inside the sources directory.
+
+    Nothing else is a document this project knows about, and a listing that
+    read one would read a file the manifest has no business naming.
+    """
+    with pytest.raises(SourceError, match="stay inside"):
+        _entry(entries, "smud-r-tod", filename=filename).path(tmp_path)
+
+
+def test_an_ordinary_filename_still_resolves_under_the_root(entries, tmp_path: Path) -> None:
+    """Control case: the refusal above is about leaving the root, not about joining."""
+    assert _entry(entries, "smud-r-tod").path(tmp_path) == tmp_path / "1-R-TOD.pdf"
+
+
+def test_a_size_mismatch_is_reported_without_reading_the_file(
+    entries, tmp_path: Path, monkeypatch
+) -> None:
+    """The manifest already pins the size, and a wrong size settles it.
+
+    Hashing a document that cannot match is work done to learn nothing, and it
+    is done on every listing of every present document.
+    """
+    entry = _entry(entries, "smud-r-tod")
+    (tmp_path / entry.filename).write_bytes(b"%PDF-1.4 truncated")
+
+    def refuse(path: Path) -> str | None:
+        raise AssertionError(f"hashed {path} despite the size already disagreeing")
+
+    monkeypatch.setattr("ca_tariff_parse.sources.safe_digest", refuse)
+    assert local_state(entry, tmp_path) == "mismatched"
+
+
+def test_a_document_of_the_right_size_is_still_hashed(entries, tmp_path: Path) -> None:
+    """Control case: the size check screens, it does not decide.
+
+    A file of exactly the pinned length whose bytes differ is still a
+    mismatch, so the digest has to run whenever the size agrees.
+    """
+    entry = _entry(entries, "smud-r-tod")
+    (tmp_path / entry.filename).write_bytes(b"x" * entry.bytes)
+    assert local_state(entry, tmp_path) == "mismatched"
+
+
+def test_the_pinned_document_reports_present(entries, tmp_path: Path) -> None:
+    """Control case: a real match still reads as present."""
+    body = b"example bytes"
+    entry = _entry(
+        entries,
+        "smud-r-tod",
+        sha256=hashlib.sha256(body).hexdigest(),
+        bytes=len(body),
+    )
+    (tmp_path / entry.filename).write_bytes(body)
+    assert local_state(entry, tmp_path) == "present"
+
+
+def test_an_absent_document_reports_not_fetched(entries, tmp_path: Path) -> None:
+    assert local_state(_entry(entries, "smud-r-tod"), tmp_path) == "not fetched"
