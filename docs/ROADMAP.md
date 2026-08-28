@@ -163,76 +163,91 @@ The refusals narrow rather than disappear, and the narrowing is the design:
 **Depends on.** Phase 2, for the test that binds the coverage claim to the
 measurement.
 
-**Done when.** ADR 0012 records the decision and its fences; `pge-e-tou-c`
-gains the unbundling sheets' priced rows with `applies_to` naming the column
-each was read from; a synthetic fixture proves a row that does not line up one
-to one with the named columns is refused, and proves a block whose heading
-names no columns is still refused on a multi-column page; `tests/golden/` is
-byte for byte unchanged; and the README's table and its refusal list say what
-became true.
+**Done when.** ADR 0012 records the decision and its fences; the rows of a
+table whose columns the page names are read across them, with `applies_to`
+naming the column each was read from; a synthetic fixture proves a row that
+does not line up one to one with the named columns is refused, and proves a
+page that names no columns is still refused whole; `tests/golden/` is byte for
+byte unchanged; and the README's table and its refusal list say what became
+true.
 
-### Phase 5: A column heading standing over a whole table
+**Shipped**, in the pull request that carries this correction's sibling. It
+moved `pge-b-1` from 104 of 477 content lines to 113 and from 18 charges to 31,
+and left the other six documents where they were. The names turned out to sit
+in two different places on the page, on a header line over the table and on the
+block's own heading line, and one mechanism reads both, which is why the phase
+below no longer says what it first said.
 
-**Delivers.** The same publisher's other rate sheets name their columns once,
-on a header line over a table whose blocks each state their own unit
-underneath:
+### Phase 5: A sub-heading between a unit and its rows
+
+**Corrected after Phase 4.** This phase and Phase 6 were first written as two
+places a table's column names can sit: on the block's own heading line, or on a
+header line over several blocks. Reading the three documents line by line
+showed those are one mechanism, a line that sets words over the amounts, and
+Phase 4 shipped both. What actually separates the remaining tables from the one
+Phase 4 reads is different, and it is what these two phases are now about.
+
+**Delivers.** Both publishers' component tables put a sub-heading between the
+heading that states the unit and the rows it prices:
 
 ```
-Total Bundled Time-of-Use Rates              B-1 Rates    B1-ST Rates
-Total Customer Charge Rates
-   Customer Charge Single-phase               $0.32854      $0.32854
-Total TOU Energy Rates ($ per kWh)
-   Peak Summer                                $0.47087      $0.49377
-   Partial-Peak Winter (for B1-ST only)            ---      $0.36632
+Energy Rates by Component ($ per kWh)          PEAK      OFF-PEAK
+Generation:
+   Summer (all usage)                       $0.20782    $0.10482
+Distribution**:
+   Summer (all usage)                       $0.20388    $0.18388
 ```
 
-Phase 4 reads a block whose own heading line names its columns. This phase
-reads a header line that names them for several blocks below it, which needs
-one thing Phase 4 does not: a rule for how far such a header reaches, derived
-from the page rather than assumed. A header whose reach cannot be established
-names nothing, and its table is refused.
+`_read_heading` looks at the line immediately above the first row, finds
+`Generation:`, finds no unit on it, and refuses the block. The unit is stated,
+two lines up, over a sub-heading that names a component rather than a unit.
 
-**Depends on.** Phase 4, whose column reading and one-cell-per-column refusal
-this reuses.
+The question is how far a stated unit reaches, and whether the page settles it.
+A sub-heading that names a component is not a heading that restates a unit, and
+treating every unitless line above a block as transparent would let a unit
+reach across a table it has nothing to do with. Whatever rule lands has to be
+readable off the page, and a reach that cannot be established refuses the block
+as now.
 
-**Done when.** ADR 0013 records the reach rule and what refuses under it;
-`pge-b-1`'s rate sheets emit their priced rows with `applies_to` naming the
-rate option; a fixture proves a header line whose reach is ambiguous refuses
-its table rather than attributing across it; `tests/golden/` is byte for byte
-unchanged; README updated.
+**Depends on.** Phase 4, whose column reading these tables also need: both are
+on pages that name two columns.
 
-### Phase 6: A unit stated over a table rather than beside a block
+**Done when.** Either the shape is read, `pge-b-1` and `pge-e-tou-c` gain their
+component tables, and a fixture proves a unit does not reach a block it is
+separated from by more than the rule allows; or an ADR records why the reach
+cannot be established from the page, with a test asserting the refusal. Both
+outcomes close this phase. `tests/golden/` byte for byte unchanged either way.
 
-**Delivers.** The third shape refusal in the README's list: "a block whose
-heading states no unit, because a number with no unit says nothing about what
-it prices". That refusal is sound as written, and there is a case it currently
-catches that it should not, because the unit is stated, over the table rather
-than on the block:
+### Phase 6: A unit broken across a line ending
+
+**Delivers.** The other thing standing between the second publisher's tables
+and their units is a parenthesis the publisher opened on one line and closed on
+the next:
 
 ```
 Base Services Charge Rates by Component ($ per
 customer per day)
    Distribution
       Income Tier 1                            ($0.10751)
-      Income Tier 2                            ($0.02710)
 ```
 
-Two things stand between that unit and the rows it prices. The publisher's own
-parenthesis is broken across a line ending, so `TRAILING_UNIT_RE` sees no unit
-on either line; and a component sub-heading sits between the heading and its
-rows, so the block the rows open is headed by a line that states nothing.
-Whether either can be read without guessing is the phase's question, and the
-answer may be no: the reach of a unit over intervening headings is exactly the
-kind of thing a page can leave unstated.
+`TRAILING_UNIT_RE` requires the unit's own brackets to open and close on one
+line, so it sees no unit on either. The page states one: the publisher's own
+brackets delimit it, and the line ending falls inside them rather than between
+them. Sheet 3 of `pge-b-1` has the same shape on its demand rate, whose unit
+runs `(per metered kW/month assessed from 2:00 p.m. to 11:00 p.m. only)` across
+two lines.
 
-**Depends on.** Phase 4 and Phase 5, whose reach reasoning this either reuses
-or contradicts.
+Whether joining a heading across a line ending is reading or reconstructing is
+the phase's question. A bracket that opens and never closes settles nothing and
+refuses.
 
-**Done when.** Either the shape is read and the component tables are gained,
-with a fixture proving a sub-heading that separates a unit from its rows by
-more than the rule allows is refused; or an ADR records why the unit's reach
-cannot be established from the page, with a test asserting the refusal. Both
-outcomes close this phase. Only silence does not.
+**Depends on.** Phase 5, since the tables that need this mostly need that too.
+
+**Done when.** Either the shape is read and those blocks gain their units, with
+a fixture proving an unclosed bracket refuses rather than joining to the end of
+the page; or an ADR records why a heading cannot be joined across a line ending
+without inventing what the publisher meant, with a test asserting the refusal.
 
 ### Phase 7: The second publisher's identity
 
@@ -294,8 +309,8 @@ distribution the owner chose, including "clone it" if that is the answer.
 | 2 | Coverage as a checked output | nothing | no figure; binds the claim |
 | 3 | The contribution surface | nothing | no figure |
 | 4 | A column that names itself | 2 | `pge-e-tou-c`, `pge-b-1` |
-| 5 | A column heading over a table | 4 | `pge-b-1` |
-| 6 | A unit stated over a table | 4, 5 | the component tables, or a refusal |
+| 5 | A sub-heading between a unit and its rows | 4 | `pge-b-1`, `pge-e-tou-c` |
+| 6 | A unit broken across a line ending | 5 | `pge-b-1`, `pge-e-tou-c`, or a refusal |
 | 7 | The second publisher's identity | nothing | identity fields, no coverage figure |
 | 8 | Release and distribution | 1 to 3 | nothing in the parser; blocked on the owner |
 
