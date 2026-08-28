@@ -335,6 +335,8 @@ def test_sources_still_hashes_a_document_of_the_pinned_size(
     _refuse_hashing(monkeypatch)
     with pytest.raises(AssertionError, match="hashed"):
         main(["sources", "--manifest", str(manifest), "--dir", str(directory)])
+
+
 def test_coverage_json_reports_the_figures_the_text_report_prints(
     complete_fixture: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:

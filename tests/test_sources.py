@@ -213,6 +213,8 @@ def test_the_pinned_document_reports_present(entries, tmp_path: Path) -> None:
 
 def test_an_absent_document_reports_not_fetched(entries, tmp_path: Path) -> None:
     assert local_state(_entry(entries, "smud-r-tod"), tmp_path) == "not fetched"
+
+
 def test_fetch_refuses_a_path_robots_txt_disallows(entries, tmp_path: Path, monkeypatch) -> None:
     """The README promises retrieval honours robots.txt; ``fetch`` must too.
 
