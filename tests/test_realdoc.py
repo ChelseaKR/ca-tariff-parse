@@ -27,7 +27,7 @@ import pytest
 from ca_tariff_parse.parser import parse_manifest_document
 from ca_tariff_parse.sources import find, load_manifest, verify
 
-from .conftest import GOLDEN, REPO_ROOT, SOURCES
+from .conftest import GOLDEN, REPO_ROOT, SOURCES, cited_value_count, unquoted_values
 
 pytestmark = pytest.mark.realdoc
 
@@ -276,12 +276,18 @@ def test_a_two_column_sheet_prices_the_rows_that_fill_both_columns() -> None:
     """
     parsed = _parse("pge-b-1", "ELEC_SCHEDS_B-1.pdf")
     wide = [charge for charge in parsed.charges if charge.applies_to is not None]
-    assert {charge.price.amount.provenance.page for charge in wide} == {3}
+    assert {charge.price.amount.provenance.page for charge in wide} == {3, 4}
     assert {charge.applies_to.value for charge in wide if charge.applies_to} == {
         "B-1 Rates",
         "B1-ST Rates",
+        "B-1 Rate",
+        "B1-ST Rate",
     }
-    assert {charge.group.value for charge in wide if charge.group} == {"Total TOU Energy Rates"}
+    assert {charge.group.value for charge in wide if charge.group} == {
+        "Total TOU Energy Rates",
+        "Generation:",
+        "Distribution**:",
+    }
 
     # The single column table on the billing sheet reads exactly as before.
     single = [charge for charge in parsed.charges if charge.applies_to is None]
@@ -301,14 +307,20 @@ def test_a_row_whose_column_carries_no_price_prices_only_the_other() -> None:
     """
     parsed = _parse("pge-b-1", "ELEC_SCHEDS_B-1.pdf")
     partial = [
-        charge
-        for charge in parsed.charges
-        if charge.label.value == "Partial-Peak Winter (for B1-ST only)"
+        charge for charge in parsed.charges if charge.label.value.startswith("Partial-Peak Winter")
     ]
     assert [
-        (charge.price.amount.value, charge.applies_to.value if charge.applies_to else None)
+        (
+            charge.price.amount.value,
+            charge.applies_to.value if charge.applies_to else None,
+            charge.group.value if charge.group else None,
+        )
         for charge in partial
-    ] == [("0.36632", "B1-ST Rates")]
+    ] == [
+        ("0.36632", "B1-ST Rates", "Total TOU Energy Rates"),
+        ("0.12812", "B1-ST Rate", "Generation:"),
+        ("0.16787", "B1-ST Rate", "Distribution**:"),
+    ]
 
 
 def test_no_citation_names_a_sheet_the_publisher_cancelled() -> None:
@@ -323,3 +335,79 @@ def test_no_citation_names_a_sheet_the_publisher_cancelled() -> None:
     assert sheets == ["61362-E", "61097-E", "61098-E", "61099-E", "61100-E", "61101-E", "61102-E"]
     assert "61247-E" not in sheets
     assert all(note.provenance.sheet in sheets for note in parsed.notes)
+
+
+@pytest.mark.parametrize(("document_id", "filename"), CASES + SECOND_PUBLISHER_CASES)
+def test_every_cited_value_appears_on_the_line_it_cites(document_id: str, filename: str) -> None:
+    """A citation a reader cannot check is not much of a citation.
+
+    Every value this parser emits carries the document, page, section and line
+    it was read from, and a snippet of that line. When the snippet does not
+    contain the value, either the value was composed rather than quoted or it
+    was quoted from the wrong line, and from the output alone those look the
+    same.
+
+    The one composition in the parser today is a credit's unit: the row prints
+    "-$0.0150/kWh" and the unit is written "$/kWh" from it. It is named here
+    rather than skipped, so a second composition cannot appear quietly.
+    """
+    path = _require(document_id, filename)
+    parsed = parse_manifest_document(find(load_manifest(MANIFEST), document_id), path)
+    if not parsed.charges:
+        pytest.skip(f"{document_id} emits no charges to check")
+
+    unquoted = unquoted_values(parsed)
+    assert [field for field, _, _ in unquoted] == [
+        "price.unit:credit" for field, _, _ in unquoted
+    ], unquoted
+    # The check has to have looked at something: one silent zero here would
+    # make every assertion above vacuous.
+    assert cited_value_count(parsed) >= 4 * len(parsed.charges)
+
+
+def test_a_component_table_prices_each_component_under_its_own_name() -> None:
+    """The unbundling sheets state one unit and then name each component.
+
+    Every row of both components carries the same two labels, so filing them
+    all under the table's own heading would publish four different prices for
+    "Peak Summer" with nothing to tell them apart.
+    """
+    parsed = _parse("pge-e-tou-c", "ELEC_SCHEDS_E-TOU-C.pdf")
+    unbundled = [
+        (
+            charge.group.value if charge.group else None,
+            charge.label.value,
+            charge.price.amount.value,
+            charge.applies_to.value if charge.applies_to else None,
+        )
+        for charge in parsed.charges
+        if charge.price.amount.provenance.page == 3
+    ]
+    assert unbundled == [
+        ("Generation:", "Summer (all usage)", "0.20782", "PEAK"),
+        ("Generation:", "Summer (all usage)", "0.10482", "OFF-PEAK"),
+        ("Generation:", "Winter (all usage)", "0.13710", "PEAK"),
+        ("Generation:", "Winter (all usage)", "0.11042", "OFF-PEAK"),
+        ("Distribution**:", "Summer (all usage)", "0.20388", "PEAK"),
+        ("Distribution**:", "Summer (all usage)", "0.18388", "OFF-PEAK"),
+        ("Distribution**:", "Winter (all usage)", "0.14977", "PEAK"),
+        ("Distribution**:", "Winter (all usage)", "0.14645", "OFF-PEAK"),
+    ]
+    assert {charge.price.unit.value for charge in parsed.charges} == {"$ per kWh", "per kWh"}
+
+
+def test_the_rows_a_component_table_sets_level_with_its_own_heading_stay_unread() -> None:
+    """Below the components, the same sheets set component rows at the table's
+    own indentation, with the unit heading seventeen lines and a whole
+    sub-table above them. Nothing on the page settles whether those rows belong
+    to the component above them or to the table, so they are left unread and
+    reported rather than filed under a component name the publisher did not
+    give them.
+    """
+    parsed = _parse("pge-b-1", "ELEC_SCHEDS_B-1.pdf")
+    labels = {charge.label.value for charge in parsed.charges}
+    assert "Transmission* (all usage)" not in labels
+    assert "Reliability Services* (all usage)" not in labels
+    # Nothing is dropped: what no recognizer claimed is still carried verbatim.
+    reported = " ".join(note.value for note in parsed.notes)
+    assert "Transmission* (all usage)" in reported

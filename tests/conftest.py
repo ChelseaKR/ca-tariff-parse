@@ -46,3 +46,59 @@ def provenance(**overrides: object) -> dict[str, object]:
     }
     base.update(overrides)
     return base
+
+
+#: The cited string fields a charge can carry, beside its price.
+CHARGE_CITED_FIELDS = (
+    "label",
+    "effective_from",
+    "rate_category",
+    "season",
+    "tou_period",
+    "applies_to",
+    "group",
+)
+
+
+def _squash(text: str) -> str:
+    return "".join(text.split())
+
+
+def unquoted_values(parsed: object) -> list[tuple[str, str, str]]:
+    """Every cited value that does not appear on the line its citation names.
+
+    A citation exists so a reader can check a value against the document. One
+    whose snippet does not contain what it cites cannot be checked without
+    finding the page by hand, and a value quoted from the wrong line looks
+    exactly like a value quoted from the right one.
+
+    Returns ``(field, value, snippet)`` for each. The caller decides which are
+    defects: a credit's unit is composed from the row's own "/kWh" tail rather
+    than quoted, and is the one composition in the parser today.
+    """
+    found: list[tuple[str, str, str]] = []
+    for charge in parsed.charges:  # type: ignore[attr-defined]
+        printed = charge.price.amount.value.lstrip("-")
+        amount = charge.price.amount
+        if not any(
+            form in _squash(amount.provenance.snippet)
+            for form in (f"${printed}", f"(${printed})", f"-${printed}")
+        ):
+            found.append(("price.amount", amount.value, amount.provenance.snippet))
+        unit = charge.price.unit
+        if _squash(unit.value) not in _squash(unit.provenance.snippet):
+            found.append((f"price.unit:{charge.kind}", unit.value, unit.provenance.snippet))
+        for name in CHARGE_CITED_FIELDS:
+            cited = getattr(charge, name)
+            if cited is not None and _squash(cited.value) not in _squash(cited.provenance.snippet):
+                found.append((name, cited.value, cited.provenance.snippet))
+    return found
+
+
+def cited_value_count(parsed: object) -> int:
+    """How many cited values :func:`unquoted_values` actually looked at."""
+    total = 0
+    for charge in parsed.charges:  # type: ignore[attr-defined]
+        total += 2  # the amount and its unit
+        total += sum(1 for name in CHARGE_CITED_FIELDS if getattr(charge, name) is not None)
+    return total
