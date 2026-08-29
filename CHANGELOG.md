@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   pinned documents present, every published figure has to be the one the tool
   reports, and every pinned document has to appear in the table. Skips where
   the documents have not been fetched, like the other real-document tests.
+- Issue forms and a pull request template, so that what `CONTRIBUTING.md` asks
+  for is visible on the screen where someone files a report or opens a change.
+  One form for a wrong or uncited value, asking for the four things
+  `CONTRIBUTING.md` names; one for a shape the parser does not read, asking
+  what on the page settles the reading; and a `config.yml` routing anything
+  with a security dimension to `SECURITY.md`. A test asserts the forms are
+  ones GitHub can render, that every contact link points at a file that still
+  exists, and that no checklist box ships already ticked.
 - The billing-proration table on three of the four SMUD schedules, read from
   the table's own ruled border rather than from line order, so a basis cell
   the publisher drew to span more than one circumstance is captured as the

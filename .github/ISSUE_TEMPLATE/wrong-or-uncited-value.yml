@@ -1,0 +1,55 @@
+name: A wrong or uncited value
+description: The parser emitted a number, unit, date or window the document does not state
+labels: ["wrong value"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the most serious kind of bug here. The whole point of the tool
+        is that every value traces to a specific published document, page,
+        section and line, so a value that does not is worse than a gap.
+
+        What makes one of these reports actionable is the document text beside
+        the emitted output. Please do not paste a real tariff document into the
+        issue: the manifest id, the page and the section are enough to find the
+        passage, and quoting the line or two in question is fine.
+  - type: input
+    id: document
+    attributes:
+      label: Document
+      description: The manifest id, or the file if it is not in the manifest.
+      placeholder: pge-b-1
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Page and section
+      description: Where in the document the value was read from.
+      placeholder: p.3, RATES
+    validations:
+      required: true
+  - type: textarea
+    id: emitted
+    attributes:
+      label: What was emitted
+      description: The JSON the parser produced, or the part of it that is wrong.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: published
+    attributes:
+      label: What the document actually says
+      description: The line or lines as the publisher printed them.
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command
+      description: How to reproduce it.
+      placeholder: uv run ca-tariff-parse parse sources/ELEC_SCHEDS_B-1.pdf --id pge-b-1
+      render: shell
+    validations:
+      required: true

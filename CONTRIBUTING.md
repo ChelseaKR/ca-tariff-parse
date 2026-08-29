@@ -89,3 +89,7 @@ affiliation with a utility.
 A wrong or uncited value is the most serious kind of bug here. Please include
 the document, the page and section, what was emitted, and what the document
 actually says. For anything with a security dimension see `SECURITY.md`.
+
+The issue forms ask for exactly that, and there is a second one for a shape
+the parser does not read yet, which asks what on the page settles the reading.
+Opening a pull request loads the checklist above as a template.

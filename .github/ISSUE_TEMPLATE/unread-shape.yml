@@ -1,0 +1,55 @@
+name: A shape the parser does not read
+description: A document states something structured that comes out unparsed
+labels: ["unread shape"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Coverage is a report on what the parser understood, not a target to
+        hit, so this is a request to understand a shape rather than to raise a
+        number. A recognizer that cannot read something with certainty has to
+        emit nothing and let the line surface as unparsed: a guess is never
+        better than a gap, and no regex or tolerance gets widened to make a
+        figure move.
+
+        The useful question is what on the page settles the reading. If the
+        answer is "nothing, but it is usually true", the shape is a refusal
+        rather than a feature, and saying so here is still worth doing.
+  - type: input
+    id: document
+    attributes:
+      label: Document
+      description: The manifest id, or the publisher and schedule if it is not pinned.
+      placeholder: pge-e-tou-c
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Page and section
+      placeholder: p.3, RATES
+    validations:
+      required: true
+  - type: textarea
+    id: shape
+    attributes:
+      label: The shape, as the document sets it
+      description: A few lines, laid out the way the page lays them out.
+    validations:
+      required: true
+  - type: textarea
+    id: settles
+    attributes:
+      label: What on the page settles the reading
+      description: >
+        A heading that states the unit, a column heading over the amount, a
+        ruled border, a footer that dates the sheet. Something the document
+        itself says, rather than a convention a reader knows.
+    validations:
+      required: true
+  - type: textarea
+    id: coverage
+    attributes:
+      label: What coverage reports today
+      description: Output of `ca-tariff-parse coverage <document> --id <id>` for the section.
+      render: text
