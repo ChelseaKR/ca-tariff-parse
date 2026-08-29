@@ -10,8 +10,8 @@ the second publisher's sheets set a heading whose bracket does not fit on one
 line:
 
 ```
-Base Services Charge Rates by Component ($ per
-customer per day)
+Base Services Charge Rates by Component ($ per customer
+per day)
     Distribution
         Income Tier 1                            ($0.10751)
 ```

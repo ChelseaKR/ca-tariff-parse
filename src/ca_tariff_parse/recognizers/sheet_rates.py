@@ -236,8 +236,8 @@ def _heading_at(
     A publisher can open the bracket its unit is written in on one line and
     close it on the next::
 
-        Base Services Charge Rates by Component ($ per
-        customer per day)
+        Base Services Charge Rates by Component ($ per customer
+        per day)
             Distribution
                 Income Tier 1                          ($0.10751)
 
