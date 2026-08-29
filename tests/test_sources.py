@@ -110,7 +110,13 @@ def test_verify_matches_an_uppercase_manifest_sha256(entries, tmp_path: Path) ->
     target = tmp_path / "1-R-TOD.pdf"
     content = b"synthetic document bytes, not the real published PDF"
     target.write_bytes(content)
-    uppercased = dataclasses.replace(entry, sha256=hashlib.sha256(content).hexdigest().upper())
+    uppercased = dataclasses.replace(
+        entry,
+        sha256=hashlib.sha256(content).hexdigest().upper(),
+        # This entry describes the synthetic body above, so it pins that
+        # body's length too. What is under test here is the digest comparison.
+        bytes=len(content),
+    )
     assert verify(uppercased, target) == hashlib.sha256(content).hexdigest()
 
 
@@ -243,7 +249,9 @@ def test_fetch_proceeds_when_robots_txt_allows_the_path(
 ) -> None:
     entry = find(entries, "smud-r-tod")
     payload = b"a stand-in for the published document, not the real bytes"
-    matching = dataclasses.replace(entry, sha256=hashlib.sha256(payload).hexdigest())
+    matching = dataclasses.replace(
+        entry, sha256=hashlib.sha256(payload).hexdigest(), bytes=len(payload)
+    )
 
     def fake_urlopen(request, timeout=None):  # noqa: ARG001
         if request.full_url.endswith("/robots.txt"):
@@ -267,7 +275,9 @@ def test_fetch_proceeds_when_robots_txt_is_unreachable(
     """
     entry = find(entries, "smud-r-tod")
     payload = b"a stand-in for the published document, not the real bytes"
-    matching = dataclasses.replace(entry, sha256=hashlib.sha256(payload).hexdigest())
+    matching = dataclasses.replace(
+        entry, sha256=hashlib.sha256(payload).hexdigest(), bytes=len(payload)
+    )
 
     def fake_urlopen(request, timeout=None):  # noqa: ARG001
         if request.full_url.endswith("/robots.txt"):
@@ -279,3 +289,60 @@ def test_fetch_proceeds_when_robots_txt_is_unreachable(
 
     path = fetch(matching, tmp_path, timeout=5.0)
     assert path.read_bytes() == payload
+
+
+def test_the_listing_and_the_check_never_disagree(entries, tmp_path: Path) -> None:
+    """One document, one verdict, whichever command is asked for it.
+
+    ``sources`` reports a state and ``verify-source`` raises or does not, and
+    they read the same manifest entry against the same file. If one can call a
+    document present while the other calls it a mismatch, the tool contradicts
+    itself and a reader has no way to tell which answer to believe.
+    """
+    body = b"example bytes"
+    good = _entry(
+        entries,
+        "smud-r-tod",
+        sha256=hashlib.sha256(body).hexdigest(),
+        bytes=len(body),
+    )
+    cases = {
+        "pinned": good,
+        # The digest is right and the pinned length is not. Nothing verifies
+        # `bytes` on the way in, so a manifest can be hand edited into this
+        # state and stay in it.
+        "length disagrees": dataclasses.replace(good, bytes=len(body) + 1),
+        "digest disagrees": dataclasses.replace(good, sha256="0" * 64),
+    }
+    for name, entry in cases.items():
+        (tmp_path / entry.filename).write_bytes(body)
+        state = local_state(entry, tmp_path)
+        try:
+            verify(entry, entry.path(tmp_path))
+        except SourceError:
+            checked = "mismatched"
+        else:
+            checked = "present"
+        assert state == checked, (
+            f"{name}: sources reports {state!r} and verify-source reports {checked!r} "
+            "for the same file"
+        )
+
+
+def test_a_document_of_the_wrong_pinned_length_fails_the_check(entries, tmp_path: Path) -> None:
+    """The manifest pins a length as well as a digest, and both are checked.
+
+    ``fetch`` verifies through this function, so a length the manifest states
+    and the download does not have is caught when the document arrives rather
+    than becoming a disagreement between two commands later.
+    """
+    body = b"example bytes"
+    entry = _entry(
+        entries,
+        "smud-r-tod",
+        sha256=hashlib.sha256(body).hexdigest(),
+        bytes=len(body) + 1,
+    )
+    (tmp_path / entry.filename).write_bytes(body)
+    with pytest.raises(SourceError, match="pinned length"):
+        verify(entry, entry.path(tmp_path))
