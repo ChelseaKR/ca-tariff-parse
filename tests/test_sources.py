@@ -249,7 +249,9 @@ def test_fetch_proceeds_when_robots_txt_allows_the_path(
 ) -> None:
     entry = find(entries, "smud-r-tod")
     payload = b"a stand-in for the published document, not the real bytes"
-    matching = dataclasses.replace(entry, sha256=hashlib.sha256(payload).hexdigest())
+    matching = dataclasses.replace(
+        entry, sha256=hashlib.sha256(payload).hexdigest(), bytes=len(payload)
+    )
 
     def fake_urlopen(request, timeout=None):  # noqa: ARG001
         if request.full_url.endswith("/robots.txt"):
@@ -273,7 +275,9 @@ def test_fetch_proceeds_when_robots_txt_is_unreachable(
     """
     entry = find(entries, "smud-r-tod")
     payload = b"a stand-in for the published document, not the real bytes"
-    matching = dataclasses.replace(entry, sha256=hashlib.sha256(payload).hexdigest())
+    matching = dataclasses.replace(
+        entry, sha256=hashlib.sha256(payload).hexdigest(), bytes=len(payload)
+    )
 
     def fake_urlopen(request, timeout=None):  # noqa: ARG001
         if request.full_url.endswith("/robots.txt"):
