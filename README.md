@@ -130,9 +130,9 @@ a claim made here.
 | R, residential | SMUD | 94/115 (81.7%) | 30 | 0 | 0 | 3 | 4 |
 | CI-TOD1, commercial and industrial time-of-day | SMUD | 142/201 (70.6%) | 85 | 5 | 11 | 3 | 3 |
 | SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 | 0 | 0 |
-| E-1, residential | PG&E | 60/247 (24.3%) | 38 | 0 | 0 | 0 | 0 |
-| E-TOU-C, residential time-of-use | PG&E | 43/346 (12.4%) | 23 | 0 | 0 | 0 | 0 |
-| B-1, small general service | PG&E | 135/477 (28.3%) | 59 | 0 | 0 | 0 | 0 |
+| E-1, residential | PG&E | 67/247 (27.1%) | 38 | 0 | 0 | 0 | 0 |
+| E-TOU-C, residential time-of-use | PG&E | 53/346 (15.3%) | 23 | 0 | 0 | 0 | 0 |
+| B-1, small general service | PG&E | 157/477 (32.9%) | 59 | 0 | 0 | 0 | 0 |
 
 `make coverage-real` reproduces the table from the fetched documents, and
 `tests/test_published_figures.py` asserts that every figure in it is the one
@@ -226,10 +226,18 @@ Most of it, and each refusal is a case where a value could otherwise be wrong.
   heading a whole sub-table above. Read as part of the block above them, every
   one would be published under a component name the publisher gave to something
   else. See [ADR 0013](docs/adr/0013-a-unit-reaches-over-the-table-it-heads.md).
-- **The identity fields, the cross-reference wording and the credit form.**
-  Each is a statement about how one publisher writes, not a thing a document
-  cannot state about itself, so none of them belongs in a profile. Closing them
-  means finding the shape, not adding a field.
+- **The cross-reference wording and the credit form.** Each is a statement
+  about how one publisher writes, not a thing a document cannot state about
+  itself, so neither belongs in a profile. Closing them means finding the
+  shape, not adding a field.
+
+  The identity fields were the third item here, and the shape turned out to be
+  that a running head runs: the line naming the schedule is the one that
+  appears on every sheet, wherever the publisher sets it, and a sentence ending
+  in the word "schedule" appears once. Both publishers' codes are read now, and
+  so is a title where the page settles which neighbouring line it is. Where
+  both neighbours repeat, no title is read. See
+  [ADR 0015](docs/adr/0015-a-running-head-runs.md).
 
 A **filing change marker** -- a bracketed capital such as `(R)` beside a
 revised line, or a change bar in the right margin -- is no longer one of

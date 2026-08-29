@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- The second publisher's schedule code and, where the page settles it, its
+  title. The line naming a schedule is the one that runs across the sheets,
+  wherever the publisher sets it, which is what tells it from a body sentence
+  ending in the word "schedule" that matches the same shape on one sheet. The
+  title is the neighbouring line that repeats, and only when exactly one of the
+  two does; where both repeat, none is read. See ADR 0015. Content lines
+  recognized go from 135 to 157 on `pge-b-1`, 43 to 53 on `pge-e-tou-c` and 60
+  to 67 on `pge-e-1`.
 - A unit the publisher broke across a line ending is now read. The bracket it
   is written in opens on one line and closes on the next, so neither line
   stated a unit and every block under two of the second publisher's sheet
