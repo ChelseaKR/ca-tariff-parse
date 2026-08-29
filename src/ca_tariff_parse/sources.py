@@ -54,7 +54,24 @@ class SourceEntry:
     itself; see :mod:`ca_tariff_parse.profiles`."""
 
     def path(self, root: Path) -> Path:
-        return root / self.filename
+        """Where this document sits under ``root``.
+
+        A manifest entry names a document inside the sources directory, and
+        the manifest is hand maintained, so this is a statement about what an
+        entry is allowed to mean rather than a defence against an attacker. An
+        entry whose filename climbs out of the root, or is absolute, names
+        something that is not one of this project's documents, and the listing
+        would go on to read its bytes to compute a digest that could never
+        match. Refusing here is the same kind of refusal as
+        :func:`require_https`: a manifest defect, reported rather than
+        followed.
+        """
+        target = root / self.filename
+        if not target.resolve().is_relative_to(root.resolve()):
+            raise SourceError(
+                f"source filenames must stay inside {root}, but {self.id!r} names {self.filename!r}"
+            )
+        return target
 
 
 def load_manifest(path: Path = DEFAULT_MANIFEST) -> list[SourceEntry]:
@@ -116,6 +133,36 @@ def verify(entry: SourceEntry, path: Path) -> str:
             "it were the pinned revision; update the manifest deliberately instead."
         )
     return actual
+
+
+def local_state(entry: SourceEntry, root: Path) -> str:
+    """Whether the document is absent, the pinned bytes, or something else.
+
+    Returns ``"not fetched"``, ``"present"`` or ``"mismatched"``. A file under
+    the manifest's name is not necessarily the document the parser was audited
+    against: it may be truncated, replaced by a publisher revision, hand
+    edited, or not a regular file at all.
+
+    The manifest pins the length as well as the digest, and a file of another
+    length cannot be the pinned document, so the size settles those cases
+    without reading the file. It only ever screens: a file of exactly the
+    right length is still hashed, because two different documents of one
+    length are what a digest is for.
+    """
+    local = entry.path(root)
+    if not local.exists():
+        return "not fetched"
+    try:
+        size = local.stat().st_size
+    except OSError:
+        # A path that stopped existing, or one this process may not stat.
+        return "mismatched"
+    if size != entry.bytes:
+        return "mismatched"
+    actual = safe_digest(local)
+    if actual is None or actual.lower() != entry.sha256.lower():
+        return "mismatched"
+    return "present"
 
 
 def require_https(url: str) -> None:

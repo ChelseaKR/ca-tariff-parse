@@ -56,6 +56,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- A credit now takes the applicability window of the sentence above it rather
+  than the last such sentence in its section. Where one section stated two
+  differently windowed credits, the first was published with the second one's
+  hours: a real quote, with real provenance, attached to the wrong charge, so
+  the provenance walk could not see it. A credit standing above every such
+  sentence, or under one that states a scope with no hours in it, now carries
+  no window rather than borrowing one.
+- A manifest entry whose filename climbs out of the sources directory, or is
+  absolute, is refused instead of resolved. Since `sources` began hashing what
+  it finds, such an entry had its contents read to compute a digest that could
+  never match.
+- `sources` no longer hashes a document whose size already disagrees with the
+  manifest. The manifest pins the length as well as the digest, so a file of
+  another length is reported `mismatched` without being read. A file of
+  exactly the pinned length is still hashed, because that is what a digest is
+  for.
 - A stray change-bar glyph extracted as a line of its own no longer gets
   swept into a numbered condition item as spurious trailing text; it is
   furniture (see `change_markers` above) and no longer part of any

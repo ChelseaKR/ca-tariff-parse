@@ -424,3 +424,73 @@ def test_a_row_with_a_cell_the_parser_cannot_read_is_refused_whole() -> None:
     )
     assert parsed.charges == ()
     assert any("($0.0500)" in note.value for note in parsed.notes)
+
+
+def test_two_credits_in_one_section_keep_their_own_windows() -> None:
+    """A section can state two credits, each with its own applicability window.
+
+    The window is a verbatim quote from the document with real provenance, so
+    a window borrowed from the credit below it is fully cited and still wrong:
+    it says a price applies during hours the publisher gave to another credit.
+    """
+    parsed = parse(
+        build(
+            {
+                5: [(9, "II. Example Credits")],
+                6: [(15, "A. Example Credit")],
+                8: [(20, "Credit applies to all example usage from midnight to 6:00 a.m. daily.")],
+                9: [(20, "Example Vehicle Credit"), (60, "-$0.0100/kWh")],
+                10: [(20, "Credit applies to all example usage from noon to 6:00 p.m. daily.")],
+                11: [(20, "Example Solar Export Credit"), (60, "-$0.0200/kWh")],
+            }
+        )
+    )
+    assert [
+        (c.label.value, c.price.amount.value, c.tou_period.value if c.tou_period else None)
+        for c in parsed.charges
+    ] == [
+        ("Example Vehicle Credit", "-0.0100", "midnight to 6:00 a.m. daily"),
+        ("Example Solar Export Credit", "-0.0200", "noon to 6:00 p.m. daily"),
+    ]
+
+
+def test_a_credit_above_every_applicability_sentence_takes_no_window() -> None:
+    """No sentence precedes it, so there is no window of its own to take.
+
+    Reading downward for one would attach the following credit's hours; this
+    is the same refusal as any other, applied to scope instead of to price.
+    """
+    parsed = parse(
+        build(
+            {
+                5: [(9, "II. Example Credits")],
+                6: [(15, "A. Example Credit")],
+                8: [(20, "Example Vehicle Credit"), (60, "-$0.0100/kWh")],
+                9: [(20, "Credit applies to all example usage from noon to 6:00 p.m. daily.")],
+                10: [(20, "Example Solar Export Credit"), (60, "-$0.0200/kWh")],
+            }
+        )
+    )
+    assert [
+        (c.label.value, c.tou_period.value if c.tou_period else None) for c in parsed.charges
+    ] == [
+        ("Example Vehicle Credit", None),
+        ("Example Solar Export Credit", "noon to 6:00 p.m. daily"),
+    ]
+
+
+def test_one_credit_under_one_sentence_still_takes_its_window() -> None:
+    """Control case: the two above are about which sentence, not about reading one."""
+    parsed = parse(
+        build(
+            {
+                5: [(9, "II. Example Credits")],
+                6: [(15, "A. Example Credit")],
+                8: [(20, "Credit applies to all example usage from midnight to 6:00 a.m. daily.")],
+                9: [(20, "Example Vehicle Credit"), (60, "-$0.0100/kWh")],
+            }
+        )
+    )
+    assert [
+        (c.label.value, c.tou_period.value if c.tou_period else None) for c in parsed.charges
+    ] == [("Example Vehicle Credit", "midnight to 6:00 a.m. daily")]

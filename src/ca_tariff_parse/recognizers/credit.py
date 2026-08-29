@@ -7,6 +7,15 @@ For example::
 
 The credit carries no effective date of its own, so it inherits the schedule's
 own effective date, cited to the footer that prints it rather than assumed.
+
+One section can state more than one credit, each under its own applicability
+sentence. A credit takes the window of the nearest sentence above it and no
+other: reading past that sentence to a later one would publish a real quote,
+with real provenance, saying a price applies during hours the publisher gave
+to a different credit. A credit standing above every such sentence takes no
+window, and so does one whose nearest sentence states a scope without hours,
+because in both cases the document states no window for that credit and the
+next one down belongs to something else.
 """
 
 from __future__ import annotations
@@ -22,6 +31,17 @@ CREDIT_RE = re.compile(
 )
 APPLIES_RE = re.compile(r"\ACredit applies to\s+(?P<scope>.+?)\s*\Z", re.IGNORECASE)
 WINDOW_RE = re.compile(r"\bfrom\s+(?P<window>.+?)\s*\.?\s*\Z", re.IGNORECASE)
+
+
+def _window_above(windows: list[tuple[int, Cited[str] | None]], position: int) -> Cited[str] | None:
+    """The window stated by the nearest applicability sentence above ``position``.
+
+    ``None`` when no sentence precedes the credit, or when the nearest one
+    states no window. Nothing below the credit is consulted, because a sentence
+    under it introduces the next credit rather than this one.
+    """
+    above = [window for at, window in windows if at < position]
+    return above[-1] if above else None
 
 
 def _credit_rows(section: Section) -> list[int]:
@@ -44,16 +64,23 @@ def parse(section: Section, citer: Citer, effective: Cited[str] | None) -> Emiss
         return emission
 
     lines = section.content_lines
-    window: Cited[str] | None = None
+    #: Every applicability sentence in the section, by the position it sits at
+    #: and the window it states, which is ``None`` when it states a scope with
+    #: no hours in it.
+    windows: list[tuple[int, Cited[str] | None]] = []
 
-    for line in lines:
+    for position, line in enumerate(lines):
         match = APPLIES_RE.match(line.text)
         if not match:
             continue
         scope = match.group("scope")
         window_match = WINDOW_RE.search(scope)
-        if window_match:
-            window = citer.text(line, section.section_id, window_match.group("window").strip())
+        stated = (
+            citer.text(line, section.section_id, window_match.group("window").strip())
+            if window_match
+            else None
+        )
+        windows.append((position, stated))
         emission.notes.append(citer.text(line, section.section_id, line.text))
         emission.take(line)
 
@@ -62,6 +89,7 @@ def parse(section: Section, citer: Citer, effective: Cited[str] | None) -> Emiss
         match = CREDIT_RE.match(line.text)
         if not match:
             continue
+        window = _window_above(windows, position)
         emission.charges.append(
             Charge(
                 label=citer.text(line, section.section_id, match.group("label").strip()),
