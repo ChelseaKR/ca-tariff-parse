@@ -148,6 +148,10 @@ class _Heading:
     on a line of its own, in which case the block's label and its unit are on
     different lines and the unit has to be cited to the line that states it.
     """
+    unit_lines: tuple[Line, ...] | None = None
+    """The lines the unit was read from, when the publisher broke it across a
+    line ending. Cited as the span it is: half of "($ per customer per day)"
+    appears on each line and the whole of it on neither."""
 
     @property
     def unit_source(self) -> Line:
@@ -214,6 +218,48 @@ def _heading_text(
     return normalize(" ".join(word.text for word in words))
 
 
+def _opens_one_bracket(text: str) -> bool:
+    """True when the line leaves exactly one bracket open at its end."""
+    return text.count("(") - text.count(")") == 1
+
+
+def _closes_one_bracket(text: str) -> bool:
+    """True when the line closes exactly one bracket it did not open."""
+    return text.count(")") - text.count("(") == 1
+
+
+def _heading_at(
+    lines: list[Line], position: int, profile: DocumentProfile, naming: _Naming | None = None
+) -> tuple[str, tuple[Line, ...]] | None:
+    """The heading text at ``position``, joined across a line ending if it is.
+
+    A publisher can open the bracket its unit is written in on one line and
+    close it on the next::
+
+        Base Services Charge Rates by Component ($ per customer
+        per day)
+            Distribution
+                Income Tier 1                          ($0.10751)
+
+    Neither line states a unit on its own: the first opens a bracket it never
+    closes and the second closes one it never opened. What settles the join is
+    the publisher's own punctuation, not a guess about the line ending, so the
+    join is only made where the bracket count says a bracket is open and where
+    the very next line closes it. A bracket that stays open is not joined to
+    anything, and neither is one that takes more than one line ending to close:
+    both leave the heading unread, and the block refused.
+    """
+    text = _heading_text(lines[position], profile, naming)
+    if text is None:
+        return None
+    if position > 0 and _closes_one_bracket(text):
+        above = _heading_text(lines[position - 1], profile, naming)
+        if above is not None and _opens_one_bracket(above):
+            joined = normalize(f"{above} {text}")
+            return joined, (lines[position - 1], lines[position])
+    return text, (lines[position],)
+
+
 def _read_heading(
     lines: list[Line], at: int, profile: DocumentProfile, naming: _Naming | None = None
 ) -> _Heading | None:
@@ -225,10 +271,11 @@ def _read_heading(
     """
     if at == 0:
         return None
-    above = lines[at - 1]
-    text = _heading_text(above, profile, naming)
-    if text is None:
+    read = _heading_at(lines, at - 1, profile, naming)
+    if read is None:
         return None
+    text, span = read
+    above = span[0]
     match = TRAILING_UNIT_RE.search(text)
     if match is None:
         return None
@@ -237,8 +284,14 @@ def _read_heading(
         return None
     label_text = text[: match.start()].strip()
     if label_text:
-        return _Heading(label=above, label_text=label_text, unit=unit, lines=(above,))
-    if at < 2:
+        return _Heading(
+            label=above,
+            label_text=label_text,
+            unit=unit,
+            lines=span,
+            unit_lines=span if len(span) > 1 else None,
+        )
+    if at < 2 or len(span) > 1:
         return None
     label_line = lines[at - 2]
     label_text = _heading_text(label_line, profile, naming) or ""
@@ -303,14 +356,16 @@ def _reaching_heading(
     previous_was_heading = False
     while position >= 0:
         line = lines[position]
-        text = _heading_text(line, profile, naming)
-        if text is None:
+        read = _heading_at(lines, position, profile, naming)
+        if read is None:
             # A priced line. It belongs to this table, or the reach ends here.
             if not is_row(line):
                 return None
             previous_was_heading = False
             position -= 1
             continue
+        text, span = read
+        line = span[0]
         match = TRAILING_UNIT_RE.search(text)
         if match is not None:
             unit = unit_tail(match.group("unit").strip())
@@ -328,8 +383,9 @@ def _reaching_heading(
                 label=label_line,
                 label_text=label_text,
                 unit=unit,
-                lines=(line, label_line),
+                lines=(*span, label_line),
                 unit_line=line,
+                unit_lines=span if len(span) > 1 else None,
             )
         if previous_was_heading or not _is_sub_heading(line, text, row_start):
             # Two lines running that are neither rows nor a unit heading are
@@ -341,7 +397,7 @@ def _reaching_heading(
             label_line, label_text = line, text
         passed.append(line)
         previous_was_heading = True
-        position -= 1
+        position -= len(span)
     return None
 
 
@@ -635,6 +691,22 @@ def _wide_candidates(
     return found
 
 
+def _cited_unit(heading: _Heading, citer: Citer, section_id: str) -> Cited[str]:
+    """The unit, cited to what the publisher printed it on.
+
+    One line, ordinarily. A span of two where the publisher broke the bracket
+    across a line ending, because half the unit appears on each line and the
+    whole of it on neither, and a citation whose snippet does not contain what
+    it cites cannot be checked.
+    """
+    if heading.unit_lines is not None:
+        return Cited(
+            value=heading.unit,
+            provenance=citer.cite_span(heading.unit_lines, section_id),
+        )
+    return citer.text(heading.unit_source, section_id, heading.unit)
+
+
 def claims(section: Section, profile: DocumentProfile) -> bool:
     return bool(_candidates(section, profile)) or bool(_wide_candidates(section, profile))
 
@@ -653,7 +725,7 @@ def parse(
             # is nothing to date these prices from and none is emitted.
             continue
         label = citer.text(heading.label, section.section_id, heading.label_text)
-        unit = citer.text(heading.unit_source, section.section_id, heading.unit)
+        unit = _cited_unit(heading, citer, section.section_id)
         kind = "energy_usage" if squash(heading.unit) in ENERGY_UNITS else "fixed_charge"
         for row in rows:
             emission.charges.append(
@@ -680,7 +752,7 @@ def parse(
         if effective is None:
             continue
         label = citer.text(heading.label, section.section_id, heading.label_text)
-        unit = citer.text(heading.unit_source, section.section_id, heading.unit)
+        unit = _cited_unit(heading, citer, section.section_id)
         kind = "energy_usage" if squash(heading.unit) in ENERGY_UNITS else "fixed_charge"
         for wide_row in wide_rows:
             for cell in wide_row.cells:

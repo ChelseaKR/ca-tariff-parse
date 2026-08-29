@@ -225,8 +225,8 @@ and their units is a parenthesis the publisher opened on one line and closed on
 the next:
 
 ```
-Base Services Charge Rates by Component ($ per
-customer per day)
+Base Services Charge Rates by Component ($ per customer
+per day)
    Distribution
       Income Tier 1                            ($0.10751)
 ```

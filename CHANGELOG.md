@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A unit the publisher broke across a line ending is now read. The bracket it
+  is written in opens on one line and closes on the next, so neither line
+  stated a unit and every block under two of the second publisher's sheet
+  shapes was refused. Joined only where the publisher's own punctuation says
+  it continues, and cited as the span of both lines, since half the unit
+  appears on each. See ADR 0014. `pge-e-1` goes from 42 of 247 content lines
+  to 60 and from 26 charges to 38; `pge-e-tou-c` from 25 of 346 to 43 and from
+  11 charges to 23; `pge-b-1` from 131 of 477 to 135 and from 57 to 59.
 - A unit stated over a table now reaches the components of that table. Both
   publishers' unbundling sheets state the unit once and then name each
   component on a line of its own, so the line above each block of rows states

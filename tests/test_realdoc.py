@@ -238,14 +238,19 @@ def test_a_quoted_price_is_still_read_exactly_as_published(
     group: str,
 ) -> None:
     parsed = _parse(document_id, filename)
-    matching = [charge for charge in parsed.charges if charge.label.value == label]
-    assert len(matching) == 1, f"{label} appears {len(matching)} times in {document_id}"
+    # A label is unique only inside its own block: the unbundling sheets state
+    # "Income Tier 3" once per component, at four different prices. What names
+    # one row of one document is the pair the sheet itself prints.
+    matching = [
+        charge
+        for charge in parsed.charges
+        if charge.label.value == label and charge.group is not None and charge.group.value == group
+    ]
+    assert len(matching) == 1, f"{label} under {group} appears {len(matching)} times"
     charge = matching[0]
     assert charge.price.amount.value == amount
     assert charge.price.unit.value == unit
     assert charge.effective_from.value == effective
-    assert charge.group is not None
-    assert charge.group.value == group
     # The citation has to lead back to the printed line.
     assert amount.lstrip("-") in charge.price.amount.provenance.snippet
 
@@ -277,6 +282,7 @@ def test_a_two_column_sheet_prices_the_rows_that_fill_both_columns() -> None:
     parsed = _parse("pge-b-1", "ELEC_SCHEDS_B-1.pdf")
     wide = [charge for charge in parsed.charges if charge.applies_to is not None]
     assert {charge.price.amount.provenance.page for charge in wide} == {3, 4}
+    assert len(wide) == 41
     assert {charge.applies_to.value for charge in wide if charge.applies_to} == {
         "B-1 Rates",
         "B1-ST Rates",
@@ -285,6 +291,7 @@ def test_a_two_column_sheet_prices_the_rows_that_fill_both_columns() -> None:
     }
     assert {charge.group.value for charge in wide if charge.group} == {
         "Total TOU Energy Rates",
+        "Total Demand Rate",
         "Generation:",
         "Distribution**:",
     }
@@ -393,7 +400,11 @@ def test_a_component_table_prices_each_component_under_its_own_name() -> None:
         ("Distribution**:", "Winter (all usage)", "0.14977", "PEAK"),
         ("Distribution**:", "Winter (all usage)", "0.14645", "OFF-PEAK"),
     ]
-    assert {charge.price.unit.value for charge in parsed.charges} == {"$ per kWh", "per kWh"}
+    assert {charge.price.unit.value for charge in parsed.charges} == {
+        "$ per kWh",
+        "per kWh",
+        "$ per customer per day",
+    }
 
 
 def test_the_rows_a_component_table_sets_level_with_its_own_heading_stay_unread() -> None:

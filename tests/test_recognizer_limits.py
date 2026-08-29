@@ -744,3 +744,130 @@ def test_a_heading_line_carrying_both_the_unit_and_the_column_names() -> None:
         "Alpha Rates",
         "Beta Rates",
     }
+
+
+#: A heading whose unit the publisher broke across a line ending: the bracket
+#: opens on one line and closes on the next, so neither line states a unit on
+#: its own. Synthetic.
+WRAPPED_UNIT = {
+    5: [(9, "II. Example Rates")],
+    6: [(15, "A. Example Table")],
+    8: [(12, "Example Charge Rates ($ per")],
+    9: [(12, "customer per day)")],
+    10: [(15, "Example Tier One"), (50, "$0.1000")],
+    11: [(15, "Example Tier Two"), (50, "$0.2000")],
+}
+
+
+def _wrapped(**changes: list[tuple[int, str]] | None) -> dict[int, list[tuple[int, str]]]:
+    page = {row: list(cells) for row, cells in WRAPPED_UNIT.items()}
+    for key, value in changes.items():
+        row = int(key.removeprefix("row"))
+        if value is None:
+            page.pop(row, None)
+        else:
+            page[row] = value
+    return page
+
+
+def test_a_unit_broken_across_a_line_ending_is_read() -> None:
+    parsed = parse(build(_wrapped()))
+    assert [(c.label.value, c.price.amount.value) for c in parsed.charges] == [
+        ("Example Tier One", "0.1000"),
+        ("Example Tier Two", "0.2000"),
+    ]
+    assert {c.price.unit.value for c in parsed.charges} == {"$ per customer per day"}
+    assert {c.group.value for c in parsed.charges if c.group} == {"Example Charge Rates"}
+
+
+def test_the_joined_unit_is_cited_to_both_lines_it_was_printed_on() -> None:
+    """Half of it appears on each line and the whole of it on neither."""
+    unit = parse(build(_wrapped())).charges[0].price.unit
+    assert unit.value == "$ per customer per day"
+    assert unit.value in " ".join(unit.provenance.snippet.split())
+    assert unit.provenance.end_line == unit.provenance.line + 1
+
+
+def test_a_bracket_that_never_closes_joins_to_nothing() -> None:
+    """An open bracket states no unit, and there is nothing to complete it."""
+    parsed = parse(build(_wrapped(row9=[(12, "customer per day")])))
+    assert parsed.charges == ()
+
+
+def test_a_bracket_taking_two_line_endings_to_close_is_refused() -> None:
+    """The join is made where the very next line closes the bracket, and there.
+
+    Reaching further would be reconstructing the heading rather than reading
+    it, and nothing on the page says how far to reach.
+    """
+    page = _wrapped(
+        row9=[(12, "customer per")],
+        row10=[(12, "day)")],
+        row11=[(15, "Example Tier One"), (50, "$0.1000")],
+        row12=[(15, "Example Tier Two"), (50, "$0.2000")],
+    )
+    assert parse(build(page)).charges == ()
+
+
+def test_a_wrapped_unit_reaches_over_its_components_like_any_other() -> None:
+    """The publisher's sheets do both at once: a wrapped unit over components."""
+    page = {
+        5: [(9, "II. Example Rates")],
+        6: [(15, "A. Example Table")],
+        8: [(9, "Example Component Rates ($ per")],
+        9: [(9, "customer per day)")],
+        10: [(12, "Example First Component")],
+        11: [(15, "Example Tier One"), (50, "$0.1000")],
+        12: [(15, "Example Tier Two"), (50, "$0.2000")],
+    }
+    parsed = parse(build(page))
+    assert [
+        (c.group.value if c.group else None, c.label.value, c.price.amount.value)
+        for c in parsed.charges
+    ] == [
+        ("Example First Component", "Example Tier One", "0.1000"),
+        ("Example First Component", "Example Tier Two", "0.2000"),
+    ]
+    assert {c.price.unit.value for c in parsed.charges} == {"$ per customer per day"}
+
+
+def test_a_stray_closing_bracket_does_not_pull_the_line_above_into_the_heading() -> None:
+    """The join is for a unit broken across a line ending, not for any bracket.
+
+    A line can close a bracket it did not open and still state its own unit
+    whole. Joined to the line above it anyway, the block would be labelled with
+    a line that is not part of its heading, and that line would be counted as
+    one this parser understood.
+    """
+    page = {
+        5: [(9, "II. Example Rates")],
+        6: [(15, "A. Example Table")],
+        8: [(12, "Example Unrelated Line")],
+        9: [(12, "surplus) ($ per kWh)")],
+        10: [(15, "Example Tier One"), (50, "$0.1000")],
+        11: [(15, "Example Tier Two"), (50, "$0.2000")],
+    }
+    parsed = parse(build(page))
+    assert {c.group.value for c in parsed.charges if c.group} == {"surplus)"}
+    assert any("Example Unrelated Line" in note.value for note in parsed.notes)
+
+
+def test_a_line_that_does_not_close_the_bracket_above_it_is_not_joined_to_it() -> None:
+    """A line stating its own whole unit completes nothing above it.
+
+    Joined to a line that left a bracket open, it would take that line's text
+    into its label and count it as understood, while the bracket the line above
+    opened is still open and still says nothing.
+    """
+    page = {
+        5: [(9, "II. Example Rates")],
+        6: [(15, "A. Example Table")],
+        8: [(12, "Example Charge Rates ($ per")],
+        9: [(12, "customer ($ per day)")],
+        10: [(15, "Example Tier One"), (50, "$0.1000")],
+        11: [(15, "Example Tier Two"), (50, "$0.2000")],
+    }
+    parsed = parse(build(page))
+    assert {c.group.value for c in parsed.charges if c.group} == {"customer"}
+    assert {c.price.unit.value for c in parsed.charges} == {"$ per day"}
+    assert any("Example Charge Rates" in note.value for note in parsed.notes)
