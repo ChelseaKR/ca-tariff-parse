@@ -132,7 +132,7 @@ a claim made here.
 | SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 | 0 | 0 |
 | E-1, residential | PG&E | 42/247 (17.0%) | 26 | 0 | 0 | 0 | 0 |
 | E-TOU-C, residential time-of-use | PG&E | 18/346 (5.2%) | 3 | 0 | 0 | 0 | 0 |
-| B-1, small general service | PG&E | 104/477 (21.8%) | 18 | 0 | 0 | 0 | 0 |
+| B-1, small general service | PG&E | 113/477 (23.7%) | 31 | 0 | 0 | 0 | 0 |
 
 `make coverage-real` reproduces the table from the fetched documents, and
 `tests/test_published_figures.py` asserts that every figure in it is the one
@@ -202,14 +202,15 @@ originally looked like it needed a spacing threshold and did not, is in
 
 Most of it, and each refusal is a case where a value could otherwise be wrong.
 
-- **A page that sets amounts in more than one column.** A row carrying one
-  amount in a two column table has to say which column it sits in, and a block
-  that states no columns cannot. This is why the commercial schedule's own rate
-  sheets contribute nothing at all: they price two rate options side by side.
+- **A row that does not fill every column its table names.** A row carrying one
+  amount where the table has two columns has to say which column it sits in,
+  and it does not: the price may be that column's or the whole row's. This is
+  what keeps the "all usage" rows of the unbundling sheets, which set one
+  amount between two columns, and the PDP tables, which set one under the first
+  of two, unread. A page that names no columns at all is still refused whole,
+  exactly as before.
 - **A block whose heading states no unit**, because a number with no unit says
   nothing about what it prices.
-- **A row carrying a cell the publisher marked with dashes**, which prices a
-  column the block does not name.
 - **The identity fields, the cross-reference wording and the credit form.**
   Each is a statement about how one publisher writes, not a thing a document
   cannot state about itself, so none of them belongs in a profile. Closing them
@@ -220,7 +221,28 @@ revised line, or a change bar in the right margin -- is no longer one of
 these, when the marker is the only thing on the line: it is now read as
 furniture, the same category as a running header, rather than reported as
 unrecognised content. A marker attached to real text is untouched, exactly
-as printed inside whatever citation quotes that line. See ADR 0010.
+as printed inside whatever citation quotes that line. See ADR 0010. On a row
+read across named columns the same markers fall between the cells as well as
+after them, and are skipped there for the same reason.
+
+**A page that names its columns** is no longer one of these either. Sheet 3 of
+the commercial schedule sets its two rate options over its amounts:
+
+```
+Total Bundled Time-of-Use Rates              B-1 Rates    B1-ST Rates
+Total TOU Energy Rates ($ per kWh)
+    Peak Summer                               $0.47087       $0.49377
+    Partial-Peak Winter (for B1-ST only)           ---       $0.36632
+```
+
+Where the page names them, each price is attributed to the column it sits
+under and carries that column's own name in `applies_to`, cited to the line
+that names it. Where it names nothing, the page is still refused whole. A cell
+the publisher marked with dashes is read as that column carrying no price for
+that row rather than as a reason to refuse the row: the winter partial-peak
+rate above is published for one rate option and not the other, and emitting it
+for both, or refusing it entirely, would each misstate the sheet. See
+[ADR 0012](docs/adr/0012-a-column-that-names-itself-can-carry-a-price.md).
 
 ### What a second publisher cost
 

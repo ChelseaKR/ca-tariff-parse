@@ -494,3 +494,115 @@ def test_one_credit_under_one_sentence_still_takes_its_window() -> None:
     assert [
         (c.label.value, c.tou_period.value if c.tou_period else None) for c in parsed.charges
     ] == [("Example Vehicle Credit", "midnight to 6:00 a.m. daily")]
+
+
+#: A page that names two columns over its amounts, in the shape a regulated
+#: publisher sets a rate sheet: the names on a line of their own over the
+#: table, the unit on the block's own heading, the labels in a column clear of
+#: the values. Every number here is synthetic.
+NAMED_COLUMNS = {
+    5: [(9, "II. Example Rates")],
+    6: [(15, "A. Example Table")],
+    8: [(9, "Example Table Rates"), (45, "Alpha Rates"), (62, "Beta Rates")],
+    9: [(12, "Example Energy Rates ($ per kWh)")],
+    10: [(15, "Example Peak Summer"), (47, "$0.1000"), (64, "$0.2000")],
+    11: [(15, "Example Off-Peak Summer"), (47, "$0.3000"), (64, "$0.4000")],
+}
+
+
+def _named(**changes: list[tuple[int, str]] | None) -> dict[int, list[tuple[int, str]]]:
+    """The named-column page with rows replaced or removed by row number."""
+    page = {row: list(cells) for row, cells in NAMED_COLUMNS.items()}
+    for key, value in changes.items():
+        row = int(key.removeprefix("row"))
+        if value is None:
+            page.pop(row, None)
+        else:
+            page[row] = value
+    return page
+
+
+def test_a_page_that_names_its_columns_is_read_across_them() -> None:
+    parsed = parse(build(_named()))
+    assert [
+        (c.label.value, c.price.amount.value, c.applies_to.value if c.applies_to else None)
+        for c in parsed.charges
+    ] == [
+        ("Example Peak Summer", "0.1000", "Alpha Rates"),
+        ("Example Peak Summer", "0.2000", "Beta Rates"),
+        ("Example Off-Peak Summer", "0.3000", "Alpha Rates"),
+        ("Example Off-Peak Summer", "0.4000", "Beta Rates"),
+    ]
+    assert {c.price.unit.value for c in parsed.charges} == {"$ per kWh"}
+    assert {c.group.value for c in parsed.charges if c.group} == {"Example Energy Rates"}
+
+
+def test_the_same_page_naming_nothing_is_refused_whole() -> None:
+    """Control case: what makes the table readable is the line that names it."""
+    parsed = parse(build(_named(row8=None)))
+    assert parsed.charges == ()
+    assert any(item.section == "II.A" for item in parsed.unparsed)
+
+
+def test_a_row_holding_fewer_cells_than_the_table_has_columns_is_refused() -> None:
+    """Its one price may be a column's or the whole row's; the page does not say."""
+    page = _named(row12=[(15, "Example Single Amount Row"), (47, "$0.9000")])
+    parsed = parse(build(page))
+    assert "Example Single Amount Row" not in {c.label.value for c in parsed.charges}
+    assert len(parsed.charges) == 4
+
+
+def test_an_unpriced_cell_prices_the_column_beside_it_and_not_itself() -> None:
+    """A dash under a named column says that column has no price for this row."""
+    page = _named(row11=[(15, "Example Beta Only Row"), (47, "---"), (64, "$0.4000")])
+    parsed = parse(build(page))
+    beta = [c for c in parsed.charges if c.label.value == "Example Beta Only Row"]
+    assert [(c.price.amount.value, c.applies_to.value if c.applies_to else None) for c in beta] == [
+        ("0.4000", "Beta Rates")
+    ]
+
+
+def test_a_row_of_nothing_but_unpriced_cells_prices_nothing() -> None:
+    """And is reported, rather than counted as a line this parser understood."""
+    page = _named(row11=[(15, "Example Empty Row"), (47, "---"), (64, "---")])
+    parsed = parse(build(page))
+    assert "Example Empty Row" not in {c.label.value for c in parsed.charges}
+    assert any("Example Empty Row" in sample for item in parsed.unparsed for sample in item.sample)
+
+
+def test_a_sentence_ending_in_two_amounts_is_not_a_row_of_the_table() -> None:
+    """A table sets its label and its prices in separate columns; prose does not."""
+    page = _named(row11=[(15, "Example label just past values"), (47, "$0.3000"), (64, "$0.4000")])
+    parsed = parse(build(page))
+    assert not [c for c in parsed.charges if c.label.value.startswith("Example label")]
+
+
+def test_a_cell_under_no_named_column_refuses_its_whole_row() -> None:
+    """An amount set between two columns belongs to neither by position."""
+    page = _named(row11=[(15, "Example Adrift Row"), (47, "$0.3000"), (55, "$0.4000")])
+    parsed = parse(build(page))
+    assert "Example Adrift Row" not in {c.label.value for c in parsed.charges}
+
+
+def test_a_filing_marker_between_two_cells_is_not_read_as_one() -> None:
+    """The letters a regulated publisher sets beside a changed cell (ADR 0010)."""
+    page = _named(row11=[(15, "Example Marked Row"), (47, "$0.3000"), (56, "(R)"), (64, "$0.4000")])
+    parsed = parse(build(page))
+    marked = [c for c in parsed.charges if c.label.value == "Example Marked Row"]
+    assert [
+        (c.price.amount.value, c.applies_to.value if c.applies_to else None) for c in marked
+    ] == [
+        ("0.3000", "Alpha Rates"),
+        ("0.4000", "Beta Rates"),
+    ]
+
+
+def test_a_named_column_price_cites_the_line_that_named_it() -> None:
+    """The column name is a quote from the page, not a label this parser wrote."""
+    parsed = parse(build(_named()))
+    charge = parsed.charges[0]
+    assert charge.applies_to is not None
+    assert charge.applies_to.value == "Alpha Rates"
+    assert "Alpha Rates" in charge.applies_to.provenance.snippet
+    # Cited to the line that names the columns, not to the row it prices.
+    assert charge.applies_to.provenance.line != charge.price.amount.provenance.line
