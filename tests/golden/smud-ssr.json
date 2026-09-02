@@ -1,6 +1,6 @@
 {
   "schema": "ca-tariff-parse/parsed-schedule/v1",
-  "parser_version": "0.1.0",
+  "parser_version": "0.2.0",
   "disclaimer": "This output is a representation of a published document, not a calculation of what any customer owes. It is not rate advice and not a bill estimate. Values are reproduced from the cited source and may be superseded, prorated, surcharged or adjusted by other schedules and rules. Verify against the publisher before relying on anything here. This project is not affiliated with, endorsed by, or approved by any utility.",
   "source": {
     "document_id": "smud-ssr",

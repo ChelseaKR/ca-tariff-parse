@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.2.0] - 2026-09-01
+
+The first signed tag from `main`. Everything below was on `main` before the tag and described here as unreleased; this section is the same list with a version on it.
+
 ### Added
 
 - The second publisher's schedule code and, where the page settles it, its
@@ -170,6 +176,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   everything, so this adds no new failure mode for the documents already in
   the manifest.
 
+### Notes
+
+- `v0.1.0` was tagged on 2026-09-01, retroactively, at commit `ba8c9aa`: the last commit on `main` before any of the changes above landed, and the commit at which the `[0.1.0]` section below was written. The section's date is the date its entry was written, not the date of the tag.
+
 ## [0.1.0] - 2026-08-18
 
 First release. A command line parser that turns published California
@@ -301,5 +311,6 @@ endorsed by, or approved by SMUD or any other utility.
 - The published PDFs are deliberately not redistributed from this repository.
   Only their digests and retrieval details are committed.
 
-[Unreleased]: https://github.com/ChelseaKR/ca-tariff-parse/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/ChelseaKR/ca-tariff-parse/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/ChelseaKR/ca-tariff-parse/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ChelseaKR/ca-tariff-parse/releases/tag/v0.1.0

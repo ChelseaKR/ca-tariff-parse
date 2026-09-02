@@ -1,0 +1,147 @@
+# Publish an already-released, signed tag to PyPI. Dispatched by the
+# maintainer, never on push, and never before `release.yml` has run for the
+# same tag.
+#
+# Same shape as release.yml: the job that reads repository code holds only
+# `contents: read`; the job that can publish never checks the repository out
+# and never sees a token with write access to it. Publication uses PyPI
+# trusted publishing (OIDC), so there is no long-lived API token anywhere.
+#
+# The PyPI side has to exist first. On pypi.org, the project `ca-tariff-parse`
+# must list this repository, this workflow file name and the `pypi`
+# environment as a trusted publisher; until it does, the publish job fails
+# closed with PyPI's own error and nothing is uploaded.
+name: publish-pypi
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing signed release tag (vX.Y.Z) that release.yml has already verified
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-pypi
+  cancel-in-progress: false
+
+env:
+  UV_VERSION: "0.12.1"
+
+jobs:
+  verify:
+    name: Verify the signed tag against trusted main
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.identity.outputs.version }}
+      source_commit: ${{ steps.identity.outputs.source_commit }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+          enable-cache: false
+
+      - name: Establish tag identity from trusted main
+        id: identity
+        env:
+          TAG: ${{ inputs.tag }}
+          # Read-only: `gh release view` only needs to see the release exists.
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REF}" = refs/heads/main
+          test "$(git rev-parse origin/main)" = "${GITHUB_SHA}"
+          printf '%s\n' "${TAG}" \
+            | grep -Eq '^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
+          git show-ref --verify --quiet "refs/tags/${TAG}"
+          test "$(git cat-file -t "refs/tags/${TAG}")" = tag
+          git merge-base --is-ancestor "${TAG}^{commit}" origin/main
+          if [ ! -s .github/allowed_signers ] \
+             || ! grep -qv '^[[:space:]]*\(#\|$\)' .github/allowed_signers; then
+            echo ".github/allowed_signers names no principal; refusing to publish an unverified tag" >&2
+            exit 1
+          fi
+          git config gpg.format ssh
+          git config gpg.ssh.allowedSignersFile .github/allowed_signers
+          git verify-tag "${TAG}"
+
+          # A tag that release.yml has not turned into a GitHub release is not
+          # released, whatever its signature says.
+          gh release view "${TAG}" --json isDraft --jq '.isDraft' | grep -qx false
+
+          version="${TAG#v}"
+          git checkout --detach "${TAG}^{commit}"
+          project_version="$(uv run python -c 'import tomllib,pathlib; print(tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"])')"
+          test "${project_version}" = "${version}"
+          {
+            printf 'version=%s\n' "${version}"
+            printf 'source_commit=%s\n' "$(git rev-parse HEAD)"
+          } >> "${GITHUB_OUTPUT}"
+
+  build:
+    name: Build the distribution at the tagged commit
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.verify.outputs.source_commit }}
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+          enable-cache: false
+
+      - name: Build and confirm the artefacts carry the tag's version
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          set -euo pipefail
+          uv build
+          ls dist
+          test -f "dist/ca_tariff_parse-${VERSION}.tar.gz"
+          test -f "dist/ca_tariff_parse-${VERSION}-py3-none-any.whl"
+          test "$(ls dist | wc -l)" -eq 2
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: Publish to PyPI
+    needs: [verify, build]
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/ca-tariff-parse/${{ needs.verify.outputs.version }}/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist
+          path: dist/
+
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          packages-dir: dist/
+          attestations: true
