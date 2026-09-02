@@ -66,6 +66,48 @@ def test_every_unparsed_line_has_a_note_with_provenance(unknown_fixture: Path) -
     assert unparsed_sections <= noted_sections
 
 
+def test_a_document_nothing_was_read_from_is_not_fully_recognized(tmp_path: Path) -> None:
+    """A failed read is not a completely understood schedule.
+
+    Zero unrecognized lines out of zero content lines is arithmetically a
+    clean sweep, so a document the extractor got no text out of at all -- a
+    scanned sheet with no text layer, an empty file -- used to report
+    ``fully_recognized`` true while emitting nothing. That is this repository's
+    worst failure shape: a read that failed, published as a schedule that was
+    understood.
+    """
+    unreadable = tmp_path / "UNREADABLE-doc.txt"
+    unreadable.write_text("", encoding="utf-8")
+
+    parsed = parse_path(unreadable)
+
+    assert parsed.coverage.content_lines == 0
+    assert parsed.coverage.read_anything is False
+    assert parsed.coverage.fully_recognized is False, (
+        "a document the parser read nothing out of was reported as fully recognized"
+    )
+    assert parsed.charges == ()
+
+
+def test_a_document_of_blank_lines_is_not_fully_recognized(tmp_path: Path) -> None:
+    """The same hole, reached by a file that has bytes but no content lines."""
+    blank = tmp_path / "BLANK-doc.txt"
+    blank.write_text("\n\n   \n\n", encoding="utf-8")
+
+    coverage = parse_path(blank).coverage
+
+    assert coverage.content_lines == 0
+    assert coverage.fully_recognized is False
+
+
+def test_a_document_with_content_still_reports_full_recognition(complete_fixture: Path) -> None:
+    """Control: the guard must not turn a real complete parse into a failure."""
+    coverage = parse_path(complete_fixture).coverage
+    assert coverage.content_lines > 0
+    assert coverage.read_anything is True
+    assert coverage.fully_recognized is True
+
+
 def test_coverage_counts_are_internally_consistent(unknown_fixture: Path) -> None:
     coverage = parse_path(unknown_fixture).coverage
     assert coverage.recognized_lines + coverage.unrecognized_lines == coverage.content_lines

@@ -357,6 +357,41 @@ def test_coverage_json_reports_the_figures_the_text_report_prints(
     assert f"emitted         {payload['emitted']['charges']} charge(s)" in text
 
 
+def test_the_reports_name_a_failed_read_rather_than_showing_a_clean_sweep(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Nothing read must not read as everything recognized.
+
+    ``parse`` publishes ``fully_recognized`` false, and the text report says
+    plainly that no content lines came out, because every count above it is
+    zero whether the document was unreadable or genuinely empty.
+    """
+    unreadable = tmp_path / "UNREADABLE-doc.txt"
+    unreadable.write_text("", encoding="utf-8")
+
+    assert main(["parse", str(unreadable)]) == EXIT_OK
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["coverage"]["content_lines"] == 0
+    assert payload["coverage"]["fully_recognized"] is False
+    assert payload["charges"] == []
+
+    assert main(["coverage", str(unreadable)]) == EXIT_OK
+    text = capsys.readouterr().out
+    assert "fully recognized False" in text
+    assert "FAILED READ" in text
+    assert "no content lines were extracted from this document" in text
+
+
+def test_a_readable_document_is_not_labelled_a_failed_read(
+    complete_fixture: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Control: the failed-read line must not appear on a document that parsed."""
+    assert main(["coverage", str(complete_fixture)]) == EXIT_OK
+    text = capsys.readouterr().out
+    assert "fully recognized True" in text
+    assert "FAILED READ" not in text
+
+
 def test_coverage_json_is_selected_from_the_parse_report_rather_than_recomputed(
     complete_fixture: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:

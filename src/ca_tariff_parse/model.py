@@ -368,8 +368,17 @@ class Coverage:
     """How much of the source document the parser actually accounted for.
 
     This is a published output, not an implicit claim. ``fully_recognized`` is
-    true only when every content line in the document was consumed by a
-    recognizer.
+    true only when the parser read at least one content line and every content
+    line it read was consumed by a recognizer.
+
+    The first half of that is not pedantry. A document the extractor got no
+    text out of at all -- a scanned sheet with no text layer, a PDF whose
+    pages fail to open, an empty file -- arrives here with every counter at
+    zero, and zero unrecognized lines out of zero content lines is
+    arithmetically a clean sweep. Reporting that as ``fully_recognized`` would
+    publish a failed read as a completely understood schedule, which is the
+    one thing this parser exists not to do. Nothing read is not everything
+    recognized. See docs/adr/0002.
     """
 
     content_lines: int
@@ -393,7 +402,20 @@ class Coverage:
         return round(self.sections_recognized / self.sections_total, 6)
 
     @property
+    def read_anything(self) -> bool:
+        """Whether the parser got any content line at all out of the document.
+
+        False is a failed read, not an empty schedule. Not a new field in the
+        payload: ``content_lines`` already carries it, and adding a key would
+        churn the v1 schema and every golden file for something the reader can
+        already see. This exists so the distinction has a name in the code.
+        """
+        return self.content_lines > 0
+
+    @property
     def fully_recognized(self) -> bool:
+        if not self.read_anything:
+            return False
         return self.unrecognized_lines == 0 and self.sections_unrecognized == 0
 
     def to_json(self) -> dict[str, object]:
