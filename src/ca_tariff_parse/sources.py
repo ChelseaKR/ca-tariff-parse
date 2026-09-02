@@ -223,12 +223,17 @@ def _robots_allowed(url: str, *, timeout: float) -> bool:
     return parser.can_fetch(USER_AGENT, url)
 
 
-def fetch(entry: SourceEntry, root: Path, *, timeout: float = 60.0) -> Path:
-    """Download one document and verify it against the manifest.
+def download(entry: SourceEntry, root: Path, *, timeout: float = 60.0) -> Path:
+    """Download one document to ``root`` without checking it against the manifest.
 
     Honours the host's own ``robots.txt`` first, as documented in the
     project README: a path the publisher has disallowed is never fetched,
     whatever the manifest says.
+
+    This is the half of :func:`fetch` that touches the network. The watch
+    uses it on its own because its whole purpose is to look at bytes that
+    may *not* be the pinned bytes; everything else should call :func:`fetch`,
+    which refuses them.
     """
     require_https(entry.url)
     if not _robots_allowed(entry.url, timeout=timeout):
@@ -244,5 +249,11 @@ def fetch(entry: SourceEntry, root: Path, *, timeout: float = 60.0) -> Path:
     with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310  # nosec B310
         payload = response.read()
     target.write_bytes(payload)
+    return target
+
+
+def fetch(entry: SourceEntry, root: Path, *, timeout: float = 60.0) -> Path:
+    """Download one document and verify it against the manifest."""
+    target = download(entry, root, timeout=timeout)
     verify(entry, target)
     return target

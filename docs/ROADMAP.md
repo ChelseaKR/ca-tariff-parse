@@ -276,30 +276,28 @@ prints neither publisher's shape still parses with a null identity rather than
 a guessed one, `tests/golden/` is byte for byte unchanged, and an ADR records
 which fields were found to be unstated rather than merely unread.
 
-### Phase 8: Release and distribution
+### Phase 8: Release and distribution — tagged; index publication pending
 
-**Delivers.** The README's Standards Conformance table says Release and
-Versioning applies, "SemVer with a signed-tag release workflow that separates
-verification from publication". `.github/workflows/release.yml` implements it
-and has never run: there is no tag and no release. Installation is
-clone-and-`make install`.
+**Delivered 2026-09-01.** `v0.1.0` and `v0.2.0` exist as signed annotated
+tags, verified against `.github/allowed_signers`, and `release.yml` has run
+green from each. `v0.1.0` sits at `ba8c9aa`, the last commit before any of
+the 0.2.0 changes landed, because that is the state the `[0.1.0]` changelog
+section describes; the section's date is the date it was written, and the
+changelog says so. The README's install section describes installing from a
+signed tag without cloning.
 
-The work is a signed annotated tag verified against
-`.github/allowed_signers`, the release workflow's first real end-to-end run,
-and a decision about whether this belongs on a package index at all.
+**Still owner-only.** Publishing under the name `ca-tariff-parse` on PyPI. The
+name was free on 2026-09-01. `.github/workflows/publish-pypi.yml` is written
+and dispatch-only: it refuses a tag that `release.yml` has not turned into a
+published release, builds at the tagged commit, and publishes through PyPI's
+trusted publishing, which needs the project registered on pypi.org with this
+repository, that workflow file and the `pypi` environment named as its
+publisher. Until the owner does that, the package is not on PyPI and the
+README says so.
 
-**Blocked, and on whom.** Signing a tag needs the owner's key, and publishing
-under a name on an index is the owner's decision about a name only the owner
-can hold. Neither is delegable to a contributor, and neither should be worked
-around. This phase stays open, and stays honestly described as blocked, until
-the owner does the two things only the owner can do.
-
-**Depends on.** Phases 1 to 3 at minimum, since a release should carry the
-correctness fixes.
-
-**Done when.** `v0.1.0` exists as a signed annotated tag, the release workflow
-has run green from it, and the README's install section describes whatever
-distribution the owner chose, including "clone it" if that is the answer.
+**Done when.** A release is on PyPI under the project's name, or the README's
+install section records that the tag is the distribution and the workflow is
+removed. Either closes the phase honestly.
 
 ### Sequencing
 
@@ -312,7 +310,7 @@ distribution the owner chose, including "clone it" if that is the answer.
 | 5 | A sub-heading between a unit and its rows | 4 | `pge-b-1`, `pge-e-tou-c` |
 | 6 | A unit broken across a line ending | 5 | `pge-b-1`, `pge-e-tou-c`, or a refusal |
 | 7 | The second publisher's identity | nothing | identity fields, no coverage figure |
-| 8 | Release and distribution | 1 to 3 | nothing in the parser; blocked on the owner |
+| 8 | Release and distribution | 1 to 3 | nothing in the parser; tagged, PyPI pending on the owner |
 
 Phases 1 to 3 are independent of each other and of everything after them.
 Phases 4 to 6 are one line of work cut into three, and each one's refusals are
@@ -333,12 +331,28 @@ Stated so that the plan's silence is not read as an omission.
   digest. Adding to it is a deliberate act with a retrieval date and a
   publisher's `robots.txt` behind it, not something a phase assumes.
 - **The refusals under *Decided against*.** They are decisions. See ADR 0011.
+- **A hosted service, or a feed of the watch's reports on any other terms.**
+  The watch writes to this repository, for review here, and nothing else.
+  Whether its reports are ever offered elsewhere is a separate decision,
+  gated on the watch having run unattended for a season and caught a real
+  revision cleanly, and on the manifest covering schedules a reader would
+  recognise; nothing in this plan assumes it, and no rule may be widened to
+  make it so.
 
 ## Done
 
 These were the largest items on this roadmap. Each is described where it
 landed rather than repeated here.
 
+- **The tariff watch.** A publisher's revision at the same URL used to be a
+  digest mismatch and nothing more. `watch` now downloads each pinned
+  document, parses a revision, and diffs it value by value against the last
+  reviewed parse, matched by identity rather than position and citing each
+  value before and after; `diff` does the same for any two parses; `baseline`
+  writes the reviewed parse of each document under `data/parsed/`, as a
+  projection without the document's verbatim prose. The weekly workflow
+  opens one pull request per revised document and merges nothing. See ADR
+  0016 and "Tariff watch" in the README.
 - **A document profile, so a second publisher can be read at all.**
   [ADR 0005](adr/0005-a-second-publisher-needs-a-document-profile.md) and
   [ADR 0006](adr/0006-the-document-profile-holds-three-things.md); see "The

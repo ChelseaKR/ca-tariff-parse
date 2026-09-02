@@ -4,7 +4,7 @@ SOURCES_DIR ?= sources
 .DEFAULT_GOAL := help
 
 .PHONY: help install lint fmt typecheck test verify coverage coverage-real fetch verify-source \
-        golden clean
+        golden watch watch-baseline clean
 
 help: ## Show this help
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -65,6 +65,16 @@ coverage-real: ## Report parser coverage of each fetched source document
 		$(UV) run ca-tariff-parse coverage \
 			$(SOURCES_DIR)/$${pair#*:} --id $${pair%%:*}; \
 	done
+
+# The watch compares a publisher's current bytes against the last reviewed
+# parse, committed under data/parsed/ without the document's verbatim prose.
+# See docs/adr/0016.
+watch: ## Download each pinned document and diff any publisher revision (networked)
+	$(UV) run ca-tariff-parse watch
+
+watch-baseline: ## Regenerate the watch baselines from the pinned documents (review every diff)
+	@test -f $(SOURCES_DIR)/1-R-TOD.pdf || { echo "run 'make fetch' first"; exit 1; }
+	$(UV) run ca-tariff-parse baseline --dir $(SOURCES_DIR)
 
 clean: ## Remove build and test artefacts
 	rm -rf .pytest_cache .ruff_cache .mypy_cache .coverage htmlcov dist build
