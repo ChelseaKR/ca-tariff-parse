@@ -40,7 +40,7 @@ cd ca-tariff-parse
 make install
 
 # Download the published schedules named in sources/sources.toml.
-# This is the only command that touches the network.
+# fetch and watch are the only commands that touch the network.
 make fetch
 
 # Parse one, with every value cited.
@@ -352,6 +352,35 @@ Retrieval honours `robots.txt` and is a handful of requests, never a crawl.
 `robots.txt` for a host is read before anything is fetched from it, and a
 publisher that disallows the path is not fetched from at all.
 
+## Tariff watch
+
+A publisher can revise a schedule at the same URL. `ca-tariff-parse watch`
+downloads each pinned document and, where the bytes are not the pinned bytes,
+parses the revision and writes a value-level diff against the last reviewed
+parse: every price, window, holiday, rule and identity field that was added,
+removed or changed, each with the citation it was read from before and after.
+Values are matched by what they are, not where they sit, so a value that only
+moved on the page is not a change. A download that fails is an error, never
+"unchanged": the watch has to be able to say it looked.
+
+The last reviewed parse of each document is its *baseline*, committed under
+`data/parsed/` as a projection of `parse`'s output without `notes` and the
+samples under `unparsed`, the two places most of an unread document's prose
+would otherwise travel. Every cited value is there untouched, and the file
+says what was left out and why. `make watch-baseline` regenerates them from
+the pinned documents, and a test fails when a committed baseline is not what
+the current parser writes. See [ADR 0016](docs/adr/0016-a-revision-is-diffed-not-absorbed.md).
+
+`.github/workflows/tariff-watch.yml` runs the watch weekly and opens one pull
+request per revised document, carrying the diff report, the new baseline and
+the manifest entry's new digest, retrieval date, page count and size. The
+watch merges nothing: accepting a revision is the deliberate review the
+manifest's digest check asks for, and a person does it. PDFs are never
+committed, by the watch or by anyone.
+
+`ca-tariff-parse diff old.json new.json` runs the same comparison on any two
+parses of one document, as Markdown or, with `--jsonl`, one object per change.
+
 ## Commands
 
 | Command | What it does |
@@ -359,8 +388,11 @@ publisher that disallows the path is not fetched from at all.
 | `parse <doc>` | Emit the structured schedule as JSON |
 | `coverage <doc>` | Report what was accounted for and what was not |
 | `sources` | List the documents in the manifest |
-| `fetch` | Download source documents (the only networked command) |
+| `fetch` | Download source documents (networked) |
 | `verify-source` | Check local documents against the manifest digests |
+| `diff <old> <new>` | What changed between two parses of one schedule, value by value, with both citations; exits 3 when anything did |
+| `baseline` | Write the reviewed parse of each pinned document, for the watch to compare against |
+| `watch` | Download each pinned document and diff any publisher revision against its baseline (networked) |
 
 `sources` reports each document as `not fetched`, `present`, or `mismatched`.
 `mismatched` means a file exists at the manifest's filename but its bytes do

@@ -1,0 +1,140 @@
+# The weekly tariff watch.
+#
+# Downloads each document the manifest pins and, where the publisher now
+# serves different bytes, parses the revision, diffs it value by value against
+# the last reviewed parse (data/parsed/<id>.json), and opens one pull request
+# per revised document carrying the diff report, the new baseline and the
+# manifest entry's new digest. It never merges anything and never commits a
+# PDF. An unchanged document produces nothing; a download that fails makes
+# the run fail, so silence always means "looked, and nothing changed".
+#
+# The manifest's pinned digest is a review gate (ADR 0003). This workflow does
+# the first half of that review in advance and hands the decision to a person.
+name: tariff-watch
+
+on:
+  schedule:
+    # Mondays, after the CI scanners have run.
+    - cron: "23 14 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tariff-watch
+  cancel-in-progress: false
+
+env:
+  UV_VERSION: "0.12.1"
+
+jobs:
+  watch:
+    name: Fetch each pinned document and diff any revision
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Install the locked dependency set
+        run: uv sync --locked
+
+      - name: Look at every pinned document
+        id: overview
+        run: |
+          set +e
+          uv run ca-tariff-parse watch --summary "${RUNNER_TEMP}/overview.json" --timeout 90
+          echo "exit=$?" >> "${GITHUB_OUTPUT}"
+          # The overview run rewrote the manifest and baselines for anything
+          # revised. Each proposal below is rebuilt from a clean main so that
+          # one pull request carries exactly one document.
+          git checkout -q -- sources/sources.toml data/parsed
+          git clean -fdq data/changes
+
+      - name: Propose one pull request per revised document
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          overview="${RUNNER_TEMP}/overview.json"
+          date="$(jq -r '.date' "${overview}")"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          {
+            echo "## Tariff watch, ${date}"
+            echo
+            echo "| document | state | detail |"
+            echo "| --- | --- | --- |"
+            jq -r '.outcomes[] | "| \(.id) | \(.state) | \(.detail) |"' "${overview}"
+            echo
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+          for id in $(jq -r '.outcomes[] | select(.state == "changed") | .id' "${overview}"); do
+            branch="tariff-watch/${id}/${date}"
+            if git ls-remote --exit-code --heads origin "${branch}" >/dev/null 2>&1; then
+              echo "::notice::${branch} already exists; not opening a second pull request for it"
+              continue
+            fi
+            git checkout -q -B "${branch}" origin/main
+            git checkout -q -- sources/sources.toml data/parsed
+            git clean -fdq data/changes
+
+            # Re-run for this one document so the commit carries only its change.
+            summary="${RUNNER_TEMP}/${id}.json"
+            uv run ca-tariff-parse watch --id "${id}" --summary "${summary}" --timeout 90 || true
+            state="$(jq -r '.outcomes[0].state' "${summary}")"
+            if [ "${state}" != "changed" ]; then
+              echo "::warning::${id} read as ${state} on the second look; nothing proposed. $(jq -r '.outcomes[0].detail' "${summary}")"
+              continue
+            fi
+            report="data/changes/${date}-${id}.md"
+            sha="$(jq -r '.outcomes[0].sha256' "${summary}")"
+            across="$(jq -r '.outcomes[0].across_parser_versions' "${summary}")"
+
+            git add sources/sources.toml "data/parsed/${id}.json" data/changes/
+            git commit -q -m "tariff-watch: ${id} was revised by its publisher (retrieved ${date})" \
+              -m "Proposes the revision's digest for the manifest, the reviewed parse it would replace, and the value-level diff between the two. Opened by the weekly watch for a person to review; nothing here is merged by the watch."
+            git push -q origin "${branch}"
+
+            {
+              echo "The publisher now serves different bytes for **${id}** than the manifest pins. This pull request proposes accepting the revision: the manifest entry's new digest (\`${sha}\`), retrieval date, page count and size; the new baseline under \`data/parsed/\`; and the report below, which lists every value that was added, removed or changed with the citation it was read from before and after."
+              echo
+              echo "**Merging this pull request is the review the manifest's digest check asks for (ADR 0003).** Before merging:"
+              echo
+              echo "- [ ] Read every line of the report against the publisher's document. The citations are there to be checked, not trusted."
+              echo "- [ ] Run \`make fetch && make coverage-real\` and update the README's coverage table if the figures moved; \`tests/test_published_figures.py\` will fail otherwise."
+              if [ "${across}" = "true" ]; then
+                echo "- [ ] **The baseline was written by a different parser version.** Some lines below may be parser changes rather than publisher changes; re-parse the previously pinned bytes with the current parser before relying on any of them."
+              fi
+              echo "- [ ] Nothing in this pull request is a PDF. If one appears, close it."
+              echo
+              echo "---"
+              echo
+              cat "${report}"
+            } > "${RUNNER_TEMP}/body.md"
+
+            gh pr create \
+              --base main \
+              --head "${branch}" \
+              --label tariff-watch \
+              --title "tariff-watch: ${id} was revised by its publisher (${date})" \
+              --body-file "${RUNNER_TEMP}/body.md"
+            echo "opened a pull request for ${id}" >> "${GITHUB_STEP_SUMMARY}"
+          done
+
+          if [ "${{ steps.overview.outputs.exit }}" != "0" ]; then
+            echo "::error::the watch could not look at every document; see the summary"
+            exit 1
+          fi

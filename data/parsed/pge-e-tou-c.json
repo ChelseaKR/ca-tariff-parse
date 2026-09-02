@@ -1,0 +1,2171 @@
+{
+  "schema": "ca-tariff-parse/watch-baseline/v1",
+  "parser_version": "0.2.0",
+  "disclaimer": "This output is a representation of a published document, not a calculation of what any customer owes. It is not rate advice and not a bill estimate. Values are reproduced from the cited source and may be superseded, prorated, surcharged or adjusted by other schedules and rules. Verify against the publisher before relying on anything here. This project is not affiliated with, endorsed by, or approved by any utility.",
+  "source": {
+    "document_id": "pge-e-tou-c",
+    "sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+    "page_count": 10,
+    "byte_size": 932456,
+    "filename": "ELEC_SCHEDS_E-TOU-C.pdf",
+    "publisher": "Pacific Gas and Electric Company",
+    "retrieved_from": "https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_SCHEDS_E-TOU-C.pdf",
+    "retrieved_at": "2026-08-17",
+    "synthetic": false
+  },
+  "identity": {
+    "schedule_code": {
+      "value": "E-TOU-C",
+      "provenance": {
+        "document_id": "pge-e-tou-c",
+        "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+        "page": 1,
+        "sheet": "61124-E",
+        "section": "front",
+        "line": 4,
+        "end_line": null,
+        "snippet": "ELECTRIC SCHEDULE E-TOU-C Sheet 1",
+        "locator": "pge-e-tou-c p.1 sheet 61124-E front L4"
+      }
+    },
+    "title": null,
+    "resolution": null,
+    "adopted": null,
+    "effective": null,
+    "sheets": [
+      {
+        "value": "61124-E",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 1,
+          "sheet": "61124-E",
+          "section": "front",
+          "line": 1,
+          "end_line": null,
+          "snippet": "Revised Cal. P.U.C. Sheet No. 61124-E",
+          "locator": "pge-e-tou-c p.1 sheet 61124-E front L1"
+        }
+      },
+      {
+        "value": "61364-E",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 2,
+          "sheet": "61364-E",
+          "section": "front",
+          "line": 1,
+          "end_line": null,
+          "snippet": "Revised Cal. P.U.C. Sheet No. 61364-E",
+          "locator": "pge-e-tou-c p.2 sheet 61364-E front L1"
+        }
+      },
+      {
+        "value": "61126-E",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "front",
+          "line": 1,
+          "end_line": null,
+          "snippet": "Revised Cal. P.U.C. Sheet No. 61126-E",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E front L1"
+        }
+      },
+      {
+        "value": "61127-E",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 1,
+          "end_line": null,
+          "snippet": "Revised Cal. P.U.C. Sheet No. 61127-E",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L1"
+        }
+      },
+      {
+        "value": "61128-E",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "front",
+          "line": 1,
+          "end_line": null,
+          "snippet": "Revised Cal. P.U.C. Sheet No. 61128-E",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E front L1"
+        }
+      },
+      {
+        "value": "61129-E",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 6,
+          "sheet": "61129-E",
+          "section": "front",
+          "line": 1,
+          "end_line": null,
+          "snippet": "Revised Cal. P.U.C. Sheet No. 61129-E",
+          "locator": "pge-e-tou-c p.6 sheet 61129-E front L1"
+        }
+      },
+      {
+        "value": "61130-E",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 7,
+          "sheet": "61130-E",
+          "section": "front",
+          "line": 1,
+          "end_line": null,
+          "snippet": "Revised Cal. P.U.C. Sheet No. 61130-E",
+          "locator": "pge-e-tou-c p.7 sheet 61130-E front L1"
+        }
+      },
+      {
+        "value": "61131-E",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 8,
+          "sheet": "61131-E",
+          "section": "front",
+          "line": 1,
+          "end_line": null,
+          "snippet": "Revised Cal. P.U.C. Sheet No. 61131-E",
+          "locator": "pge-e-tou-c p.8 sheet 61131-E front L1"
+        }
+      },
+      {
+        "value": "61132-E",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 9,
+          "sheet": "61132-E",
+          "section": "front",
+          "line": 1,
+          "end_line": null,
+          "snippet": "Revised Cal. P.U.C. Sheet No. 61132-E",
+          "locator": "pge-e-tou-c p.9 sheet 61132-E front L1"
+        }
+      },
+      {
+        "value": "61133-E",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 10,
+          "sheet": "61133-E",
+          "section": "front",
+          "line": 1,
+          "end_line": null,
+          "snippet": "Revised Cal. P.U.C. Sheet No. 61133-E",
+          "locator": "pge-e-tou-c p.10 sheet 61133-E front L1"
+        }
+      }
+    ]
+  },
+  "applicability": [
+    {
+      "text": {
+        "value": "APPLICABILITY: This voluntary schedule is available to residential customers on an opt-in basis.",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 1,
+          "sheet": "61124-E",
+          "section": "APPLICABILITY",
+          "line": 6,
+          "end_line": null,
+          "snippet": "APPLICABILITY: This voluntary schedule is available to residential customers on an opt-in basis.",
+          "locator": "pge-e-tou-c p.1 sheet 61124-E APPLICABILITY L6"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "This schedule is applicable to single-phase and polyphase residential service in single-family dwellings and in flats and apartments separately metered by PG&E; to single-phase and polyphase service in common areas in a multifamily complex (see Special Condition 8); and to all single-phase and polyphase farm service on the premises operated by the person whose residence is supplied through the same meter.",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 1,
+          "sheet": "61124-E",
+          "section": "APPLICABILITY",
+          "line": 7,
+          "end_line": 12,
+          "snippet": "This schedule is applicable to single-phase and polyphase residential service in single-family dwellings and in flats and apartments separately metered by PG&E; to single-phase and polyphase service in common areas in a multifamily complex (see Special Condition 8); and to all single-phase and polyphase farm service on the premises operated by the person whose residence is supplied through the same meter.",
+          "locator": "pge-e-tou-c p.1 sheet 61124-E APPLICABILITY L7-12"
+        }
+      },
+      "disposition": "included"
+    },
+    {
+      "text": {
+        "value": "The provisions of Schedule S—Standby Service Special Conditions 1 through 6 shall also apply to customers whose premises are regularly supplied in part (but not in whole) by electric energy from a nonutility source of supply. These customers will pay monthly reservation charges as specified under Section 1 of Schedule S, in addition to all applicable Schedule E-TOU-C charges. See Special Conditions 10 and 11 of this rate schedule for exemptions to standby charges",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 1,
+          "sheet": "61124-E",
+          "section": "APPLICABILITY",
+          "line": 13,
+          "end_line": 18,
+          "snippet": "The provisions of Schedule S—Standby Service Special Conditions 1 through 6 shall also apply to customers whose premises are regularly supplied in part (but not in whole) by electric energy from a nonutility source of supply. These customers will pay monthly reservation charges as specified under Section 1 of Schedule S, in addition to all applicable Schedule E-TOU-C charges. See Special Conditions 10 and 11 of this rate schedule for exemptions to standby charges",
+          "locator": "pge-e-tou-c p.1 sheet 61124-E APPLICABILITY L13-18"
+        }
+      },
+      "disposition": "included"
+    }
+  ],
+  "charges": [
+    {
+      "label": {
+        "value": "Income Tier 1",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 10,
+          "end_line": null,
+          "snippet": "Income Tier 1 ($0.10751) (N)",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L10"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "-0.10751",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 10,
+            "end_line": null,
+            "snippet": "Income Tier 1 ($0.10751) (N)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L10"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per customer per day",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 7,
+            "end_line": 8,
+            "snippet": "Base Services Charge Rates by Component ($ per customer per day)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L7-8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L27"
+        }
+      },
+      "group": {
+        "value": "Distribution",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Distribution",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L9"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Income Tier 2",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 11,
+          "end_line": null,
+          "snippet": "Income Tier 2 ($0.02710) (N)",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L11"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "-0.02710",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 11,
+            "end_line": null,
+            "snippet": "Income Tier 2 ($0.02710) (N)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L11"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per customer per day",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 7,
+            "end_line": 8,
+            "snippet": "Base Services Charge Rates by Component ($ per customer per day)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L7-8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L27"
+        }
+      },
+      "group": {
+        "value": "Distribution",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Distribution",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L9"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Income Tier 3",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Income Tier 3 $0.36945 (N)",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L12"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "0.36945",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 12,
+            "end_line": null,
+            "snippet": "Income Tier 3 $0.36945 (N)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L12"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per customer per day",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 7,
+            "end_line": 8,
+            "snippet": "Base Services Charge Rates by Component ($ per customer per day)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L7-8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L27"
+        }
+      },
+      "group": {
+        "value": "Distribution",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Distribution",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L9"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Income Tier 1",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 14,
+          "end_line": null,
+          "snippet": "Income Tier 1 $0.19131 (N)",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L14"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "0.19131",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 14,
+            "end_line": null,
+            "snippet": "Income Tier 1 $0.19131 (N)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L14"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per customer per day",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 7,
+            "end_line": 8,
+            "snippet": "Base Services Charge Rates by Component ($ per customer per day)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L7-8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L27"
+        }
+      },
+      "group": {
+        "value": "Public Purpose Program",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Public Purpose Program",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Income Tier 2",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 15,
+          "end_line": null,
+          "snippet": "Income Tier 2 $0.31065 (N)",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L15"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "0.31065",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 15,
+            "end_line": null,
+            "snippet": "Income Tier 2 $0.31065 (N)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L15"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per customer per day",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 7,
+            "end_line": 8,
+            "snippet": "Base Services Charge Rates by Component ($ per customer per day)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L7-8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L27"
+        }
+      },
+      "group": {
+        "value": "Public Purpose Program",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Public Purpose Program",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Income Tier 3",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 16,
+          "end_line": null,
+          "snippet": "Income Tier 3 $0.31065 (N)",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L16"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "0.31065",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 16,
+            "end_line": null,
+            "snippet": "Income Tier 3 $0.31065 (N)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L16"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per customer per day",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 7,
+            "end_line": 8,
+            "snippet": "Base Services Charge Rates by Component ($ per customer per day)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L7-8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L27"
+        }
+      },
+      "group": {
+        "value": "Public Purpose Program",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Public Purpose Program",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Income Tier 1",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 18,
+          "end_line": null,
+          "snippet": "Income Tier 1 $0.00000 (N)",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L18"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "0.00000",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 18,
+            "end_line": null,
+            "snippet": "Income Tier 1 $0.00000 (N)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L18"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per customer per day",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 7,
+            "end_line": 8,
+            "snippet": "Base Services Charge Rates by Component ($ per customer per day)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L7-8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L27"
+        }
+      },
+      "group": {
+        "value": "Nuclear Decommissioning",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 17,
+          "end_line": null,
+          "snippet": "Nuclear Decommissioning",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L17"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Income Tier 2",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 19,
+          "end_line": null,
+          "snippet": "Income Tier 2 $0.00000 (N)",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L19"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "0.00000",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 19,
+            "end_line": null,
+            "snippet": "Income Tier 2 $0.00000 (N)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L19"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per customer per day",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 7,
+            "end_line": 8,
+            "snippet": "Base Services Charge Rates by Component ($ per customer per day)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L7-8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L27"
+        }
+      },
+      "group": {
+        "value": "Nuclear Decommissioning",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 17,
+          "end_line": null,
+          "snippet": "Nuclear Decommissioning",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L17"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Income Tier 3",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 20,
+          "end_line": null,
+          "snippet": "Income Tier 3 $0.00000 (N)",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L20"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "0.00000",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 20,
+            "end_line": null,
+            "snippet": "Income Tier 3 $0.00000 (N)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L20"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per customer per day",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 7,
+            "end_line": 8,
+            "snippet": "Base Services Charge Rates by Component ($ per customer per day)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L7-8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L27"
+        }
+      },
+      "group": {
+        "value": "Nuclear Decommissioning",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 17,
+          "end_line": null,
+          "snippet": "Nuclear Decommissioning",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L17"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Income Tier 1",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 22,
+          "end_line": null,
+          "snippet": "Income Tier 1 $0.11333 (N)",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L22"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "0.11333",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 22,
+            "end_line": null,
+            "snippet": "Income Tier 1 $0.11333 (N)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L22"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per customer per day",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 7,
+            "end_line": 8,
+            "snippet": "Base Services Charge Rates by Component ($ per customer per day)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L7-8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L27"
+        }
+      },
+      "group": {
+        "value": "New System Generation Charge",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 21,
+          "end_line": null,
+          "snippet": "New System Generation Charge",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L21"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Income Tier 2",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 23,
+          "end_line": null,
+          "snippet": "Income Tier 2 $0.11333 (N)",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L23"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "0.11333",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 23,
+            "end_line": null,
+            "snippet": "Income Tier 2 $0.11333 (N)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L23"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per customer per day",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 7,
+            "end_line": 8,
+            "snippet": "Base Services Charge Rates by Component ($ per customer per day)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L7-8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L27"
+        }
+      },
+      "group": {
+        "value": "New System Generation Charge",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 21,
+          "end_line": null,
+          "snippet": "New System Generation Charge",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L21"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Income Tier 3",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 24,
+          "end_line": null,
+          "snippet": "Income Tier 3 $0.11333 (N)",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L24"
+        }
+      },
+      "kind": "fixed_charge",
+      "price": {
+        "amount": {
+          "value": "0.11333",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 24,
+            "end_line": null,
+            "snippet": "Income Tier 3 $0.11333 (N)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L24"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per customer per day",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 4,
+            "sheet": "61127-E",
+            "section": "RATES",
+            "line": 7,
+            "end_line": 8,
+            "snippet": "Base Services Charge Rates by Component ($ per customer per day)",
+            "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L7-8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "front",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E front L27"
+        }
+      },
+      "group": {
+        "value": "New System Generation Charge",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 4,
+          "sheet": "61127-E",
+          "section": "RATES",
+          "line": 21,
+          "end_line": null,
+          "snippet": "New System Generation Charge",
+          "locator": "pge-e-tou-c p.4 sheet 61127-E RATES L21"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Summer (all usage)",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 10,
+          "end_line": null,
+          "snippet": "Summer (all usage) $0.20782 $0.10482",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L10"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.20782",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 10,
+            "end_line": null,
+            "snippet": "Summer (all usage) $0.20782 $0.10482",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L10"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 8,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "front",
+          "line": 40,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E front L40"
+        }
+      },
+      "applies_to": {
+        "value": "PEAK",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+        }
+      },
+      "group": {
+        "value": "Generation:",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Generation:",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L9"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Summer (all usage)",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 10,
+          "end_line": null,
+          "snippet": "Summer (all usage) $0.20782 $0.10482",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L10"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.10482",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 10,
+            "end_line": null,
+            "snippet": "Summer (all usage) $0.20782 $0.10482",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L10"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 8,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "front",
+          "line": 40,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E front L40"
+        }
+      },
+      "applies_to": {
+        "value": "OFF-PEAK",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+        }
+      },
+      "group": {
+        "value": "Generation:",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Generation:",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L9"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Winter (all usage)",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 11,
+          "end_line": null,
+          "snippet": "Winter (all usage) $0.13710 $0.11042",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L11"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.13710",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 11,
+            "end_line": null,
+            "snippet": "Winter (all usage) $0.13710 $0.11042",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L11"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 8,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "front",
+          "line": 40,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E front L40"
+        }
+      },
+      "applies_to": {
+        "value": "PEAK",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+        }
+      },
+      "group": {
+        "value": "Generation:",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Generation:",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L9"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Winter (all usage)",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 11,
+          "end_line": null,
+          "snippet": "Winter (all usage) $0.13710 $0.11042",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L11"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.11042",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 11,
+            "end_line": null,
+            "snippet": "Winter (all usage) $0.13710 $0.11042",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L11"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 8,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "front",
+          "line": 40,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E front L40"
+        }
+      },
+      "applies_to": {
+        "value": "OFF-PEAK",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+        }
+      },
+      "group": {
+        "value": "Generation:",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 9,
+          "end_line": null,
+          "snippet": "Generation:",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L9"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Summer (all usage)",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Summer (all usage) $0.20388 (R) $0.18388 (R)",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L13"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.20388",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Summer (all usage) $0.20388 (R) $0.18388 (R)",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L13"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 8,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "front",
+          "line": 40,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E front L40"
+        }
+      },
+      "applies_to": {
+        "value": "PEAK",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+        }
+      },
+      "group": {
+        "value": "Distribution**:",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Distribution**:",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L12"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Summer (all usage)",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Summer (all usage) $0.20388 (R) $0.18388 (R)",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L13"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.18388",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Summer (all usage) $0.20388 (R) $0.18388 (R)",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L13"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 8,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "front",
+          "line": 40,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E front L40"
+        }
+      },
+      "applies_to": {
+        "value": "OFF-PEAK",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+        }
+      },
+      "group": {
+        "value": "Distribution**:",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Distribution**:",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L12"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Winter (all usage)",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 14,
+          "end_line": null,
+          "snippet": "Winter (all usage) $0.14977 (R) $0.14645 (R)",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L14"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.14977",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 14,
+            "end_line": null,
+            "snippet": "Winter (all usage) $0.14977 (R) $0.14645 (R)",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L14"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 8,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "front",
+          "line": 40,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E front L40"
+        }
+      },
+      "applies_to": {
+        "value": "PEAK",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+        }
+      },
+      "group": {
+        "value": "Distribution**:",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Distribution**:",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L12"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Winter (all usage)",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 14,
+          "end_line": null,
+          "snippet": "Winter (all usage) $0.14977 (R) $0.14645 (R)",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L14"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.14645",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 14,
+            "end_line": null,
+            "snippet": "Winter (all usage) $0.14977 (R) $0.14645 (R)",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L14"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 3,
+            "sheet": "61126-E",
+            "section": "RATES",
+            "line": 8,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+            "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "front",
+          "line": 40,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E front L40"
+        }
+      },
+      "applies_to": {
+        "value": "OFF-PEAK",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 8,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh) PEAK OFF-PEAK",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L8"
+        }
+      },
+      "group": {
+        "value": "Distribution**:",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 3,
+          "sheet": "61126-E",
+          "section": "RATES",
+          "line": 12,
+          "end_line": null,
+          "snippet": "Distribution**:",
+          "locator": "pge-e-tou-c p.3 sheet 61126-E RATES L12"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "2009 Vintage",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 8,
+          "sheet": "61131-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 35,
+          "end_line": null,
+          "snippet": "2009 Vintage $0.02973 (I) |",
+          "locator": "pge-e-tou-c p.8 sheet 61131-E SPECIALCONDITIONS L35"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.02973",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 8,
+            "sheet": "61131-E",
+            "section": "SPECIALCONDITIONS",
+            "line": 35,
+            "end_line": null,
+            "snippet": "2009 Vintage $0.02973 (I) |",
+            "locator": "pge-e-tou-c p.8 sheet 61131-E SPECIALCONDITIONS L35"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per kWh",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 8,
+            "sheet": "61131-E",
+            "section": "SPECIALCONDITIONS",
+            "line": 34,
+            "end_line": null,
+            "snippet": "(per kWh) |",
+            "locator": "pge-e-tou-c p.8 sheet 61131-E SPECIALCONDITIONS L34"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 8,
+          "sheet": "61131-E",
+          "section": "front",
+          "line": 68,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.8 sheet 61131-E front L68"
+        }
+      },
+      "group": {
+        "value": "Vintage Power Charge Indifference Adjustment Rate",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 8,
+          "sheet": "61131-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 33,
+          "end_line": null,
+          "snippet": "Vintage Power Charge Indifference Adjustment Rate |",
+          "locator": "pge-e-tou-c p.8 sheet 61131-E SPECIALCONDITIONS L33"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "2010 Vintage",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 8,
+          "sheet": "61131-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 36,
+          "end_line": null,
+          "snippet": "2010 Vintage $0.03366 (I) |",
+          "locator": "pge-e-tou-c p.8 sheet 61131-E SPECIALCONDITIONS L36"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.03366",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 8,
+            "sheet": "61131-E",
+            "section": "SPECIALCONDITIONS",
+            "line": 36,
+            "end_line": null,
+            "snippet": "2010 Vintage $0.03366 (I) |",
+            "locator": "pge-e-tou-c p.8 sheet 61131-E SPECIALCONDITIONS L36"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per kWh",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 8,
+            "sheet": "61131-E",
+            "section": "SPECIALCONDITIONS",
+            "line": 34,
+            "end_line": null,
+            "snippet": "(per kWh) |",
+            "locator": "pge-e-tou-c p.8 sheet 61131-E SPECIALCONDITIONS L34"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 8,
+          "sheet": "61131-E",
+          "section": "front",
+          "line": 68,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.8 sheet 61131-E front L68"
+        }
+      },
+      "group": {
+        "value": "Vintage Power Charge Indifference Adjustment Rate",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 8,
+          "sheet": "61131-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 33,
+          "end_line": null,
+          "snippet": "Vintage Power Charge Indifference Adjustment Rate |",
+          "locator": "pge-e-tou-c p.8 sheet 61131-E SPECIALCONDITIONS L33"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "2011 Vintage",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 8,
+          "sheet": "61131-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 37,
+          "end_line": null,
+          "snippet": "2011 Vintage $0.03492 (I) |",
+          "locator": "pge-e-tou-c p.8 sheet 61131-E SPECIALCONDITIONS L37"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.03492",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 8,
+            "sheet": "61131-E",
+            "section": "SPECIALCONDITIONS",
+            "line": 37,
+            "end_line": null,
+            "snippet": "2011 Vintage $0.03492 (I) |",
+            "locator": "pge-e-tou-c p.8 sheet 61131-E SPECIALCONDITIONS L37"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "per kWh",
+          "provenance": {
+            "document_id": "pge-e-tou-c",
+            "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+            "page": 8,
+            "sheet": "61131-E",
+            "section": "SPECIALCONDITIONS",
+            "line": 34,
+            "end_line": null,
+            "snippet": "(per kWh) |",
+            "locator": "pge-e-tou-c p.8 sheet 61131-E SPECIALCONDITIONS L34"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 8,
+          "sheet": "61131-E",
+          "section": "front",
+          "line": 68,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-tou-c p.8 sheet 61131-E front L68"
+        }
+      },
+      "group": {
+        "value": "Vintage Power Charge Indifference Adjustment Rate",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 8,
+          "sheet": "61131-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 33,
+          "end_line": null,
+          "snippet": "Vintage Power Charge Indifference Adjustment Rate |",
+          "locator": "pge-e-tou-c p.8 sheet 61131-E SPECIALCONDITIONS L33"
+        }
+      }
+    }
+  ],
+  "tou_windows": [],
+  "holidays": [],
+  "cross_references": [],
+  "proration": [],
+  "conditions": [],
+  "unparsed": [
+    {
+      "section": "preamble",
+      "heading": "(preamble)",
+      "page": 1,
+      "sheet": "61124-E",
+      "first_line": 3,
+      "last_page": 10,
+      "last_sheet": "61133-E",
+      "last_line": 5,
+      "line_count": 20,
+      "reason": "20 of 30 lines in a recognized section matched no rule",
+      "span": "p.1 L3 to p.10 L5"
+    },
+    {
+      "section": "TERRITORY",
+      "heading": "TERRITORY",
+      "page": 1,
+      "sheet": "61124-E",
+      "first_line": 19,
+      "last_page": 1,
+      "last_sheet": "61124-E",
+      "last_line": 19,
+      "line_count": 1,
+      "reason": "no recognizer claimed this section",
+      "span": "p.1 lines 19-19"
+    },
+    {
+      "section": "RATES",
+      "heading": "RATES",
+      "page": 1,
+      "sheet": "61124-E",
+      "first_line": 20,
+      "last_page": 4,
+      "last_sheet": "61127-E",
+      "last_line": 6,
+      "line_count": 69,
+      "reason": "69 of 94 lines in a recognized section matched no rule",
+      "span": "p.1 L20 to p.4 L6"
+    },
+    {
+      "section": "SPECIALCONDITIONS",
+      "heading": "SPECIAL CONDITIONS",
+      "page": 5,
+      "sheet": "61128-E",
+      "first_line": 6,
+      "last_page": 10,
+      "last_sheet": "61133-E",
+      "last_line": 44,
+      "line_count": 203,
+      "reason": "203 of 208 lines in a recognized section matched no rule",
+      "span": "p.5 L6 to p.10 L44"
+    }
+  ],
+  "coverage": {
+    "content_lines": 346,
+    "recognized_lines": 53,
+    "unrecognized_lines": 293,
+    "boilerplate_lines": 148,
+    "sections_total": 5,
+    "sections_recognized": 1,
+    "sections_unrecognized": 4,
+    "line_ratio": 0.153179,
+    "section_ratio": 0.2,
+    "fully_recognized": false
+  },
+  "omitted": {
+    "fields": [
+      "notes",
+      "unparsed[].sample"
+    ],
+    "why": "notes and the samples under unparsed carry the document's own prose verbatim, and most of a document the parser does not yet read would travel in them; the cited values are the deliverable, the prose is the publisher's (ADR 0003, ADR 0016)"
+  }
+}

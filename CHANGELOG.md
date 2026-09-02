@@ -7,7 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- `diff`: what changed between two parses of one schedule, value by value.
+  Records are matched by what they are (a charge by its kind, label, category,
+  season, period, applicability, group, effective date and unit) rather than
+  by where they sit, so a value that only moved on the page is not a change,
+  and each occurrence of a repeated identity is its own record. Every line
+  carries the citation the value was read from before and after; a diff
+  across two parser versions says so at the top. Exits 3 when anything
+  changed. See ADR 0016.
+- `watch`: downloads each pinned document and, where the publisher serves
+  bytes that are not the pinned bytes, parses the revision, diffs it against
+  the document's baseline, writes the report under `data/changes/`, and
+  proposes the manifest entry's new digest, retrieval date, page count and
+  size in place, comments intact. A download that fails is an error, never
+  "unchanged". `baseline` writes the reviewed parse of each pinned document
+  under `data/parsed/`, from the pinned bytes only.
+- `data/parsed/`: the reviewed parse of all seven pinned documents, as a
+  projection of `parse`'s output without `notes` and the samples under
+  `unparsed`, which is where most of an unread document's prose would
+  otherwise travel (ADR 0003). The file says what it omits and why. A test
+  fails when a committed baseline is not what the current parser writes.
+- `.github/workflows/tariff-watch.yml`: the watch, weekly and on demand,
+  opening one pull request per revised document for a person to review.
+  It merges nothing and never commits a PDF.
+- `download` in `sources.py`, split out of `fetch`: the half that touches
+  the network, without the digest check. `fetch` is unchanged in behaviour.
+  Only the watch calls `download` on its own, because looking at bytes that
+  may not be the pinned bytes is its purpose.
 
 ## [0.2.0] - 2026-09-01
 
