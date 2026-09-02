@@ -110,6 +110,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- A document the parser read nothing out of is no longer reported as fully
+  recognized. Zero unrecognized lines out of zero content lines is
+  arithmetically a clean sweep, so a scanned sheet with no text layer, a PDF
+  whose pages yield no words, or an empty file produced `fully_recognized:
+  true` alongside an empty `charges` array and exit 0 — a failed read
+  published as a completely understood schedule, which is the one claim this
+  parser exists not to make. `fully_recognized` now requires that at least one
+  content line was read, and `coverage`'s text report names the failed read
+  outright instead of printing a column of zeroes that looks the same as a
+  document which is genuinely empty. No published payload key changed, so the
+  v1 schema and the golden files are untouched. See ADR 0002.
+
 - `verify-source` and `sources` no longer disagree about one file. The
   listing reads the manifest's pinned length to decide whether a present
   document is the pinned one, and nothing checked that length on the way in,

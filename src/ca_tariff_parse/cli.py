@@ -117,6 +117,14 @@ def _cmd_coverage(args: argparse.Namespace) -> int:
         f"fully recognized ({coverage.section_ratio:.1%})\n"
     )
     out.write(f"fully recognized {coverage.fully_recognized}\n")
+    if not coverage.read_anything:
+        # Zero content lines is a failed read, not a schedule that happens to
+        # be empty, and the two lines above it are all zeroes either way. Say
+        # which one it is rather than leaving a reader to infer it.
+        out.write(
+            "FAILED READ     no content lines were extracted from this document; "
+            "nothing below was read from it\n"
+        )
     out.write(
         f"emitted         {len(parsed.charges)} charge(s), "
         f"{len(parsed.tou_windows)} time-of-use window(s), "
