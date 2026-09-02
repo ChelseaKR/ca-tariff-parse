@@ -38,7 +38,7 @@ from .recognizers.base import Citer, Emission
 from .segment import Section, segment
 from .sources import SourceEntry
 
-PARSER_VERSION = "0.1.0"
+PARSER_VERSION = "0.2.0"
 
 #: Lines a recognizer left behind are sampled into the unparsed report, capped
 #: so a wholly unrecognised document does not produce an unbounded output.

@@ -1,6 +1,6 @@
 [project]
 name = "ca-tariff-parse"
-version = "0.1.0"
+version = "0.2.0"
 description = "Deterministic parser that turns published California electricity rate schedules into structured data, with a citation for every value."
 readme = "README.md"
 requires-python = ">=3.12"
