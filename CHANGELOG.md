@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- ADR 0018 records what the second publisher does not state, from the
+  footer of all twenty-eight pinned sheets: `resolution` is a form label with
+  nothing beside it, `adopted` is never printed, and `effective` is per sheet
+  and differs within a document. The three schedule-level fields stay null as
+  a statement rather than a gap, and two synthetic fixtures pin that a
+  document printing neither publisher's shape, or this publisher's signature
+  block with an empty `Resolution`, invents nothing. No parser change.
 - A table's first line says how far its unit heading reaches. ADR 0013 read
   a unit over the components of its table only where the heading was set left
   of them, and called a heading level with them their sibling; the residential
