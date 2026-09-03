@@ -23,9 +23,11 @@ token this parser cannot read and the row is refused whole.
 
 What this refuses is most of what it sees, on purpose.
 
-* **A block with no heading stating its unit.** A run of prices under
-  "Conservation Incentive Adjustment:" says nothing about what it is a price
-  per, and the heading two blocks above may be for another unit entirely.
+* **A block with no heading stating its unit, and no unit heading whose table
+  it sits in.** A run of prices under a bare "Example Adjustment:" says nothing
+  about what it is a price per. A unit heading reaches over the table the page
+  sets under it, and how far under is read off the heading's own first line:
+  nothing set further left than that line is in the table (ADR 0013, 0017).
 * **A page setting amounts in more than one column and naming none of them.**
   A row carrying one amount in a two column table has to say which column it
   sits under, and a page that sets no words over its columns cannot. This is
@@ -69,6 +71,7 @@ refuses is the point of it::
 
 from __future__ import annotations
 
+import dataclasses
 import re
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -78,9 +81,11 @@ from ..model import Charge, Cited, Money
 from ..profiles import DocumentProfile
 from ..segment import Section
 from .base import (
+    BRACKET_MONEY_RE,
     COLUMN_TOLERANCE,
     ENERGY_UNITS,
     LABEL_MARGIN,
+    MONEY_RE,
     Citer,
     Column,
     Emission,
@@ -112,6 +117,12 @@ MINIMUM_ROWS = 2
 #: table's columns. One is a heading over a single column of amounts, which
 #: this module already reads without needing anything named.
 MINIMUM_NAMED_COLUMNS = 2
+#: How far apart two lines' first words may start and still be level. The
+#: corpus's level lines differ by up to 1.6 points (one sheet's unbundled
+#: component rows start anywhere from 95.4 to 97.9), and its smallest
+#: deliberate indent is 7.2. Two points is inside the one and well clear of the
+#: other; in the monospace fixtures one character column is six. See ADR 0017.
+LEVEL_TOLERANCE = 2.0
 
 
 def _without_margin(words: tuple[Word, ...]) -> list[Word]:
@@ -131,6 +142,9 @@ class _Row:
     amount: str
     word: Word
     label_words: tuple[Word, ...]
+    label_lines: tuple[Line, ...]
+    """The line the label was read from, or the two lines it was joined across
+    when the publisher broke it at a line ending. Cited as the span it is."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -187,6 +201,7 @@ def _read_row(line: Line, profile: DocumentProfile) -> _Row | None:
         amount=value,
         word=words[at],
         label_words=tuple(words[:at]),
+        label_lines=(line,),
     )
 
 
@@ -226,6 +241,17 @@ def _opens_one_bracket(text: str) -> bool:
 def _closes_one_bracket(text: str) -> bool:
     """True when the line closes exactly one bracket it did not open."""
     return text.count(")") - text.count("(") == 1
+
+
+def _unbalanced(text: str) -> bool:
+    """True when the text opens brackets it does not close, or the reverse.
+
+    A label that leaves a bracket open was broken at a line ending the page
+    did not let this parser join; published as it stands it would be the
+    first half of a name. A bracket that never closes states nothing that can
+    be read (ADR 0014), and the row carrying it is refused.
+    """
+    return text.count("(") != text.count(")")
 
 
 def _heading_at(
@@ -316,7 +342,19 @@ def _is_sub_heading(line: Line, text: str, row_start: float) -> bool:
     of the rows it groups, which is how the page says the rows are under it. A
     line starting level with its rows, or right of them, groups nothing.
     """
-    return bool(text) and bool(line.words) and line.words[0].x0 < row_start
+    return bool(text) and bool(line.words) and line.words[0].x0 < row_start - LEVEL_TOLERANCE
+
+
+def _unit_heading(text: str) -> tuple[str, str] | None:
+    """The unit a heading line states and the label beside it, or ``None``."""
+    match = TRAILING_UNIT_RE.search(text)
+    if match is None:
+        return None
+    unit = unit_tail(match.group("unit").strip())
+    stem = text[: match.start()].strip()
+    if unit is None or not stem:
+        return None
+    return unit, stem
 
 
 def _reaching_heading(
@@ -338,20 +376,23 @@ def _reaching_heading(
         Distribution**:
             Summer (all usage)                      $0.20388    $0.18388
 
-    The unit reaches over the table it heads, and the table is what sits under
-    it: its own rows, and the lines that name the components grouping them.
-    Anything else ends the reach, and the block is refused rather than priced
-    in a unit stated over something else.
+    The unit reaches over the table it heads, and the table is what the page
+    sets under it. How far under is read off the heading's own first line: the
+    first line beneath a unit heading is that table's first line, and nothing
+    set further left than it is in the table. Everything between the heading
+    and the block, and the block's own rows, has to sit at that level or
+    deeper, or the reach ends and the block is refused rather than priced in
+    a unit stated over something else (ADR 0017).
 
-    The nearest of those component lines is the block's own label. The unit
-    comes from the first line above that states one, and it has to be set left
-    of every component line it reaches over: a heading level with them is
-    another heading like them rather than one over them, and taking its unit
-    would price a block under a unit stated for a different table.
+    The block's label is the nearest component line set left of its rows. A
+    component line set level with the rows is one of their siblings rather
+    than a heading over them, and is passed over; a block with no component
+    line of its own is priced under the heading's own name, exactly as a row
+    directly beneath the heading is.
     """
     label_line: Line | None = None
     label_text = ""
-    passed: list[Line] = []
+    passed = [row_start]
     position = at - 1
     previous_was_heading = False
     while position >= 0:
@@ -361,24 +402,29 @@ def _reaching_heading(
             # A priced line. It belongs to this table, or the reach ends here.
             if not is_row(line):
                 return None
+            passed.append(line.indent)
             previous_was_heading = False
             position -= 1
             continue
         text, span = read
         line = span[0]
-        match = TRAILING_UNIT_RE.search(text)
-        if match is not None:
-            unit = unit_tail(match.group("unit").strip())
-            stem = text[: match.start()].strip()
-            if unit is None or not stem or label_line is None:
+        stated = _unit_heading(text)
+        if stated is not None:
+            unit, stem = stated
+            level = lines[position + 1].indent
+            if level < line.indent - LEVEL_TOLERANCE or min(passed) < level - LEVEL_TOLERANCE:
+                # The heading's first line is set left of the heading, so the
+                # heading heads nothing; or something on the way up is set
+                # left of that first line, so it is outside the table.
                 return None
-            if line.words and line.words[0].x0 >= min(
-                heading.words[0].x0 for heading in passed if heading.words
-            ):
-                # A heading that groups the component names below it is set
-                # left of them. One set level with them is their sibling, not
-                # their parent, and its unit is a statement about its own rows.
-                return None
+            if label_line is None:
+                return _Heading(
+                    label=line,
+                    label_text=stem,
+                    unit=unit,
+                    lines=span,
+                    unit_lines=span if len(span) > 1 else None,
+                )
             return _Heading(
                 label=label_line,
                 label_text=label_text,
@@ -387,15 +433,14 @@ def _reaching_heading(
                 unit_line=line,
                 unit_lines=span if len(span) > 1 else None,
             )
-        if previous_was_heading or not _is_sub_heading(line, text, row_start):
+        if previous_was_heading:
             # Two lines running that are neither rows nor a unit heading are
-            # prose or another table's furniture, and a line that does not sit
-            # left of the rows heads nothing. Either way the reach stops rather
+            # prose or another table's furniture, and the reach stops rather
             # than being guessed past.
             return None
-        if label_line is None:
+        if label_line is None and _is_sub_heading(line, text, row_start):
             label_line, label_text = line, text
-        passed.append(line)
+        passed.append(line.indent)
         previous_was_heading = True
         position -= len(span)
     return None
@@ -446,19 +491,15 @@ def _blocks(lines: list[Line], profile: DocumentProfile) -> list[tuple[_Heading,
     found: list[tuple[_Heading, list[_Row]]] = []
     position = 0
     while position < len(lines):
-        row = _read_row(lines[position], profile)
-        if row is None:
+        if _read_row(lines[position], profile) is None:
             position += 1
             continue
         start = position
-        rows = [row]
-        position += 1
-        while position < len(lines):
-            following = _read_row(lines[position], profile)
-            if following is None:
-                break
-            rows.append(following)
-            position += 1
+        rows, position = _run(
+            lines, start, lambda line: _read_row(line, profile), profile, split=_outdented
+        )
+        if not rows:
+            continue
         heading = _read_heading(lines, start, profile) or _reaching_heading(
             lines,
             start,
@@ -494,6 +535,7 @@ class _WideRow:
     label: str
     cells: tuple[_Cell, ...]
     label_words: tuple[Word, ...]
+    label_lines: tuple[Line, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -594,14 +636,137 @@ def _read_wide_row(
         label=label,
         cells=tuple(cells),
         label_words=tuple(label_words),
+        label_lines=(line,),
     )
 
 
-def _outdented(row: _WideRow, first: _WideRow) -> bool:
-    """True when ``row`` starts left of the first row of its run."""
+def _outdented(row: _Row | _WideRow, first: _Row | _WideRow) -> bool:
+    """True when ``row`` starts left of the first row of its run.
+
+    On a table naming its components, that outdent is how the page leaves one
+    component's rows and starts something else; read as one block, every row
+    would be filed under the first component's name.
+    """
     if not row.label_words or not first.label_words:
         return False
     return row.label_words[0].x0 < first.label_words[0].x0
+
+
+def _value_edge(row: _Row | _WideRow) -> float:
+    """Where the row's value area begins."""
+    if isinstance(row, _Row):
+        return row.word.x0
+    return min(cell.word.x0 for cell in row.cells)
+
+
+def _carries_money(line: Line) -> bool:
+    """True when any word on the line is written as an amount, in any notation.
+
+    Whether a bracketed amount is *read* depends on the profile; whether the
+    page printed one does not. A line carrying one is a row of some table,
+    readable or not, and never the rest of a label.
+    """
+    return any(
+        MONEY_RE.match(word.text)
+        or BRACKET_MONEY_RE.match(word.text)
+        or UNPRICED_CELL_RE.match(word.text)
+        for word in line.words
+    )
+
+
+def _joined_label[R: (_Row, _WideRow)](row: R, tail: Line, profile: DocumentProfile) -> R | None:
+    """The row with its label joined across a line ending, or ``None``.
+
+    Joined only where the publisher's own brackets say the label continues:
+    the row's label leaves exactly one bracket open and the unpriced line
+    beneath it closes exactly one it did not open. The same rule ADR 0014
+    reads a heading's unit by, applied to a row's label, and refused for the
+    same reasons where the punctuation does not settle it.
+    """
+    text = _heading_text(tail, profile)
+    if text is None or _carries_money(tail):
+        return None
+    if not _opens_one_bracket(row.label) or not _closes_one_bracket(text):
+        return None
+    return dataclasses.replace(
+        row, label=normalize(f"{row.label} {text}"), label_lines=(*row.label_lines, tail)
+    )
+
+
+def _may_continue(
+    row: _Row | _WideRow,
+    tail: Line,
+    following: Line | None,
+    profile: DocumentProfile,
+    is_row: Callable[[Line], bool],
+) -> bool:
+    """True when the line that ended a run may be the tail of its last row's label.
+
+    A label the publisher broke at a line ending without a bracket to say so
+    looks, on the next line, like an unpriced line set as a row: no amount, no
+    unit, starting no further left than the label and stopping short of the
+    value area, and heading nothing. The page does not say whether that line
+    finishes the label above it, so the row is refused rather than published
+    with the first half of its name.
+    """
+    text = _heading_text(tail, profile)
+    if text is None or _carries_money(tail) or _unit_heading(text) is not None:
+        return False
+    if tail.indent < row.label_words[0].x0 - LEVEL_TOLERANCE or tail.indent >= _value_edge(row):
+        return False
+    if following is None:
+        return True
+    if is_row(following):
+        # The tail heads the row beneath it only when it is set left of that
+        # row, which is how the page says a row is under a line (ADR 0013). A
+        # row level with the tail, or left of it, is not headed by it.
+        return following.indent < tail.indent + LEVEL_TOLERANCE
+    below = _heading_text(following, profile)
+    return below is None or _unit_heading(below) is None
+
+
+def _run[R: (_Row, _WideRow)](
+    lines: list[Line],
+    start: int,
+    read: Callable[[Line], R | None],
+    profile: DocumentProfile,
+    *,
+    split: Callable[[R, R], bool] | None = None,
+) -> tuple[list[R], int]:
+    """The run of rows starting at ``lines[start]``, and where the page goes on.
+
+    A run continues over an unpriced line only where that line finishes the
+    label above it and the publisher's brackets say so. It ends at anything
+    else, and at a row ``split`` says starts something new. The line that
+    ended it is then read against the last row: if it may be the rest of that
+    row's label, the row is dropped rather than published with half a name.
+    """
+    first = read(lines[start])
+    assert first is not None  # noqa: S101 - the caller found the row
+    rows = [first]
+    position = start + 1
+    while position < len(lines):
+        following = read(lines[position])
+        if following is not None:
+            if split is not None and split(following, first):
+                break
+            rows.append(following)
+            position += 1
+            continue
+        joined = _joined_label(rows[-1], lines[position], profile)
+        if joined is None:
+            break
+        rows[-1] = joined
+        position += 1
+    if position < len(lines):
+        after = lines[position + 1] if position + 1 < len(lines) else None
+        if _may_continue(
+            rows[-1], lines[position], after, profile, lambda line: read(line) is not None
+        ):
+            rows.pop()
+    # A label still opening a bracket was broken at a line ending the page did
+    # not let this parser join. It is the first half of a name, and refused.
+    return [row for row in rows if not _unbalanced(row.label)], position
 
 
 def _wide_blocks(
@@ -616,24 +781,19 @@ def _wide_blocks(
     found: list[tuple[_Heading, list[_WideRow]]] = []
     position = 0
     while position < len(lines):
-        row = _read_wide_row(lines[position], profile, columns)
-        if row is None:
+        if _read_wide_row(lines[position], profile, columns) is None:
             position += 1
             continue
         start = position
-        rows = [row]
-        position += 1
-        while position < len(lines):
-            following = _read_wide_row(lines[position], profile, columns)
-            if following is None or _outdented(following, row):
-                # A row set further left than the rows above it is not one of
-                # them. On a table naming its components, that outdent is how
-                # the page leaves one component's rows and starts something
-                # else, and reading them as one block would file every row
-                # under the first component's name.
-                break
-            rows.append(following)
-            position += 1
+        rows, position = _run(
+            lines,
+            start,
+            lambda line: _read_wide_row(line, profile, columns),
+            profile,
+            split=_outdented,
+        )
+        if not rows:
+            continue
         heading = _read_heading(lines, start, profile, naming) or _reaching_heading(
             lines,
             start,
@@ -707,6 +867,24 @@ def _cited_unit(heading: _Heading, citer: Citer, section_id: str) -> Cited[str]:
     return citer.text(heading.unit_source, section_id, heading.unit)
 
 
+def _cited_label(row: _Row | _WideRow, citer: Citer, section_id: str) -> Cited[str]:
+    """The row's label, cited to the line that prints it, or to the two lines it
+    was joined across when the publisher broke it at a line ending."""
+    if len(row.label_lines) > 1:
+        # The amount sits between the label's two halves on the page, so the
+        # span is cited with the label's own words as its quote: what the two
+        # lines print of the label, in order, and nothing else.
+        words = " ".join(word.text for word in row.label_words)
+        tail = " ".join(line.text for line in row.label_lines[1:])
+        return Cited(
+            value=row.label,
+            provenance=citer.cite_span(
+                row.label_lines, section_id, snippet=normalize(f"{words} {tail}")
+            ),
+        )
+    return citer.text(row.line, section_id, row.label)
+
+
 def claims(section: Section, profile: DocumentProfile) -> bool:
     return bool(_candidates(section, profile)) or bool(_wide_candidates(section, profile))
 
@@ -730,7 +908,7 @@ def parse(
         for row in rows:
             emission.charges.append(
                 Charge(
-                    label=citer.text(row.line, section.section_id, row.label),
+                    label=_cited_label(row, citer, section.section_id),
                     kind=kind,
                     price=Money(
                         amount=Cited(
@@ -744,7 +922,7 @@ def parse(
                     group=label,
                 )
             )
-            emission.take(row.line)
+            emission.take(*row.label_lines)
         emission.take(*heading.lines)
 
     for naming, heading, wide_rows in _wide_candidates(section, profile):
@@ -763,7 +941,7 @@ def parse(
                     continue
                 emission.charges.append(
                     Charge(
-                        label=citer.text(wide_row.line, section.section_id, wide_row.label),
+                        label=_cited_label(wide_row, citer, section.section_id),
                         kind=kind,
                         price=Money(
                             amount=Cited(
@@ -778,6 +956,6 @@ def parse(
                         group=label,
                     )
                 )
-            emission.take(wide_row.line)
+            emission.take(*wide_row.label_lines)
         emission.take(naming.line, *heading.lines)
     return emission

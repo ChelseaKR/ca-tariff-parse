@@ -145,7 +145,7 @@ a claim made here.
 | R, residential | SMUD | 94/115 (81.7%) | 30 | 0 | 0 | 3 | 4 |
 | CI-TOD1, commercial and industrial time-of-day | SMUD | 142/201 (70.6%) | 85 | 5 | 11 | 3 | 3 |
 | SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 | 0 | 0 |
-| E-1, residential | PG&E | 67/247 (27.1%) | 38 | 0 | 0 | 0 | 0 |
+| E-1, residential | PG&E | 84/247 (34.0%) | 53 | 0 | 0 | 0 | 0 |
 | E-TOU-C, residential time-of-use | PG&E | 53/346 (15.3%) | 23 | 0 | 0 | 0 | 0 |
 | B-1, small general service | PG&E | 157/477 (32.9%) | 59 | 0 | 0 | 0 | 0 |
 
@@ -231,16 +231,31 @@ Most of it, and each refusal is a case where a value could otherwise be wrong.
   or that takes more than one line ending to close, states nothing that can be
   read without reconstructing it, and refuses. See
   [ADR 0014](docs/adr/0014-a-unit-the-publisher-broke-across-a-line-ending.md).
-  Otherwise: A table can state its unit once and then name each component of it on
-  a line of its own, and the unit reaches over the components of its own table:
-  its rows, and the lines naming them. It reaches no further. A heading set
-  level with those component names is another heading like them rather than one
-  over them, and a block under it prices nothing.
-- **A row set further left than the rows above it.** Below the components, the
-  same sheets set component rows at the table's own indentation, with the unit
-  heading a whole sub-table above. Read as part of the block above them, every
-  one would be published under a component name the publisher gave to something
-  else. See [ADR 0013](docs/adr/0013-a-unit-reaches-over-the-table-it-heads.md).
+  Otherwise: a table can state its unit once and then name each component of it
+  on a line of its own, and the unit reaches over the table the page sets under
+  it. How far under is read off the heading's own first line: nothing set
+  further left than that line is in the table, and a heading whose first line
+  is set left of it heads nothing. A component line set level with the rows
+  beneath a heading is a sibling of those rows, passed over rather than made
+  their label; a block with no component line of its own is priced under the
+  heading's own name, exactly as a row directly beneath the heading is. See
+  [ADR 0013](docs/adr/0013-a-unit-reaches-over-the-table-it-heads.md) and
+  [ADR 0017](docs/adr/0017-a-tables-first-line-says-how-far-its-heading-reaches.md).
+- **A row set further left than the table's first line.** Below the
+  components, the commercial sheet sets its remaining component rows level with
+  the unit heading itself, left of the indented line the table began with, and
+  nothing on the page says what those rows are priced per. The residential
+  sheet sets its first line, `Generation: $0.12855`, level with the heading, so
+  its later rows at that level are in the table and are read. See ADR 0017.
+- **A row whose label may go on to the next line.** A label the publisher
+  broke at a line ending is joined where its own brackets say it continues,
+  the rule ADR 0014 reads a wrapped unit by, and cited to both lines with the
+  label's own words as the quote. Where nothing on the page says the next line
+  finishes the label, an unpriced line set as a row, stating no unit and
+  heading nothing, the row is refused rather than published with half its name:
+  `Bundled Power Charge Indifference` over `Adjustment (all usage)****` on the
+  residential sheet is that case. A label still opening a bracket is refused
+  for the same reason. See ADR 0017.
 - **The cross-reference wording and the credit form.** Each is a statement
   about how one publisher writes, not a thing a document cannot state about
   itself, so neither belongs in a profile. Closing them means finding the

@@ -668,13 +668,30 @@ def test_the_unit_is_cited_to_the_line_that_states_it() -> None:
     assert unit.value in unit.provenance.snippet
 
 
-def test_a_heading_level_with_the_component_names_does_not_reach_them() -> None:
-    """A heading set level with them is their sibling, not their parent."""
+def test_a_heading_level_with_its_own_first_line_still_heads_it() -> None:
+    """One publisher sets a heading's first-level lines level with the heading.
+
+    Its residential sheet prints ``Energy Rates by Component ($ per kWh)`` and,
+    level with it, ``Generation: $0.12855``. A line level with a heading is not
+    thereby the heading's sibling: how far the heading reaches is read off its
+    own first line, and nothing set further left than that line is in the
+    table (ADR 0017, revising ADR 0013's second fence).
+    """
     parsed = parse(build(_components(row9=[(12, "Example Component Rates ($ per kWh)")])))
-    assert parsed.charges == ()
+    assert _grouped(parsed) == [
+        ("Example First Component:", "Example Peak Summer", "0.1000"),
+        ("Example First Component:", "Example Peak Summer", "0.2000"),
+        ("Example First Component:", "Example Off-Peak Summer", "0.3000"),
+        ("Example First Component:", "Example Off-Peak Summer", "0.4000"),
+        ("Example Second Component:", "Example Peak Winter", "0.5000"),
+        ("Example Second Component:", "Example Peak Winter", "0.6000"),
+        ("Example Second Component:", "Example Off-Peak Winter", "0.7000"),
+        ("Example Second Component:", "Example Off-Peak Winter", "0.8000"),
+    ]
 
 
-def test_a_heading_set_right_of_the_component_names_does_not_reach_them() -> None:
+def test_a_heading_set_right_of_its_own_first_line_heads_nothing() -> None:
+    """A first line set left of the heading is outside it, and so is everything after."""
     parsed = parse(build(_components(row9=[(13, "Example Component Rates ($ per kWh)")])))
     assert parsed.charges == ()
 
@@ -692,15 +709,38 @@ def test_two_lines_that_are_not_rows_end_the_reach() -> None:
     assert "Example Peak Winter" not in labels
 
 
-def test_a_row_outdented_from_the_rows_above_it_leaves_their_component() -> None:
-    """The unbundled components a sheet sets level with the table's own heading.
+def test_a_row_outdented_to_the_tables_first_line_is_priced_under_the_heading_itself() -> None:
+    """A row that leaves a component's rows but stays in the table.
 
-    Read as part of the block above, every one of them would be published under
-    a component name the publisher gave to something else.
+    Read as part of the block above, it would be published under a component
+    name the publisher gave to something else. Set level with the table's
+    first line, it is one of the heading's own rows and takes the heading's
+    own name (ADR 0017).
     """
     page = _components(
         row16=[(12, "Example Outdented Row"), (47, "$0.9000"), (64, "$0.9500")],
         row17=[(12, "Example Second Outdented Row"), (47, "$0.9600"), (64, "$0.9700")],
+    )
+    grouped = _grouped(parse(build(page)))
+    assert ("Example Component Rates", "Example Outdented Row", "0.9000") in grouped
+    assert ("Example Component Rates", "Example Second Outdented Row", "0.9700") in grouped
+    assert ("Example Second Component:", "Example Off-Peak Winter", "0.7000") in grouped
+    assert not any(
+        label == "Example Outdented Row" and group != "Example Component Rates"
+        for group, label, _ in grouped
+    )
+
+
+def test_a_row_set_left_of_the_tables_first_line_is_outside_it() -> None:
+    """The commercial sheet's shape: the components indented under the heading,
+    then the remaining component rows back at the heading's own level.
+
+    The heading's first line is indented, so a row at the heading's level has
+    left the table, and nothing on the page says what it is priced per.
+    """
+    page = _components(
+        row16=[(9, "Example Outdented Row"), (47, "$0.9000"), (64, "$0.9500")],
+        row17=[(9, "Example Second Outdented Row"), (47, "$0.9600"), (64, "$0.9700")],
     )
     grouped = _grouped(parse(build(page)))
     assert "Example Outdented Row" not in {label for _, label, _ in grouped}
@@ -708,9 +748,16 @@ def test_a_row_outdented_from_the_rows_above_it_leaves_their_component() -> None
 
 
 def test_a_component_name_level_with_its_rows_groups_nothing() -> None:
-    """A line set level with the rows below it is not a heading over them."""
-    parsed = parse(build(_components(row10=[(15, "Example First Component:")])))
-    assert "Example Peak Summer" not in {label for _, label, _ in _grouped(parsed)}
+    """A line set level with the rows below it is not a heading over them.
+
+    The rows are still in the table the unit heading began, so they are priced
+    under the heading's own name. That level line is the table's first line;
+    the second component, set left of it, is outside the table, and its rows
+    are refused.
+    """
+    grouped = _grouped(parse(build(_components(row10=[(15, "Example First Component:")]))))
+    assert ("Example Component Rates", "Example Peak Summer", "0.1000") in grouped
+    assert "Example Peak Winter" not in {label for _, label, _ in grouped}
 
 
 def test_a_heading_line_carrying_both_the_unit_and_the_column_names() -> None:
@@ -871,3 +918,105 @@ def test_a_line_that_does_not_close_the_bracket_above_it_is_not_joined_to_it() -
     assert {c.group.value for c in parsed.charges if c.group} == {"customer"}
     assert {c.price.unit.value for c in parsed.charges} == {"$ per day"}
     assert any("Example Charge Rates" in note.value for note in parsed.notes)
+
+
+#: A single-column table in the residential sheet's shape: the heading's own
+#: rows level with it, a component set level with those rows grouping rows
+#: indented under it, one of those rows with its label broken at a line
+#: ending, and more of the heading's own rows after, the last of them followed
+#: by a line that may be the rest of its label. Synthetic throughout.
+LEVEL_TABLE = {
+    5: [(9, "II. Example Rates")],
+    9: [(12, "Example Rates by Component ($ per kWh)")],
+    10: [(12, "Example Generation:"), (52, "$0.1000")],
+    11: [(12, "Example Distribution:"), (52, "$0.2000")],
+    12: [(12, "Example Adjustment:")],
+    13: [(15, "Example Tier 1 Usage"), (52, "$0.3000")],
+    14: [(15, "Example Tier 2 (Over 400% of"), (52, "$0.4000")],
+    15: [(18, "Baseline)")],
+    16: [(12, "Example Transmission (all usage)"), (52, "$0.5000")],
+    17: [(12, "Example Public Purpose (all usage)"), (52, "$0.6000")],
+    18: [(12, "Example Indifference"), (52, "$0.7000")],
+    19: [(12, "Example Adjustment (all usage)")],
+}
+
+
+def _level(**changes: list[tuple[int, str]] | None) -> dict[int, list[tuple[int, str]]]:
+    page = {row: list(cells) for row, cells in LEVEL_TABLE.items()}
+    for key, value in changes.items():
+        row = int(key.removeprefix("row"))
+        if value is None:
+            page.pop(row, None)
+        else:
+            page[row] = value
+    return page
+
+
+def test_the_residential_sheets_shape_is_read_as_the_page_sets_it() -> None:
+    """Rows level with the heading are its own; a component level with them
+    groups the rows indented under it; a row whose label may go on is refused."""
+    assert _grouped(parse(build(_level()))) == [
+        ("Example Rates by Component", "Example Generation:", "0.1000"),
+        ("Example Rates by Component", "Example Distribution:", "0.2000"),
+        ("Example Adjustment:", "Example Tier 1 Usage", "0.3000"),
+        ("Example Adjustment:", "Example Tier 2 (Over 400% of Baseline)", "0.4000"),
+        ("Example Rates by Component", "Example Transmission (all usage)", "0.5000"),
+        ("Example Rates by Component", "Example Public Purpose (all usage)", "0.6000"),
+    ]
+
+
+def test_a_label_broken_at_a_line_ending_is_joined_where_its_brackets_say_so() -> None:
+    """The same rule ADR 0014 reads a wrapped unit by, applied to a label, and
+    cited to both lines with the label's own words as the quote: the amount
+    that sits between the two halves on the page is not part of the label."""
+    parsed = parse(build(_level()))
+    (charge,) = [c for c in parsed.charges if c.label.value.startswith("Example Tier 2")]
+    assert charge.label.value == "Example Tier 2 (Over 400% of Baseline)"
+    assert charge.label.provenance.end_line == charge.label.provenance.line + 1
+    assert charge.label.provenance.snippet == charge.label.value
+    assert charge.price.amount.provenance.end_line is None
+
+
+def test_a_row_whose_label_may_go_on_is_refused_rather_than_cut() -> None:
+    """An unpriced line set as a row, stating no unit and heading nothing, may
+    finish the label above it. The page does not say, so the row is refused."""
+    labels = {label for _, label, _ in _grouped(parse(build(_level())))}
+    assert "Example Indifference" not in labels
+    assert "Example Public Purpose (all usage)" in labels
+
+
+def test_a_tail_that_heads_rows_finishes_no_label() -> None:
+    """``Example Adjustment:`` follows a row and heads rows of its own; the row
+    above it is a whole row."""
+    labels = {label for _, label, _ in _grouped(parse(build(_level())))}
+    assert "Example Distribution:" in labels
+
+
+def test_a_tail_carrying_an_amount_the_profile_cannot_read_finishes_no_label() -> None:
+    """A bracketed amount is a row of some table whether or not the profile
+    reads brackets; it is never the rest of a label."""
+    page = _level(row19=[(12, "Example Bracketed"), (52, "($0.0500)")])
+    labels = {label for _, label, _ in _grouped(parse(build(page)))}
+    assert "Example Indifference" in labels
+    assert "Example Bracketed" not in labels
+
+
+def test_a_tail_set_left_of_the_label_finishes_no_label() -> None:
+    page = _level(row19=[(9, "Example note about the table.")])
+    assert "Example Indifference" in {label for _, label, _ in _grouped(parse(build(page)))}
+
+
+def test_a_tail_stating_a_unit_finishes_no_label() -> None:
+    page = _level(row19=[(12, "Example Other Rates ($ per kWh)")])
+    assert "Example Indifference" in {label for _, label, _ in _grouped(parse(build(page)))}
+
+
+def test_a_label_whose_bracket_never_closes_on_the_next_line_is_not_joined() -> None:
+    """``Baseline`` without its bracket closes nothing; the row above is then a
+    row whose label may go on, and is refused rather than joined at a guess."""
+    page = _level(row15=[(18, "Baseline")])
+    labels = {label for _, label, _ in _grouped(parse(build(page)))}
+    assert not any(label.startswith("Example Tier 2") for label in labels)
+    # One row is left under "Example Adjustment:", and one row is not a table.
+    assert "Example Tier 1 Usage" not in labels
+    assert "Example Transmission (all usage)" in labels

@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A table's first line says how far its unit heading reaches. ADR 0013 read
+  a unit over the components of its table only where the heading was set left
+  of them, and called a heading level with them their sibling; the residential
+  sheet sets a heading's own first-level lines level with the heading
+  (`Energy Rates by Component ($ per kWh)` over `Generation: $0.12855`), so
+  that inference was one publisher's typography, not a fact about pages. The
+  reach is now read off the heading's first line: nothing set further left
+  than it is in the table, and a heading whose first line is set left of it
+  heads nothing. A component line level with the rows beneath a heading is
+  their sibling and is passed over; a block with no component line of its
+  own is priced under the heading's own name. See ADR 0017. `pge-e-1` goes
+  from 67 of 247 content lines to 84 and from 38 charges to 53; the four SMUD
+  schedules and the other two PG&E schedules are byte for byte unchanged.
+- A row's label is joined across a line ending where the publisher's own
+  brackets say it continues, the rule ADR 0014 reads a wrapped unit by, and
+  cited to both lines with the label's own words as the quote. A row whose
+  next line may be the rest of its label, and whose page does not say so, is
+  refused rather than published with half a name; so is a label still opening
+  a bracket. See ADR 0017.
 - `diff`: what changed between two parses of one schedule, value by value.
   Records are matched by what they are (a charge by its kind, label, category,
   season, period, applicability, group, effective date and unit) rather than

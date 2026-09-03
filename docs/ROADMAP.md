@@ -218,6 +218,18 @@ separated from by more than the rule allows; or an ADR records why the reach
 cannot be established from the page, with a test asserting the refusal. Both
 outcomes close this phase. `tests/golden/` byte for byte unchanged either way.
 
+**Shipped, in two parts.** ADR 0013 read the shape on the two-column sheets:
+the unit reaches over the components of its own table, fenced by indentation,
+and `pge-b-1` and `pge-e-tou-c` gained their component tables (113 to 131 and
+18 to 25 content lines). ADR 0017 then corrected the fence that ADR 0013 had
+drawn from those two sheets alone, after the residential sheet showed a
+heading whose own first-level lines sit level with it: how far a unit reaches
+is read off the heading's first line, not off the heading's indent. `pge-e-1`
+went from 67 to 84 content lines and from 38 to 53 charges. What stays refused
+on these sheets is stated in the README: the commercial sheet's remaining
+component rows, set left of the table's first line, and any row whose label
+may go on to a line the page does not tie to it.
+
 ### Phase 6: A unit broken across a line ending
 
 **Delivers.** The other thing standing between the second publisher's tables
@@ -248,6 +260,12 @@ refuses.
 a fixture proving an unclosed bracket refuses rather than joining to the end of
 the page; or an ADR records why a heading cannot be joined across a line ending
 without inventing what the publisher meant, with a test asserting the refusal.
+
+**Shipped** as ADR 0014: a heading is joined across one line ending when the
+line leaves exactly one bracket open and the next closes exactly one it did
+not open, and the joined unit is cited to the span of both lines. `pge-e-1`
+went from 42 to 60 content lines, `pge-e-tou-c` from 25 to 43, `pge-b-1` from
+131 to 135. ADR 0017 later applied the same rule to a row's label.
 
 ### Phase 7: The second publisher's identity
 
@@ -307,8 +325,8 @@ removed. Either closes the phase honestly.
 | 2 | Coverage as a checked output | nothing | no figure; binds the claim |
 | 3 | The contribution surface | nothing | no figure |
 | 4 | A column that names itself | 2 | `pge-e-tou-c`, `pge-b-1` |
-| 5 | A sub-heading between a unit and its rows | 4 | `pge-b-1`, `pge-e-tou-c` |
-| 6 | A unit broken across a line ending | 5 | `pge-b-1`, `pge-e-tou-c`, or a refusal |
+| 5 | A sub-heading between a unit and its rows | 4 | shipped: ADR 0013, then ADR 0017 (`pge-e-1`) |
+| 6 | A unit broken across a line ending | 5 | shipped: ADR 0014 |
 | 7 | The second publisher's identity | nothing | identity fields, no coverage figure |
 | 8 | Release and distribution | 1 to 3 | nothing in the parser; tagged, PyPI pending on the owner |
 
@@ -344,6 +362,13 @@ Stated so that the plan's silence is not read as an omission.
 These were the largest items on this roadmap. Each is described where it
 landed rather than repeated here.
 
+- **How far a unit heading reaches**, read off the heading's own first line
+  rather than off its indent, after the residential sheet showed a heading
+  whose first-level lines sit level with it. Rows level with the heading are
+  its own, a component level with them groups the rows indented under it, and
+  a row whose label may go on to a line the page does not tie to it is refused.
+  See ADR 0017 and "What is still refused on the second publisher" in the
+  README.
 - **The tariff watch.** A publisher's revision at the same URL used to be a
   digest mismatch and nothing more. `watch` now downloads each pinned
   document, parses a revision, and diffs it value by value against the last
