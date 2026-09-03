@@ -267,7 +267,13 @@ Most of it, and each refusal is a case where a value could otherwise be wrong.
   in the word "schedule" appears once. Both publishers' codes are read now, and
   so is a title where the page settles which neighbouring line it is. Where
   both neighbours repeat, no title is read. See
-  [ADR 0015](docs/adr/0015-a-running-head-runs.md).
+  [ADR 0015](docs/adr/0015-a-running-head-runs.md). The remaining three
+  identity fields are null for this publisher because the page states no
+  value for them, not because one went unread: `Resolution` is printed as a
+  label with nothing beside it on every sheet, nothing is printed as adopted,
+  and each sheet states its own effective date, which is carried on every
+  charge rather than borrowed for the schedule. See
+  [ADR 0018](docs/adr/0018-what-the-second-publisher-does-not-state.md).
 
 A **filing change marker** -- a bracketed capital such as `(R)` beside a
 revised line, or a change bar in the right margin -- is no longer one of

@@ -294,6 +294,17 @@ prints neither publisher's shape still parses with a null identity rather than
 a guessed one, `tests/golden/` is byte for byte unchanged, and an ADR records
 which fields were found to be unstated rather than merely unread.
 
+**Shipped, in two parts.** ADR 0015 read `schedule_code` on all three
+documents and `title` where the page settles it. ADR 0018 records the rest as
+unstated rather than unread, from the footer of all twenty-eight sheets:
+`resolution` is a form label with nothing beside it on every sheet,
+`adopted` is never printed (`Submitted` and `Decision` are other facts), and
+`effective` is stated per sheet and differs within a document, so it stays
+null at the schedule level and is carried on every charge from its own
+sheet. The advice letter number, decision number and submission date each
+sheet prints are real per-sheet facts the model has no place for; adding one
+is a schema decision, listed below under what is not in this plan.
+
 ### Phase 8: Release and distribution — tagged; index publication pending
 
 **Delivered 2026-09-01.** `v0.1.0` and `v0.2.0` exist as signed annotated
@@ -327,7 +338,7 @@ removed. Either closes the phase honestly.
 | 4 | A column that names itself | 2 | `pge-e-tou-c`, `pge-b-1` |
 | 5 | A sub-heading between a unit and its rows | 4 | shipped: ADR 0013, then ADR 0017 (`pge-e-1`) |
 | 6 | A unit broken across a line ending | 5 | shipped: ADR 0014 |
-| 7 | The second publisher's identity | nothing | identity fields, no coverage figure |
+| 7 | The second publisher's identity | nothing | shipped: ADR 0015, then ADR 0018 (nulls recorded as unstated) |
 | 8 | Release and distribution | 1 to 3 | nothing in the parser; tagged, PyPI pending on the owner |
 
 Phases 1 to 3 are independent of each other and of everything after them.
@@ -349,6 +360,11 @@ Stated so that the plan's silence is not read as an omission.
   digest. Adding to it is a deliberate act with a retrieval date and a
   publisher's `robots.txt` behind it, not something a phase assumes.
 - **The refusals under *Decided against*.** They are decisions. See ADR 0011.
+- **A per-sheet record of the advice letter, decision and submission date.**
+  The second publisher prints all three on every sheet, and the model has no
+  place for them; `effective` is the one per-sheet fact it carries, on each
+  charge. Carrying the rest means a new record and a schema revision, which is
+  a decision about `parsed-schedule/v1`, not about a publisher. See ADR 0018.
 - **A hosted service, or a feed of the watch's reports on any other terms.**
   The watch writes to this repository, for review here, and nothing else.
   Whether its reports are ever offered elsewhere is a separate decision,

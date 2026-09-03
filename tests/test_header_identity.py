@@ -162,3 +162,58 @@ def test_the_schedule_line_is_accounted_for_rather_than_left_unread() -> None:
     unread = " ".join(sample for item in parsed.unparsed for sample in item.sample)
     assert "EXAMPLE SCHEDULE SYN-X" not in unread
     assert "EXAMPLE GENERAL SERVICE" not in unread
+
+
+def bare_page(cells: dict[int, str]) -> str:
+    """One synthetic sheet printing neither publisher's identity shape."""
+    grid = [""] * PAGE_ROWS
+    for row, text in cells.items():
+        grid[row] = " " * 9 + text
+    return "\n".join(line.rstrip() for line in grid)
+
+
+def test_a_document_printing_neither_shape_has_a_null_identity() -> None:
+    """No schedule line, no resolution line, no sheet number: nothing is guessed."""
+    parsed = parse(
+        bare_page({4: "EXAMPLE SERVICE (SYNTHETIC)", 6: "Example rates are stated below."}),
+        bare_page({4: "EXAMPLE SERVICE (SYNTHETIC)", 6: "Example conditions continue."}),
+    )
+    assert parsed.identity.schedule_code is None
+    assert parsed.identity.title is None
+    assert parsed.identity.resolution is None
+    assert parsed.identity.adopted is None
+    assert parsed.identity.effective is None
+    assert parsed.identity.sheets == ()
+
+
+def signed_page(cells: dict[int, str], *, sheet: str, effective: str) -> str:
+    """One synthetic sheet in the second publisher's shape: the schedule named
+    in the body, and a signature block whose Resolution label has nothing
+    beside it (ADR 0018)."""
+    grid = [""] * PAGE_ROWS
+    grid[1] = " " * 40 + f"Revised Example Sheet No. {sheet}"
+    grid[3] = " " * 9 + f"EXAMPLE SCHEDULE SYN-9 Sheet {sheet[-1]}"
+    for row, text in cells.items():
+        grid[row] = " " * 9 + text
+    grid[49] = " " * 9 + "Advice 0000-E              Issued by          Submitted January 1, 2026"
+    grid[50] = " " * 9 + f"Decision                   Example Person     Effective {effective}"
+    grid[51] = " " * 36 + "Vice President     Resolution"
+    grid[52] = " " * 36 + "Regulatory and Rates"
+    return "\n".join(line.rstrip() for line in grid)
+
+
+def test_a_blank_resolution_label_is_not_a_resolution() -> None:
+    """The second publisher's signature block prints the word and no value.
+
+    Nothing schedule-level is invented from it: no resolution, no adoption, and
+    no single effective date for sheets that took effect on different days.
+    """
+    parsed = parse(
+        signed_page(
+            {6: "Example rates are stated below."}, sheet="SYN-9-1", effective="March 1, 2026"
+        ),
+        signed_page({6: "Example conditions continue."}, sheet="SYN-9-2", effective="June 1, 2026"),
+    )
+    assert parsed.identity.resolution is None
+    assert parsed.identity.adopted is None
+    assert parsed.identity.effective is None
