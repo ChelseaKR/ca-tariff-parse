@@ -742,7 +742,10 @@ def _run[R: (_Row, _WideRow)](
     row's label, the row is dropped rather than published with half a name.
     """
     first = read(lines[start])
-    assert first is not None  # noqa: S101 - the caller found the row
+    if first is None:
+        # Callers start a run at a row they have already read; a start that is
+        # not one has no run, and the page goes on from the next line.
+        return [], start + 1
     rows = [first]
     position = start + 1
     while position < len(lines):
