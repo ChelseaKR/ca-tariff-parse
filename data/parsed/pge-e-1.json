@@ -780,6 +780,1146 @@
     },
     {
       "label": {
+        "value": "Tier 1 Usage (0% - 100% of Baseline)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 17,
+          "end_line": null,
+          "snippet": "Tier 1 Usage (0% - 100% of Baseline) ($0.04052) (I)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L17"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "-0.04052",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 17,
+            "end_line": null,
+            "snippet": "Tier 1 Usage (0% - 100% of Baseline) ($0.04052) (I)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L17"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Conservation Incentive Adjustment:",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 16,
+          "end_line": null,
+          "snippet": "Conservation Incentive Adjustment:",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L16"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Tier 2 Usage (101% - 400% of Baseline)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 18,
+          "end_line": null,
+          "snippet": "Tier 2 Usage (101% - 400% of Baseline) $0.04089 (R)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L18"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.04089",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 18,
+            "end_line": null,
+            "snippet": "Tier 2 Usage (101% - 400% of Baseline) $0.04089 (R)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L18"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Conservation Incentive Adjustment:",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 16,
+          "end_line": null,
+          "snippet": "Conservation Incentive Adjustment:",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L16"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Tier 2 Usage Continued (Over 400% of Baseline)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 19,
+          "end_line": 20,
+          "snippet": "Tier 2 Usage Continued (Over 400% of Baseline)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L19-20"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.04089",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 19,
+            "end_line": null,
+            "snippet": "Tier 2 Usage Continued (Over 400% of $0.04089 (R)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L19"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Conservation Incentive Adjustment:",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 16,
+          "end_line": null,
+          "snippet": "Conservation Incentive Adjustment:",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L16"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Transmission* (all usage)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 21,
+          "end_line": null,
+          "snippet": "Transmission* (all usage) $0.04638",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L21"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.04638",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 21,
+            "end_line": null,
+            "snippet": "Transmission* (all usage) $0.04638",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L21"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Energy Rates by Component",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Transmission Rate Adjustments* (all usage)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 22,
+          "end_line": null,
+          "snippet": "Transmission Rate Adjustments* (all usage) $0.00453 (I)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L22"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.00453",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 22,
+            "end_line": null,
+            "snippet": "Transmission Rate Adjustments* (all usage) $0.00453 (I)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L22"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Energy Rates by Component",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Reliability Services* (all usage)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 23,
+          "end_line": null,
+          "snippet": "Reliability Services* (all usage) $0.00013",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L23"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.00013",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 23,
+            "end_line": null,
+            "snippet": "Reliability Services* (all usage) $0.00013",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L23"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Energy Rates by Component",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Public Purpose Programs (all usage)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 24,
+          "end_line": null,
+          "snippet": "Public Purpose Programs (all usage) $0.00614 (R)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L24"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.00614",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 24,
+            "end_line": null,
+            "snippet": "Public Purpose Programs (all usage) $0.00614 (R)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L24"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Energy Rates by Component",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Nuclear Decommissioning (all usage)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 25,
+          "end_line": null,
+          "snippet": "Nuclear Decommissioning (all usage) ($0.00002)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L25"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "-0.00002",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 25,
+            "end_line": null,
+            "snippet": "Nuclear Decommissioning (all usage) ($0.00002)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L25"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Energy Rates by Component",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Competition Transition Charges (all usage)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 26,
+          "end_line": null,
+          "snippet": "Competition Transition Charges (all usage) $0.00027",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L26"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.00027",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 26,
+            "end_line": null,
+            "snippet": "Competition Transition Charges (all usage) $0.00027",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L26"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Energy Rates by Component",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Energy Cost Recovery Amount (all usage)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 27,
+          "end_line": null,
+          "snippet": "Energy Cost Recovery Amount (all usage) $0.00002",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L27"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.00002",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 27,
+            "end_line": null,
+            "snippet": "Energy Cost Recovery Amount (all usage) $0.00002",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L27"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Energy Rates by Component",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Wildfire Fund Charge (all usage)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 28,
+          "end_line": null,
+          "snippet": "Wildfire Fund Charge (all usage) $0.00591",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L28"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.00591",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 28,
+            "end_line": null,
+            "snippet": "Wildfire Fund Charge (all usage) $0.00591",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L28"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Energy Rates by Component",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "New System Generation Charge (all usage)**",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 29,
+          "end_line": null,
+          "snippet": "New System Generation Charge (all usage)** $0.00000 (R)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L29"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.00000",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 29,
+            "end_line": null,
+            "snippet": "New System Generation Charge (all usage)** $0.00000 (R)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L29"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Energy Rates by Component",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Wildfire Hardening Charge (all usage)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 30,
+          "end_line": null,
+          "snippet": "Wildfire Hardening Charge (all usage) $0.00391 (I)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L30"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.00391",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 30,
+            "end_line": null,
+            "snippet": "Wildfire Hardening Charge (all usage) $0.00391 (I)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L30"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Energy Rates by Component",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Recovery Bond Charge (all usage)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 31,
+          "end_line": null,
+          "snippet": "Recovery Bond Charge (all usage) $0.00857 (I)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L31"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "0.00857",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 31,
+            "end_line": null,
+            "snippet": "Recovery Bond Charge (all usage) $0.00857 (I)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L31"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Energy Rates by Component",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
+        "value": "Recovery Bond Credit (all usage)",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 32,
+          "end_line": null,
+          "snippet": "Recovery Bond Credit (all usage) ($0.00857) (R)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L32"
+        }
+      },
+      "kind": "energy_usage",
+      "price": {
+        "amount": {
+          "value": "-0.00857",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 32,
+            "end_line": null,
+            "snippet": "Recovery Bond Credit (all usage) ($0.00857) (R)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L32"
+          }
+        },
+        "currency": "USD",
+        "unit": {
+          "value": "$ per kWh",
+          "provenance": {
+            "document_id": "pge-e-1",
+            "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+            "page": 2,
+            "sheet": "61097-E",
+            "section": "RATES",
+            "line": 13,
+            "end_line": null,
+            "snippet": "Energy Rates by Component ($ per kWh)",
+            "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+          }
+        }
+      },
+      "effective_from": {
+        "value": "March 1, 2026",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "front",
+          "line": 45,
+          "end_line": null,
+          "snippet": "Decision Shilpa Ramaiya Effective March 1, 2026",
+          "locator": "pge-e-1 p.2 sheet 61097-E front L45"
+        }
+      },
+      "group": {
+        "value": "Energy Rates by Component",
+        "provenance": {
+          "document_id": "pge-e-1",
+          "document_sha256": "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239",
+          "page": 2,
+          "sheet": "61097-E",
+          "section": "RATES",
+          "line": 13,
+          "end_line": null,
+          "snippet": "Energy Rates by Component ($ per kWh)",
+          "locator": "pge-e-1 p.2 sheet 61097-E RATES L13"
+        }
+      }
+    },
+    {
+      "label": {
         "value": "Income Tier 1",
         "provenance": {
           "document_id": "pge-e-1",
@@ -3100,8 +4240,8 @@
       "last_page": 3,
       "last_sheet": "61098-E",
       "last_line": 6,
-      "line_count": 54,
-      "reason": "54 of 83 lines in a recognized section matched no rule",
+      "line_count": 37,
+      "reason": "37 of 83 lines in a recognized section matched no rule",
       "span": "p.1 L18 to p.3 L6"
     },
     {
@@ -3120,13 +4260,13 @@
   ],
   "coverage": {
     "content_lines": 247,
-    "recognized_lines": 67,
-    "unrecognized_lines": 180,
+    "recognized_lines": 84,
+    "unrecognized_lines": 163,
     "boilerplate_lines": 69,
     "sections_total": 5,
     "sections_recognized": 1,
     "sections_unrecognized": 4,
-    "line_ratio": 0.271255,
+    "line_ratio": 0.340081,
     "section_ratio": 0.2,
     "fully_recognized": false
   },

@@ -196,12 +196,24 @@ class Citer:
             snippet=snippet if snippet is not None else line.text,
         )
 
-    def cite_span(self, lines: Iterable[Line], section: str) -> Provenance:
+    def cite_span(
+        self, lines: Iterable[Line], section: str, *, snippet: str | None = None
+    ) -> Provenance:
+        """Cite a value read across several lines.
+
+        The snippet is the lines' text, joined, unless the caller quotes the
+        words the value was read from directly: a label the publisher broke
+        at a line ending has its amount printed between its two halves, and
+        a snippet of both whole lines would not contain the label as one
+        phrase. Quoting the label's own words, in order, still quotes only
+        what the page prints.
+        """
         group = list(lines)
         if not group:
             raise ValueError("cannot cite an empty span")
         first, last = group[0], group[-1]
-        snippet = normalize(" ".join(line.text for line in group))
+        if snippet is None:
+            snippet = normalize(" ".join(line.text for line in group))
         return Provenance(
             document_id=self.doc.document_id,
             document_sha256=self.doc.sha256,
