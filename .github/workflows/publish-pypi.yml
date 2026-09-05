@@ -35,6 +35,7 @@ jobs:
   verify:
     name: Verify the signed tag against trusted main
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
     outputs:
@@ -94,6 +95,7 @@ jobs:
     name: Build the distribution at the tagged commit
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
     steps:
@@ -130,6 +132,7 @@ jobs:
     name: Publish to PyPI
     needs: [verify, build]
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     environment:
       name: pypi
       url: https://pypi.org/project/ca-tariff-parse/${{ needs.verify.outputs.version }}/
