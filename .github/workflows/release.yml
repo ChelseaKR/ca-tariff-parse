@@ -36,6 +36,7 @@ jobs:
   verify:
     name: Verify the signed tag against trusted main
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
     outputs:
@@ -118,6 +119,7 @@ jobs:
     name: Publish the release
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
     steps:
