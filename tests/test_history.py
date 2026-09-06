@@ -320,6 +320,54 @@ def test_a_match_that_selects_nothing_exits_non_zero(scenario: Path, capsys) -> 
     assert "no record matched" in capsys.readouterr().err
 
 
+def _committed_baseline_only(root: Path) -> None:
+    """A reviewed baseline with no change reports beside it.
+
+    This is the state of the repository itself: `data/parsed/` is committed and
+    `data/changes/` does not exist yet, because the watch has not recorded a
+    revision. It is the case the command has to get right.
+    """
+    (root / "changes").mkdir()
+    (root / "parsed").mkdir()
+    first = stamped(
+        json.loads((GOLDEN / f"{DOC}.json").read_text(encoding="utf-8")), "a" * 64, "2026-01-05"
+    )
+    (root / "parsed" / f"{DOC}.json").write_text(dump(project(first)), encoding="utf-8")
+
+
+def test_all_with_no_committed_reports_is_not_a_failed_match(tmp_path: Path, capsys) -> None:
+    """`--all` asks for nothing by name, so nothing coming back is a statement
+    about what has been committed, not a match that failed. Exiting 5 here
+    would tell a script the request was wrong when the record is simply empty."""
+    _committed_baseline_only(tmp_path)
+    code = main(
+        [
+            "history",
+            "--id",
+            DOC,
+            "--changes-dir",
+            str(tmp_path / "changes"),
+            "--baseline-dir",
+            str(tmp_path / "parsed"),
+            "--all",
+        ]
+    )
+    captured = capsys.readouterr()
+    assert code == EXIT_OK
+    assert "no committed report" in captured.err
+    assert "None" not in captured.err
+    assert "not about whether the document has changed" in captured.err
+
+
+def test_an_empty_report_says_what_it_does_and_does_not_establish(
+    tmp_path: Path,
+) -> None:
+    _committed_baseline_only(tmp_path)
+    text = _run_at(tmp_path, None)
+    assert "Nothing to show" in text
+    assert "Neither says the document has not changed" in text
+
+
 def test_the_no_match_code_is_not_the_read_failure_code() -> None:
     assert EXIT_NO_MATCH != EXIT_OK
     assert EXIT_NO_MATCH == 5
@@ -336,6 +384,10 @@ def test_all_lists_every_record_the_reports_mention(scenario: Path) -> None:
 # ---------------------------------------------------------------------------
 # Command line
 # ---------------------------------------------------------------------------
+
+
+def _run_at(root: Path, match: str | None, *extra: str) -> str:
+    return _run(root, match, *extra)
 
 
 def _run(root: Path, match: str | None, *extra: str) -> str:
