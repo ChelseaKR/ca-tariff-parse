@@ -471,7 +471,12 @@ def _cite_text(cite: Mapping[str, Any] | None) -> str:
 def to_text(document_id: str, built: Sequence[Timeline]) -> str:
     lines = [f"# History of {document_id}", ""]
     if not built:
-        return "".join(line + "\n" for line in [*lines, "No record matched."])
+        lines.append(
+            "Nothing to show. Either no record matched, or no committed change "
+            "report mentions a record for this document. Neither says the "
+            "document has not changed: it says the record here does not cover it."
+        )
+        return "".join(line + "\n" for line in lines)
     gaps = built[0].gaps
     if gaps:
         lines.append("## Gaps in the committed record")

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **`history --all` no longer reports an empty record as a failed match.** With
+  a reviewed baseline committed and no change reports beside it — which is the
+  state of this repository today, since `data/changes/` does not exist until
+  the watch records a revision — `--all` exited 5 and printed
+  `no record matched None`. Two things wrong with that: `--all` asks for
+  nothing by name, so nothing coming back is a statement about what has been
+  committed rather than a request that failed, and a script reading exit 5 was
+  told the request was wrong. It now exits 0 and says which directory holds no
+  reports. The report itself says that neither an empty match nor an empty
+  report set means the document has not changed; it means the committed record
+  does not cover it. `--match` selecting nothing still exits 5.
+
 ### Added
 
 - **A `history` verb rebuilds a value's timeline from the committed reports.**

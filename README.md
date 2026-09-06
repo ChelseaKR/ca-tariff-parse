@@ -534,7 +534,10 @@ than left out — omitting it would make "no result" mean both "no such record"
 and "a record the publisher has not moved". A `--match` term naming a field no
 record kind is identified by is an error, not a term that quietly matches
 nothing; `history` exits 5 when a well-formed match selects no record, which is
-a different exit from "the reports could not be read".
+a different exit from "the reports could not be read". `--all` asks for nothing
+by name, so an empty result there is a statement about what has been committed
+rather than a failed request, and it exits 0 saying which directory holds no
+reports.
 
 To make this possible, `diff --jsonl` now repeats both sides' retrieval date,
 digest, parser version and `parser_comparison` on every change line. It is

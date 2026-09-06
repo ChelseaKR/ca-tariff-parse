@@ -319,13 +319,24 @@ def _cmd_history(args: argparse.Namespace) -> int:
         Path(args.output).write_text(text, encoding="utf-8")
     else:
         sys.stdout.write(text)
-    if not built:
+    if built:
+        return EXIT_OK
+    if args.all:
+        # Not a failed match: nothing was asked for by name. An empty result
+        # here means the committed reports mention no record for this
+        # document, which `history_text` has already said in the output, and
+        # which is a true statement about the record rather than an error.
         sys.stderr.write(
-            f"{args.id}: no record matched {args.match!r}. That is not the same as "
-            "a record that has never changed, which is reported with one state\n"
+            f"{args.id}: no committed report under {args.changes_dir} mentions a "
+            "record for this document. That is a statement about what has been "
+            "committed, not about whether the document has changed\n"
         )
-        return EXIT_NO_MATCH
-    return EXIT_OK
+        return EXIT_OK
+    sys.stderr.write(
+        f"{args.id}: no record matched {args.match!r}. That is not the same as "
+        "a record that has never changed, which is reported with one state\n"
+    )
+    return EXIT_NO_MATCH
 
 
 def _cmd_calendar(args: argparse.Namespace) -> int:
