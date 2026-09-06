@@ -16,6 +16,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+from .check import PROPERTY_IDS, CheckError, check, to_json, to_text, unmet
 from .diff import DiffError, schedule_diff
 from .model import DISCLAIMER, ParsedSchedule
 from .parser import PARSER_VERSION, parse_manifest_document, parse_path
@@ -38,6 +39,10 @@ EXIT_COVERAGE = 2
 #: ``diff`` found differences. Its own code, the way ``diff(1)`` exits 1, so a
 #: script can tell "changed" from "could not compare" without reading stderr.
 EXIT_CHANGED = 3
+#: ``check --require`` named a property that did not come back ``holds``. Its
+#: own code, so a caller can tell "the property is false or undecidable" from
+#: "the file could not be read".
+EXIT_PROPERTY = 4
 
 DEFAULT_BASELINE_DIR = Path("data/parsed")
 DEFAULT_CHANGES_DIR = Path("data/changes")
@@ -218,6 +223,38 @@ def _cmd_diff(args: argparse.Namespace) -> int:
     return EXIT_CHANGED if delta.changes else EXIT_OK
 
 
+def _pinned_schedules(path: str | None) -> list[str] | None:
+    """The schedule codes the manifest pins, or None when none was given.
+
+    None and an empty list are different answers and stay different: no
+    manifest means the property was not tested, an empty manifest means it
+    could not be.
+    """
+    if path is None:
+        return None
+    return [entry.schedule for entry in load_manifest(Path(path))]
+
+
+def _cmd_check(args: argparse.Namespace) -> int:
+    payload = _read_json(args.parsed)
+    if not isinstance(payload, dict):
+        raise CheckError("a parse payload is an object")
+    source = payload.get("source")
+    stated = source.get("document_id") if isinstance(source, dict) else None
+    document_id = stated if isinstance(stated, str) and stated else Path(args.parsed).stem
+    properties = check(payload, pinned=_pinned_schedules(args.manifest))
+    text = to_json(document_id, properties) if args.json else to_text(document_id, properties)
+    if args.output:
+        Path(args.output).write_text(text, encoding="utf-8")
+    else:
+        sys.stdout.write(text)
+
+    failed = unmet(properties, args.require)
+    for prop in failed:
+        sys.stderr.write(f"{document_id}: required property {prop.id} {prop.state}\n")
+    return EXIT_PROPERTY if failed else EXIT_OK
+
+
 def _cmd_baseline(args: argparse.Namespace) -> int:
     """Write the reviewed parse of each pinned document, from the pinned bytes only."""
     entries = load_manifest(Path(args.manifest))
@@ -364,6 +401,37 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_diff.add_argument("-o", "--output", help="write the report here instead of stdout")
     p_diff.set_defaults(func=_cmd_diff)
+
+    p_check = subparsers.add_parser(
+        "check",
+        help="report which properties of a parse hold, fail, or cannot be established",
+    )
+    p_check.add_argument("parsed", help="JSON from parse, or a watch baseline")
+    p_check.add_argument(
+        "--manifest",
+        help=(
+            "path to sources.toml. Without it the cross-reference property "
+            "reports that it was not tested, rather than passing."
+        ),
+    )
+    p_check.add_argument(
+        "--json", action="store_true", help="write the report as JSON instead of text"
+    )
+    p_check.add_argument("-o", "--output", help="write the report here instead of stdout")
+    p_check.add_argument(
+        "--require",
+        action="append",
+        default=[],
+        choices=list(PROPERTY_IDS),
+        metavar="PROPERTY",
+        help=(
+            "exit non-zero unless this property holds. Repeatable. "
+            '"cannot be established" counts as unmet: a caller who requires a '
+            "property is saying a value depends on it, and not being able to "
+            "tell is not permission to proceed. One of: " + ", ".join(PROPERTY_IDS)
+        ),
+    )
+    p_check.set_defaults(func=_cmd_check)
 
     p_baseline = subparsers.add_parser(
         "baseline", help="write the reviewed parse of each pinned document for the watch"

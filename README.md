@@ -426,6 +426,7 @@ parses of one document, as Markdown or, with `--jsonl`, one object per change.
 | `fetch` | Download source documents (networked) |
 | `verify-source` | Check local documents against the manifest digests |
 | `diff <old> <new>` | What changed between two parses of one schedule, value by value, with both citations; exits 3 when anything did |
+| `check <parsed.json>` | Which properties of a parse hold, do not hold, or cannot be established; exits 4 when a `--require`d property is not `holds` |
 | `baseline` | Write the reviewed parse of each pinned document, for the watch to compare against |
 | `watch` | Download each pinned document and diff any publisher revision against its baseline (networked) |
 
@@ -450,6 +451,49 @@ anything else that wants the numbers rather than the prose. Every value in it
 is selected out of `parse`'s own report rather than computed a second time, so
 the two cannot come to disagree, and `--min-coverage` gates identically either
 way.
+
+### `check`: what a parse does and does not settle
+
+`parse` says what it read. It does not say whether what it read hangs
+together, and a consumer who works that out downstream is one step from this
+project's defining defect: a missing thing read as a value. A charge whose
+period no window defines is not a charge that applies all day. A residual
+window is not a window with no hours.
+
+`ca-tariff-parse check parsed.json --manifest sources/sources.toml` answers
+five named properties, each in one of three states:
+
+| State | Means |
+| --- | --- |
+| `holds` | tested, and true |
+| `does not hold` | tested, and false; every record involved is listed with the citation it was read from |
+| `cannot be established` | **not tested**, because the parse does not carry what deciding it would need |
+
+There is deliberately no state meaning "no problems found". A document with no
+charges satisfies "every charge has a window" vacuously, and reporting that as
+a pass is the same error as printing a suppressed cell as zero — so
+`smud-ssr`, which prices nothing, reports all five properties as
+`cannot be established` rather than five passes.
+
+The properties are `period-window-closure`, `season-vocabulary`,
+`window-enumerability`, `unit-uniformity` and `cross-reference-pinned`.
+`--require <property>` exits 4 unless that property `holds`; **`cannot be
+established` counts as unmet**, because a caller who says a value depends on a
+property is not helped by "we could not tell". `--json` writes the same report
+as JSON. `check` infers nothing, fills nothing in, fetches nothing, and is
+byte-for-byte deterministic over the same payload. It reads `parse` output and
+watch baselines alike: the baseline projection drops only `notes` and the
+unparsed samples, which no property reads.
+
+Two of the answers over today's corpus are worth stating, because they are
+facts about the documents rather than about the tool. `season-vocabulary`
+reports `cannot be established` on every real document, because each names its
+seasons twice — `Summer Season (June - September)` on the charge tables and
+`Summer (Jun 1 - Sept 30)` on the time-of-use table — and nothing in the parse
+says those denote the same season. Matching them would be inference. And
+`period-window-closure` does not hold on `smud-r-tod` or on the complete
+synthetic fixture, where one credit line carries the period
+`midnight to 6:00 a.m. daily`, a phrase read from prose that no window defines.
 
 ## How it works
 
