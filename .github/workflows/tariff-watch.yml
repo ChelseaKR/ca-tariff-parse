@@ -102,7 +102,11 @@ jobs:
             fi
             report="data/changes/${date}-${id}.md"
             sha="$(jq -r '.outcomes[0].sha256' "${summary}")"
-            across="$(jq -r '.outcomes[0].across_parser_versions' "${summary}")"
+            # Three states, never two. `parser_version` is the release
+            # constant, so equal stamps are "indeterminate", not "same
+            # parser"; branching on the boolean alone left this checklist
+            # silent in the common case (issue #46).
+            parsers="$(jq -r '.outcomes[0].parser_comparison' "${summary}")"
 
             git add sources/sources.toml "data/parsed/${id}.json" data/changes/
             git commit -q -m "tariff-watch: ${id} was revised by its publisher (retrieved ${date})" \
@@ -116,9 +120,17 @@ jobs:
               echo
               echo "- [ ] Read every line of the report against the publisher's document. The citations are there to be checked, not trusted."
               echo "- [ ] Run \`make fetch && make coverage-real\` and update the README's coverage table if the figures moved; \`tests/test_published_figures.py\` will fail otherwise."
-              if [ "${across}" = "true" ]; then
-                echo "- [ ] **The baseline was written by a different parser version.** Some lines below may be parser changes rather than publisher changes; re-parse the previously pinned bytes with the current parser before relying on any of them."
-              fi
+              case "${parsers}" in
+                different)
+                  echo "- [ ] **The baseline was written by a different parser version.** Some lines below may be parser changes rather than publisher changes; re-parse the previously pinned bytes with the current parser before relying on any of them."
+                  ;;
+                unstated)
+                  echo "- [ ] **One of these parses does not say which parser read it.** Whether a parser change is mixed into the report below is unknown; re-parse the previously pinned bytes with the current parser before relying on any line."
+                  ;;
+                *)
+                  echo "- [ ] **Both parses state the same parser version, which does not mean one parser read them both.** That string moves only at a release, so a parser change since the baseline was written is listed below as a schedule change. If \`src/ca_tariff_parse/\` has moved since \`data/parsed/${id}.json\` was last written, re-parse the previously pinned bytes with the current parser before relying on any line."
+                  ;;
+              esac
               echo "- [ ] Nothing in this pull request is a PDF. If one appears, close it."
               echo
               echo "---"

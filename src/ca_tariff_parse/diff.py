@@ -31,6 +31,16 @@ ADDED = "added"
 REMOVED = "removed"
 CHANGED = "changed"
 
+#: The three things two parses' parser stamps can establish about each other.
+#: There is deliberately no fourth value meaning "the same parser read both":
+#: ``parser_version`` is this project's *release* version and only moves when a
+#: release is cut, so two parses made by different builds of the parser between
+#: releases state the same string. Equal strings are therefore
+#: :data:`PARSER_INDETERMINATE`, never proof of sameness.
+PARSER_DIFFERENT = "different"
+PARSER_INDETERMINATE = "indeterminate"
+PARSER_UNSTATED = "unstated"
+
 
 class DiffError(ValueError):
     """Raised when the two payloads are not two parses of one document."""
@@ -169,11 +179,33 @@ class ScheduleDiff:
     changes: tuple[Change, ...]
 
     @property
-    def across_parser_versions(self) -> bool:
-        """True when the two parses were not made by the same parser.
+    def parser_comparison(self) -> str:
+        """What the two parser stamps establish: see :data:`PARSER_DIFFERENT`.
 
-        A diff across parser versions can contain parser changes as well as
-        publisher changes, and nothing in the payloads can tell them apart.
+        :data:`PARSER_DIFFERENT` when the two parses state different parser
+        versions; :data:`PARSER_UNSTATED` when either does not say; and
+        :data:`PARSER_INDETERMINATE` when both state the same version, which
+        is the common case and proves nothing. ``parser_version`` is the
+        release constant in ``parser.py``: every commit between two releases
+        stamps the same string, so a baseline written by last month's parser
+        and a revision read by today's are indistinguishable here. A diff
+        between them mixes parser changes with publisher changes, and this
+        property is the only place that says so.
+        """
+        old, new = self.old.parser_version, self.new.parser_version
+        if old is None or new is None:
+            return PARSER_UNSTATED
+        return PARSER_INDETERMINATE if old == new else PARSER_DIFFERENT
+
+    @property
+    def across_parser_versions(self) -> bool:
+        """True when the two parses *state* different parser versions.
+
+        False does not mean one parser read both documents; it means the two
+        stamps are equal, which :attr:`parser_comparison` reports as
+        :data:`PARSER_INDETERMINATE`. Read that instead: this flag cannot see
+        a parser that moved without a release, and callers that branch on it
+        alone stay silent in exactly the case they exist to warn about.
         """
         return self.old.parser_version != self.new.parser_version
 
@@ -362,12 +394,7 @@ def _markdown(delta: ScheduleDiff) -> Iterator[str]:
     yield f" | {_text(delta.new.page_count)} / {_text(delta.new.byte_size)} |\n"
     yield f"| parser | {_text(delta.old.parser_version)} | {_text(delta.new.parser_version)} |\n"
     yield f"| content lines recognized | {_ratio(delta.old)} | {_ratio(delta.new)} |\n\n"
-    if delta.across_parser_versions:
-        yield (
-            "> **Two different parser versions read these documents.** Some of what is "
-            "listed below may be a change in the parser rather than in the schedule; "
-            "re-parse the old bytes with the current parser before relying on any line.\n\n"
-        )
+    yield from _parser_note(delta)
     yield (
         f"**{counts[ADDED]} added, {counts[REMOVED]} removed, {counts[CHANGED]} changed.** "
         "A value that only moved on the page is not listed. Check the citations, not "
@@ -397,6 +424,45 @@ def _uncited_sides(delta: ScheduleDiff) -> tuple[int, int]:
         elif cites == 1:
             one += 1
     return neither, one
+
+
+def _parser_note(delta: ScheduleDiff) -> Iterator[str]:
+    """Say which parser stamps the two parses carry, and what that settles.
+
+    This block used to be printed only when the two stamps differed, so the
+    report said nothing at all in the one case it cannot see: a parser that
+    changed between two releases stamps the same ``parser_version`` on both
+    sides, and silence there reads as "the parser was the same, so everything
+    below is the publisher's". It is not a measurement of that, and the
+    report now says which of the three states it is in every time.
+    """
+    state = delta.parser_comparison
+    if state == PARSER_DIFFERENT:
+        yield (
+            "> **Two different parser versions read these documents** "
+            f"({_text(delta.old.parser_version)} and {_text(delta.new.parser_version)}). "
+            "Some of what is listed below may be a change in the parser rather than in "
+            "the schedule; re-parse the old bytes with the current parser before relying "
+            "on any line.\n\n"
+        )
+    elif state == PARSER_UNSTATED:
+        yield (
+            "> **At least one of these parses does not say which parser read it.** "
+            "Whether a parser change is mixed into the list below is unknown, not "
+            "ruled out; re-parse the old bytes with the current parser before relying "
+            "on any line.\n\n"
+        )
+    else:
+        yield (
+            "> **Both parses state parser version "
+            f"{_text(delta.new.parser_version)}, which does not establish that one "
+            "parser read them both.** That string is the project's release version and "
+            "moves only when a release is cut, so parses made by different builds "
+            "between releases carry it identically. If the parser changed after the "
+            "older parse was written, a parser change is listed below as a schedule "
+            "change and nothing here can tell them apart; re-parse the old bytes with "
+            "the current parser to separate them.\n\n"
+        )
 
 
 def _citation_note(delta: ScheduleDiff) -> Iterator[str]:

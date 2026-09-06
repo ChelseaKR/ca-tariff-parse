@@ -61,11 +61,18 @@ removed record carries the one citation it has. The report is a table of
 citations with values beside them, and its own footer says to check the
 citation rather than the table.
 
-**A diff across parser versions says so first.** The baseline records the
-parser that wrote it. When the current parser is not that one, the report
-opens by saying that some of its lines may be parser changes rather than
-publisher changes, and the pull request's checklist repeats it. The tool
-cannot tell the two apart from the payloads and does not pretend to.
+**Every report says what its two parser stamps settle, and one of the three
+answers is "nothing".** The baseline records the `parser_version` that wrote
+it. That field is the project's *release* version, so it moves only when a
+release is cut and every build between two releases stamps it identically:
+equal stamps do not establish that one parser read both documents. The report
+therefore states which of three cases it is in — the stamps differ, a stamp is
+missing, or the stamps are equal and settle nothing — and the pull request's
+checklist carries the matching item. It used to print the warning only in the
+first case and stay silent in the other two, which read as "the parser was the
+same, so everything below is the publisher's"; that is a claim it never
+measured (issue #46). The tool cannot tell parser changes from publisher
+changes given the payloads, and does not pretend to in any of the three cases.
 
 **The manifest is proposed, never rewritten.** The watch substitutes the four
 pinned facts of one entry — digest, retrieval date, page count, byte size —
