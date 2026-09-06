@@ -495,6 +495,73 @@ says those denote the same season. Matching them would be inference. And
 synthetic fixture, where one credit line carries the period
 `midnight to 6:00 a.m. daily`, a phrase read from prose that no window defines.
 
+## The Python API
+
+Everything the command line does with a parse, a caller can do with the same
+records. `load` reads a file `parse` wrote, or a watch baseline committed under
+`data/parsed/`, back into typed objects:
+
+```python
+import ca_tariff_parse as ctp
+
+schedule = ctp.load("data/parsed/pge-e-1.json")
+
+for charge in schedule.charges.where(kind="energy_usage", season=None):
+    print(charge.label.value, charge.price.amount.value, charge.price.unit.value)
+    print("  ", schedule.cite(charge, "label").locator)
+    print("  ", charge.price.amount.provenance.locator)
+```
+
+Three properties are worth stating, because they are the reason this exists
+rather than a `json.load` in the caller.
+
+**Loading is not trusting.** Every record goes back through the constructors a
+fresh parse uses. A citation missing a field, a digest that is not 64 hex
+characters, a page number that is not positive — each raises `ProvenanceError`
+and no object is produced. There is no partially cited result to accidentally
+publish. `assert_fully_cited` then walks the reconstruction independently, the
+same walk that runs before `parse` writes anything.
+
+**A derived value is recomputed, never read.** A locator, an unparsed span,
+`line_ratio`, `section_ratio` and `fully_recognized` are all derived from
+fields beside them. `load` recomputes each and compares. A payload asserting
+`fully_recognized: true` over counters that say otherwise is refused, rather
+than believed — which is the shape ADR 0002 exists to prevent, arriving from
+the outside instead of from the parser.
+
+**An omission is not an empty answer.** A watch baseline drops the document's
+verbatim prose on purpose (ADR 0003, ADR 0016). A schedule loaded from one
+carries `schedule.withheld == ("notes", "unparsed[].sample")`, its `notes`
+refuse to be queried at all rather than answering "none", and re-serialising it
+writes a baseline again — never a full parse with `"notes": []`, which would
+state that the document has no prose. It has prose; the projection dropped it.
+
+`where(field=value)` compares a cited field on its value and a structural field
+directly. `where(season=None)` selects the charges that state no season, which
+is a different question from `where(season="Summer")`. A field name the record
+does not have raises rather than returning nothing, because an empty result
+reads as "the schedule states none of these" and a typo is not that.
+
+`schedule.cite(record, field)` returns the `Provenance` behind one field. It
+raises when the document did not state the field, and when the field is
+structural metadata such as `kind`: a caller asking where a value came from is
+told there is no value, rather than handed a blank to render.
+
+### Stability
+
+The names in `ca_tariff_parse.__all__` are the supported surface, versioned
+with the package under SemVer. Within a major version, a name is not removed
+and its meaning does not change; new names, new optional record fields and new
+subcommands are minor changes. The JSON payload has its own version, printed in
+its `schema` key and published as `schemas/parsed-schedule-v1.schema.json`; a
+breaking change to the payload is a new schema id, not a silent edit to this
+one.
+
+Reading a parse needs only the standard library. `import ca_tariff_parse` does
+not import `pdfplumber`, so a consumer of the committed baselines can install
+the package without the PDF stack present and `load` still works; only
+`parse_path` and `parse_document`, which read a document, need it.
+
 ## How it works
 
 1. **Extract.** `pdfplumber` gives the position of every word. Positions are
