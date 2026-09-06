@@ -51,6 +51,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`check`: which properties of a parse hold, and which cannot be decided.**
+  `parse` is honest about what it read and silent about whether what it read
+  hangs together, so a consumer works that out downstream and lands one step
+  from this project's defining defect: a missing thing read as a value. A
+  charge whose period no window defines is not a charge that applies all day;
+  a residual window is not a window with no hours.
+
+  `ca-tariff-parse check parsed.json` answers five named properties —
+  `period-window-closure`, `season-vocabulary`, `window-enumerability`,
+  `unit-uniformity`, `cross-reference-pinned` — each as `holds`,
+  `does not hold` (with every record involved listed by its citation), or
+  `cannot be established`. There is deliberately no fourth state meaning "no
+  problems found": a document with no charges satisfies "every charge has a
+  window" vacuously, so `smud-ssr`, which prices nothing, reports all five as
+  `cannot be established` rather than five passes. `--require <property>`
+  exits 4 unless that property holds, and treats `cannot be established` as
+  unmet. `--json` writes the same report as JSON. It infers nothing, fills
+  nothing in, fetches nothing, and is byte-for-byte deterministic; the watch
+  baseline's projection changes no result.
+
+  Two answers over today's corpus are facts about the documents rather than
+  about the tool, and are recorded in the README: `season-vocabulary` cannot
+  be established on any real document, because each names its seasons twice in
+  two vocabularies and matching them would be inference; and
+  `period-window-closure` does not hold on `smud-r-tod` or on the complete
+  synthetic fixture, where one credit line carries the period
+  `midnight to 6:00 a.m. daily`, a phrase read from prose that no window
+  defines.
 - ADR 0018 records what the second publisher does not state, from the
   footer of all twenty-eight pinned sheets: `resolution` is a form label with
   nothing beside it, `adopted` is never printed, and `effective` is per sheet
