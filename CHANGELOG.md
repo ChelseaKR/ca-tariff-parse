@@ -9,6 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **A `calendar` verb writes the time rules the document stated, and a refusal
+  list for the rest.** `calendar <parsed.json> --dir DIR` writes
+  `<id>.ics` and `<id>.refused.json`, both always, because a missing refusal
+  file reads as "no refusals" and an empty list reads as "nothing was refused".
+
+  This is the first consumer-facing derivation the project ships, so the fence
+  is the feature. A `VEVENT` is written only where it re-expresses text the
+  parser already committed to. A residual window is refused on the residual
+  flag itself rather than on the absence of times, so it stays refused even if
+  it carried hours. A window defined by exception, a window with hours but no
+  stated day type, and a window whose end is at or before its start are each
+  refused with the reason and the citation. A holiday `day_rule` outside a
+  closed grammar — a fixed day, an ordinal weekday, a last weekday — is refused
+  rather than approximated: `Day after Thanksgiving` is a real rule with a
+  defensible date, and rendering it as the fourth Friday would give a guess a
+  calendar entry's authority.
+
+  Season bounds are added only where the season names whole months, because
+  `BYMONTH` can express whole months and nothing else; a range like
+  `Jun 15 - Sept 30` is left unbounded and marked partial rather than widened.
+  No time zone is inferred and the file says so. Recurrences are anchored to
+  1970 because a published rule states no year, and every `DTSTART` is a real
+  instance of its own rule so a reader cannot read it as an extra occurrence.
+  Nothing reads the clock: `DTSTAMP` is the document's retrieval date, or the
+  epoch, so the same parse renders identical bytes.
+
+  On `smud-r-tod` this renders 2 of 5 windows and 11 of 11 holidays, with three
+  refusals. On `smud-ci-tod1`, which states no bare times, it renders none of
+  its five and says so. A watch baseline is refused outright: it omits the
+  verbatim prose, and a refusal that cannot quote what it refused is not one.
+
 - **An `export` verb writes the parse as cited tables.** `parse` emits one
   nested document per schedule; the shape downstream tooling consumes is one
   row per charge. `export <parsed.json> --table charges` writes CSV,
