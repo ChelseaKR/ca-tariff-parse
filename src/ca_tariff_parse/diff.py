@@ -427,17 +427,15 @@ def _citation_note(delta: ScheduleDiff) -> Iterator[str]:
     if not changed:
         return
     if neither == 0 and one == 0:
-        yield (
-            f"All {changed} changed row(s) cite both sides.\n\n"
-        )
+        yield (f"All {changed} changed row(s) cite both sides.\n\n")
         return
     parts = [f"{both} cite both sides"] if both else []
     if one:
-        parts.append(f"{one} cite one side, because the field is optional and "
-                     "absent on the other")
+        parts.append(f"{one} cite one side, because the field is optional and absent on the other")
     if neither:
-        parts.append(f"{neither} cite neither side, because the value is not "
-                     "carried with a citation")
+        parts.append(
+            f"{neither} cite neither side, because the value is not carried with a citation"
+        )
     yield (
         f"Of {changed} changed row(s), " + "; ".join(parts) + ". A dash in a "
         "citation column means exactly that, and is not a missing lookup.\n\n"

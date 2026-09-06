@@ -51,6 +51,7 @@ def _user_agent() -> str:
     """
     try:
         from importlib.metadata import version
+
         release = version("ca-tariff-parse")
     except Exception:  # pragma: no cover - metadata missing in odd checkouts
         release = None

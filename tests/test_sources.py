@@ -380,8 +380,7 @@ def test_a_robots_group_naming_this_tool_refuses_the_fetch(
     def fake_urlopen(request, timeout=None):  # noqa: ARG001
         requested.append(request.full_url)
         if request.full_url.endswith("/robots.txt"):
-            return _FakeResponse(
-                f"User-agent: {ROBOTS_AGENT}\nDisallow: /\n".encode())
+            return _FakeResponse(f"User-agent: {ROBOTS_AGENT}\nDisallow: /\n".encode())
         raise AssertionError("the document itself must not be requested")
 
     monkeypatch.setattr("ca_tariff_parse.sources.urllib.request.urlopen", fake_urlopen)

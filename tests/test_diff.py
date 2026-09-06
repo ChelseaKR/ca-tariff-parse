@@ -248,9 +248,7 @@ class TestTheCitationNoteIsDerivedNotAsserted:
         assert n >= 1
         assert f"All {n} changed row(s) cite both sides." in markdown
 
-    def test_added_rows_are_described_as_carrying_one_citation(
-        self, parsed: Json
-    ) -> None:
+    def test_added_rows_are_described_as_carrying_one_citation(self, parsed: Json) -> None:
         changed = copy.deepcopy(parsed)
         charges = changed["charges"]
         extra = copy.deepcopy(charges[0])
@@ -258,25 +256,41 @@ class TestTheCitationNoteIsDerivedNotAsserted:
         charges.append(extra)
         delta = schedule_diff(parsed, changed)
         assert delta.summary()[ADDED] >= 1
-        assert (
-            "Added and removed rows carry the one citation they have"
-            in delta.to_markdown()
-        )
+        assert "Added and removed rows carry the one citation they have" in delta.to_markdown()
 
     def test_an_uncited_changed_row_is_counted_and_explained(self) -> None:
         """Counted from the rows, so the sentence cannot drift from them."""
         from ca_tariff_parse.diff import Change, _citation_note
 
         both = Change(
-            "charge", ("x", "#1"), CHANGED, "rate", 1, 2,
-            {"locator": "p1"}, {"locator": "p2"},
+            "charge",
+            ("x", "#1"),
+            CHANGED,
+            "rate",
+            1,
+            2,
+            {"locator": "p1"},
+            {"locator": "p2"},
         )
         neither = Change(
-            "window", ("y", "#1"), CHANGED, "residual", True, False, None, None,
+            "window",
+            ("y", "#1"),
+            CHANGED,
+            "residual",
+            True,
+            False,
+            None,
+            None,
         )
         one = Change(
-            "window", ("z", "#1"), CHANGED, "start", None, "08:00",
-            None, {"locator": "p3"},
+            "window",
+            ("z", "#1"),
+            CHANGED,
+            "start",
+            None,
+            "08:00",
+            None,
+            {"locator": "p3"},
         )
 
         class _Delta:
