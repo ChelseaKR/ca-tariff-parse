@@ -9,7 +9,16 @@ from typing import Any, ClassVar
 
 import pytest
 
-from ca_tariff_parse.diff import ADDED, CHANGED, REMOVED, DiffError, schedule_diff
+from ca_tariff_parse.diff import (
+    ADDED,
+    CHANGED,
+    PARSER_DIFFERENT,
+    PARSER_INDETERMINATE,
+    PARSER_UNSTATED,
+    REMOVED,
+    DiffError,
+    schedule_diff,
+)
 from ca_tariff_parse.parser import parse_path
 
 from .conftest import COMPLETE
@@ -140,7 +149,56 @@ def test_different_parser_versions_are_flagged_loudly(parsed: Json) -> None:
     new["parser_version"] = "9.9.9"
     delta = schedule_diff(parsed, new)
     assert delta.across_parser_versions
+    assert delta.parser_comparison == PARSER_DIFFERENT
     assert "Two different parser versions" in delta.to_markdown()
+
+
+def test_equal_parser_versions_are_indeterminate_not_clean(parsed: Json) -> None:
+    """The defect in issue #46: equal stamps are not proof of the same parser.
+
+    ``parser_version`` is the release constant in ``parser.py``. Two parses
+    made by different builds of the parser between releases carry it
+    identically, so a report that says nothing when the stamps match is
+    claiming a cleanliness it never measured.
+    """
+    delta = schedule_diff(parsed, copy.deepcopy(parsed))
+
+    assert not delta.across_parser_versions
+    assert delta.parser_comparison == PARSER_INDETERMINATE
+    report = delta.to_markdown()
+    assert "does not establish that one" in report
+    assert "moves only when a release is cut" in report
+
+
+def test_an_unstated_parser_version_is_reported_as_unknown(parsed: Json) -> None:
+    new = copy.deepcopy(parsed)
+    del new["parser_version"]
+    delta = schedule_diff(parsed, new)
+
+    assert delta.parser_comparison == PARSER_UNSTATED
+    assert "does not say which parser read it" in delta.to_markdown()
+
+
+def test_every_report_states_which_of_the_three_parser_states_it_is_in(parsed: Json) -> None:
+    """No report is silent about the parser, whatever the two stamps say."""
+    without = copy.deepcopy(parsed)
+    del without["parser_version"]
+    other = copy.deepcopy(parsed)
+    other["parser_version"] = "9.9.9"
+
+    seen = {}
+    for new in (copy.deepcopy(parsed), without, other):
+        delta = schedule_diff(parsed, new)
+        notes = [
+            line
+            for line in delta.to_markdown().splitlines()
+            if line.startswith("> ") and "parser" in line.lower()
+        ]
+        assert len(notes) == 1, f"{delta.parser_comparison}: expected one parser note, got {notes}"
+        seen[delta.parser_comparison] = notes[0]
+
+    assert set(seen) == {PARSER_INDETERMINATE, PARSER_UNSTATED, PARSER_DIFFERENT}
+    assert len(set(seen.values())) == 3, "the three states must not share one wording"
 
 
 def test_two_different_documents_cannot_be_diffed(parsed: Json) -> None:

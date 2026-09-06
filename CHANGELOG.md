@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A diff whose two parses state the same parser version no longer reads as
+  clean.** `parser_version` is the release constant in `parser.py`, so it moves
+  only when a release is cut and every build between two releases stamps it
+  identically. The report printed its "two different parser versions read these
+  documents" warning only when the two strings differed, and printed nothing at
+  all when they matched — which is the common case, and which reads as "one
+  parser read both, so everything below is the publisher's". A baseline written
+  by last month's parser and a revision read by today's would produce a report
+  that mixed parser changes with publisher changes and said nothing about it.
+  `ScheduleDiff.parser_comparison` now reports one of three states —
+  `different`, `unstated`, `indeterminate` — with no fourth state meaning
+  "same parser", because the payloads cannot establish one. Every report
+  carries the note for its state, the watch summary carries
+  `parser_comparison`, and the tariff-watch pull request template carries the
+  matching review item in all three cases instead of only the first.
 - **A `robots.txt` group naming this tool by name is now honoured.** Fetches
   sent a spoofed desktop Chrome `User-Agent`, which `urllib.robotparser`
   reduces to the token `mozilla` before matching a group. No plausible

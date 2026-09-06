@@ -27,7 +27,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .diff import DiffError, schedule_diff
+from .diff import PARSER_INDETERMINATE, DiffError, schedule_diff
 from .parser import parse_manifest_document
 from .sources import SourceEntry, SourceError, digest
 
@@ -100,6 +100,11 @@ class Outcome:
     removed: int = 0
     changed: int = 0
     across_parser_versions: bool = False
+    #: One of :data:`~ca_tariff_parse.diff.PARSER_DIFFERENT`,
+    #: ``PARSER_INDETERMINATE`` or ``PARSER_UNSTATED``. There is no value
+    #: meaning "one parser read both": equal ``parser_version`` strings are
+    #: indeterminate, because the constant only moves at a release.
+    parser_comparison: str = PARSER_INDETERMINATE
     report: Path | None = None
     jsonl: Path | None = None
     baseline: Path | None = None
@@ -121,6 +126,7 @@ class Outcome:
             "removed": self.removed,
             "changed": self.changed,
             "across_parser_versions": self.across_parser_versions,
+            "parser_comparison": self.parser_comparison,
             "report": None if self.report is None else str(self.report),
             "jsonl": None if self.jsonl is None else str(self.jsonl),
             "baseline": None if self.baseline is None else str(self.baseline),
@@ -183,6 +189,7 @@ def watch_entry(
         counts["removed"],
         counts["changed"],
         delta.across_parser_versions,
+        delta.parser_comparison,
         report,
         jsonl,
         baseline,
