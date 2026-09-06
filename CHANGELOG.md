@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **A `robots.txt` group naming this tool by name is now honoured.** Fetches
+  sent a spoofed desktop Chrome `User-Agent`, which `urllib.robotparser`
+  reduces to the token `mozilla` before matching a group. No plausible
+  `User-agent:` line matches that, so no named group was ever selected and only
+  a `User-agent: *` group could refuse a fetch. A publisher writing
+  `User-agent: ca-tariff-parse` / `Disallow: /` was fetched anyway — and
+  because the header claimed to be Chrome, that publisher had no server-side
+  way to identify the request either, so the by-name opt-out the README
+  promises existed at neither end. Requests now identify themselves as
+  `ca-tariff-parse/<version>` with a link to this repository, and the robots
+  check matches on that same token.
+- **The diff report no longer claims every line cites both sides.** That
+  sentence printed above every table, unconditionally, and was untrue of every
+  added and removed row (which carry the one citation they have, by
+  construction and by ADR 0016) and of some changed rows: a value that is not a
+  cited envelope cites neither side, and an optional cited field absent on one
+  side cites one. The note is now derived from the rows and counts them, so it
+  cannot drift from what the table shows.
+- **Occurrence ordinals past the second were wrong.** The suffix was the
+  literal string `nd`, correct for exactly one value, so the third repeat of an
+  identity rendered "3nd occurrence" and the eleventh would have rendered
+  "11nd". The committed baselines already contain identities occurring four
+  times, and this text is the `what` column of the tariff-watch report a
+  reviewer reads. Ordinals are now correct for any number, teens included.
+
 ### Added
 
 - ADR 0018 records what the second publisher does not state, from the

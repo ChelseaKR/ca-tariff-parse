@@ -22,12 +22,46 @@ from pathlib import Path
 
 DEFAULT_MANIFEST = Path("sources/sources.toml")
 
-#: Sent when fetching. Some publishers reject a default client, and a request
-#: that identifies itself is the polite way to ask.
-USER_AGENT = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/128.0 Safari/537.36"
-)
+#: The token a publisher writes in ``robots.txt`` to address this tool by name,
+#: and the first token of the ``User-Agent`` header it sends. The two must be
+#: the same string: ``urllib.robotparser`` reduces a user-agent to
+#: ``useragent.split("/")[0].lower()`` before matching a group, so the header
+#: and the rule only meet if they share that leading token.
+ROBOTS_AGENT = "ca-tariff-parse"
+
+#: The project's own page, so a publisher reading a log has somewhere to go.
+USER_AGENT_URL = "https://github.com/ChelseaKR/ca-tariff-parse"
+
+
+def _user_agent() -> str:
+    """Identify this tool, honestly, with a version and a way to reach it.
+
+    This used to be a spoofed desktop Chrome string, which broke the project's
+    stated promise in both directions at once. ``urllib.robotparser`` reduced
+    it to the single token ``mozilla``, which no plausible ``User-agent:``
+    line matches, so no named group was ever selected and only a
+    ``User-agent: *`` group could refuse a fetch --- a publisher writing
+    ``User-agent: ca-tariff-parse`` / ``Disallow: /`` was fetched anyway. And
+    because the outgoing header claimed to be Chrome, that publisher had no
+    server-side way to recognise the request either. The by-name opt-out
+    channel the README promises did not exist at either end.
+
+    The version is read from installed metadata rather than restated here, so
+    it cannot drift from the release.
+    """
+    try:
+        from importlib.metadata import version
+
+        release = version("ca-tariff-parse")
+    except Exception:  # pragma: no cover - metadata missing in odd checkouts
+        release = None
+    label = f"{ROBOTS_AGENT}/{release}" if release else ROBOTS_AGENT
+    return f"{label} (+{USER_AGENT_URL})"
+
+
+#: Sent when fetching. Identifies the tool rather than disguising it, so a
+#: publisher can both recognise the request and refuse it by name.
+USER_AGENT = _user_agent()
 
 
 class SourceError(RuntimeError):
@@ -220,7 +254,11 @@ def _robots_allowed(url: str, *, timeout: float) -> bool:
         return True
     parser = urllib.robotparser.RobotFileParser()
     parser.parse(body.decode("utf-8", errors="replace").splitlines())
-    return parser.can_fetch(USER_AGENT, url)
+    # Matched against the bare token, not the full header. Both resolve to the
+    # same string today, but passing the token states the intent: a group
+    # addressed to this tool by name must be the one that applies, and a
+    # change to the header's shape must never silently stop selecting it.
+    return parser.can_fetch(ROBOTS_AGENT, url)
 
 
 def download(entry: SourceEntry, root: Path, *, timeout: float = 60.0) -> Path:

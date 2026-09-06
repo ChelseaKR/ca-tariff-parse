@@ -346,3 +346,94 @@ def test_a_document_of_the_wrong_pinned_length_fails_the_check(entries, tmp_path
     (tmp_path / entry.filename).write_bytes(body)
     with pytest.raises(SourceError, match="pinned length"):
         verify(entry, entry.path(tmp_path))
+
+
+def test_the_user_agent_identifies_this_tool_rather_than_a_browser() -> None:
+    """The header used to claim to be Chrome 128.
+
+    That broke the README's promise in both directions at once. It gave the
+    publisher no server-side way to recognise the request, and
+    ``urllib.robotparser`` reduced it to the token ``mozilla``, which no
+    plausible ``User-agent:`` line matches --- so no named group was ever
+    selected and only a ``User-agent: *`` group could refuse a fetch.
+    """
+    from ca_tariff_parse.sources import ROBOTS_AGENT, USER_AGENT
+
+    assert "Mozilla" not in USER_AGENT
+    assert "Chrome" not in USER_AGENT
+    assert USER_AGENT.startswith(ROBOTS_AGENT)
+    # Somewhere for a publisher reading a log to go.
+    assert "github.com/ChelseaKR/ca-tariff-parse" in USER_AGENT
+    # The token urllib matches a robots group against must be the agent name.
+    assert USER_AGENT.split("/")[0].lower() == ROBOTS_AGENT
+
+
+def test_a_robots_group_naming_this_tool_refuses_the_fetch(
+    entries, tmp_path: Path, monkeypatch
+) -> None:
+    """The defect itself: a by-name opt-out used to be silently inert."""
+    from ca_tariff_parse.sources import ROBOTS_AGENT
+
+    entry = find(entries, "smud-r-tod")
+    requested: list[str] = []
+
+    def fake_urlopen(request, timeout=None):  # noqa: ARG001
+        requested.append(request.full_url)
+        if request.full_url.endswith("/robots.txt"):
+            return _FakeResponse(f"User-agent: {ROBOTS_AGENT}\nDisallow: /\n".encode())
+        raise AssertionError("the document itself must not be requested")
+
+    monkeypatch.setattr("ca_tariff_parse.sources.urllib.request.urlopen", fake_urlopen)
+
+    with pytest.raises(SourceError, match=r"robots\.txt"):
+        fetch(entry, tmp_path, timeout=5.0)
+    assert requested == ["https://www.smud.org/robots.txt"]
+    assert not (tmp_path / entry.filename).exists()
+
+
+def test_a_robots_group_naming_a_different_agent_does_not_apply(
+    entries, tmp_path: Path, monkeypatch
+) -> None:
+    """Honouring by-name rules must not mean honouring everyone else's."""
+    entry = find(entries, "smud-r-tod")
+    payload = b"a stand-in for the published document, not the real bytes"
+    matching = dataclasses.replace(
+        entry, sha256=hashlib.sha256(payload).hexdigest(), bytes=len(payload)
+    )
+
+    def fake_urlopen(request, timeout=None):  # noqa: ARG001
+        if request.full_url.endswith("/robots.txt"):
+            return _FakeResponse(b"User-agent: some-other-crawler\nDisallow: /\n")
+        return _FakeResponse(payload)
+
+    monkeypatch.setattr("ca_tariff_parse.sources.urllib.request.urlopen", fake_urlopen)
+
+    path = fetch(matching, tmp_path, timeout=5.0)
+    assert path.read_bytes() == payload
+
+
+def test_the_outgoing_header_is_the_agent_the_robots_check_used(
+    entries, tmp_path: Path, monkeypatch
+) -> None:
+    """The header and the robots token must not be able to drift apart."""
+    from ca_tariff_parse.sources import ROBOTS_AGENT
+
+    entry = find(entries, "smud-r-tod")
+    payload = b"a stand-in for the published document, not the real bytes"
+    matching = dataclasses.replace(
+        entry, sha256=hashlib.sha256(payload).hexdigest(), bytes=len(payload)
+    )
+    seen: list[str] = []
+
+    def fake_urlopen(request, timeout=None):  # noqa: ARG001
+        seen.append(request.get_header("User-agent") or "")
+        if request.full_url.endswith("/robots.txt"):
+            return _FakeResponse(b"")
+        return _FakeResponse(payload)
+
+    monkeypatch.setattr("ca_tariff_parse.sources.urllib.request.urlopen", fake_urlopen)
+
+    fetch(matching, tmp_path, timeout=5.0)
+    assert seen, "no request was made"
+    for header in seen:
+        assert header.split("/")[0].lower() == ROBOTS_AGENT, header

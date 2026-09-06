@@ -373,6 +373,20 @@ Retrieval honours `robots.txt` and is a handful of requests, never a crawl.
 `robots.txt` for a host is read before anything is fetched from it, and a
 publisher that disallows the path is not fetched from at all.
 
+Requests identify themselves as `ca-tariff-parse/<version>` with a link back to
+this repository, so a publisher can recognise them in a log **and** refuse them
+by name:
+
+```
+User-agent: ca-tariff-parse
+Disallow: /
+```
+
+That group is honoured. Until 2026-09-06 it was not: the tool sent a spoofed
+desktop Chrome header, which `urllib.robotparser` reduces to the token
+`mozilla`, so no named group was ever selected and only a `User-agent: *` group
+could refuse a fetch.
+
 ## Tariff watch
 
 A publisher can revise a schedule at the same URL. `ca-tariff-parse watch`
