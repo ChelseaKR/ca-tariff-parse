@@ -428,6 +428,7 @@ parses of one document, as Markdown or, with `--jsonl`, one object per change.
 | `diff <old> <new>` | What changed between two parses of one schedule, value by value, with both citations; exits 3 when anything did |
 | `check <parsed.json>` | Which properties of a parse hold, do not hold, or cannot be established; exits 4 when a `--require`d property is not `holds` |
 | `export <parsed.json>` | Flatten the parse into cited tables: one row per record, a `.locator` column beside every cited value |
+| `calendar <parsed.json>` | Render the stated TOU windows and holidays as iCalendar rules, with a refusal file naming everything it will not express |
 | `baseline` | Write the reviewed parse of each pinned document, for the watch to compare against |
 | `watch` | Download each pinned document and diff any publisher revision against its baseline (networked) |
 
@@ -495,6 +496,61 @@ says those denote the same season. Matching them would be inference. And
 `period-window-closure` does not hold on `smud-r-tod` or on the complete
 synthetic fixture, where one credit line carries the period
 `midnight to 6:00 a.m. daily`, a phrase read from prose that no window defines.
+
+### `calendar`: the rules the page states, and a list of the rest
+
+```
+ca-tariff-parse calendar tests/golden/smud-r-tod.json --dir dist/calendar
+```
+
+writes `smud-r-tod.ics` and `smud-r-tod.refused.json`. **Both, always.** A
+missing refusal file reads as "no refusals"; an empty list reads as "nothing
+was refused", and those are different statements.
+
+This is the first consumer-facing derivation the project ships, so the fence
+matters more than the feature. A rule is written only where it re-expresses
+text the parser already committed to:
+
+- a **residual** window ("All other hours, including weekends and holidays") is
+  refused, because the parser has already refused to give it hours and
+  deriving them here would undo that refusal — and it is refused on the
+  residual flag itself, not on the absence of times, so a residual window that
+  did carry hours is still refused;
+- a window **defined by exception** ("Weekdays between noon and midnight except
+  during the Peak hours") is refused, because the exception is prose this
+  module cannot subtract;
+- a window with hours but **no stated day type** is refused rather than assumed
+  daily;
+- a window whose stated end is at or before its start **crosses midnight**, and
+  splitting it is a decision the document did not make;
+- a holiday `day_rule` outside a closed grammar — a fixed day (`25`), an
+  ordinal weekday (`Third Monday`), or a last weekday (`Last Monday`) — is
+  refused. `Day after Thanksgiving` is a real rule with a defensible date and
+  it is not in the grammar, so it is refused rather than rendered as the fourth
+  Friday. A guess in a calendar entry has a calendar entry's authority.
+
+On `smud-r-tod` that is 2 of 5 windows and 11 of 11 holidays rendered, with
+three refusals listed. On `smud-ci-tod1`, which states no bare times, it is
+0 of 5 windows: the calendar is empty and says so.
+
+**Season bounds only where the season states whole months.** `BYMONTH` selects
+whole months and nothing else, so `Summer (Jun 1 - Sept 30)` becomes
+`BYMONTH=6,7,8,9`, while `Summer (Jun 15 - Sept 30)` would have to be widened
+or narrowed to fit and is left unbounded and marked
+`X-CA-SEASON-BOUNDS:partial`. The season string still travels in the summary.
+
+**No time zone is inferred.** Times are floating local times, as the document
+states them, and the file says so. The recurrences are anchored to 1970 because
+a published rule states no year; only the month, day and time of a `DTSTART`
+mean anything, and the file says that too. Every `DTSTART` is a real instance
+of its own rule, so a reader cannot treat it as an extra occurrence.
+
+**Nothing reads the clock.** `DTSTAMP` is the document's own retrieval date, or
+the epoch when it states none — a generation time would make two renderings of
+one parse differ. The same parse renders identical bytes.
+
+A watch baseline is refused: it omits the verbatim prose, and a refusal that
+cannot quote the text it refused is not much of a refusal.
 
 ### `export`: the same values, one row each
 

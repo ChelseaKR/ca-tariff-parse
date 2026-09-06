@@ -16,10 +16,12 @@ import sys
 import tempfile
 from pathlib import Path
 
+from .calendar import CalendarError, render, summary
 from .check import PROPERTY_IDS, CheckError, check, to_json, to_text, unmet
 from .diff import DiffError, schedule_diff
 from .export import ExportError, render_csv, render_jsonl, rows, table_names
 from .export import columns as export_columns
+from .loader import load as load_parse
 from .model import DISCLAIMER, ParsedSchedule
 from .parser import PARSER_VERSION, parse_manifest_document, parse_path
 from .profiles import UnknownProfileError, names, resolve
@@ -286,6 +288,23 @@ def _cmd_export(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_calendar(args: argparse.Namespace) -> int:
+    """Write the time rules the document stated, and the list of what it did not."""
+    rendered = render(load_parse(args.parsed))
+    directory = Path(args.dir)
+    directory.mkdir(parents=True, exist_ok=True)
+    calendar_path = directory / f"{rendered.document_id}.ics"
+    refused_path = directory / f"{rendered.document_id}.refused.json"
+    calendar_path.write_text(rendered.ics, encoding="utf-8", newline="")
+    # Always written, even when nothing was refused. A missing file reads as
+    # "no refusal list", which is not the same statement as "nothing refused".
+    refused_path.write_text(rendered.refused_json(), encoding="utf-8")
+    for line in summary(rendered):
+        sys.stdout.write(f"{line}\n")
+    sys.stdout.write(f"{calendar_path}\n{refused_path}\n")
+    return EXIT_OK
+
+
 def _cmd_baseline(args: argparse.Namespace) -> int:
     """Write the reviewed parse of each pinned document, from the pinned bytes only."""
     entries = load_manifest(Path(args.manifest))
@@ -491,6 +510,22 @@ def build_parser() -> argparse.ArgumentParser:
     p_export.add_argument("-o", "--output", help="write here instead of stdout")
     p_export.set_defaults(func=_cmd_export)
 
+    p_calendar = subparsers.add_parser(
+        "calendar",
+        help="render the stated TOU windows and holidays as iCalendar rules",
+    )
+    p_calendar.add_argument("parsed", help="JSON from parse")
+    p_calendar.add_argument(
+        "--dir",
+        default=".",
+        help=(
+            "where to write <document_id>.ics and <document_id>.refused.json "
+            "(default: the current directory). Both are always written; the "
+            "refusal list is part of the output, not a log."
+        ),
+    )
+    p_calendar.set_defaults(func=_cmd_calendar)
+
     p_baseline = subparsers.add_parser(
         "baseline", help="write the reviewed parse of each pinned document for the watch"
     )
@@ -536,7 +571,7 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("export needs exactly one of --table and --all")
     try:
         result: int = args.func(args)
-    except (SourceError, UnknownProfileError, DiffError, ExportError) as error:
+    except (SourceError, UnknownProfileError, DiffError, ExportError, CalendarError) as error:
         sys.stderr.write(f"error: {error}\n")
         return EXIT_ERROR
     return result
