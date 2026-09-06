@@ -9,6 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **An `export` verb writes the parse as cited tables.** `parse` emits one
+  nested document per schedule; the shape downstream tooling consumes is one
+  row per charge. `export <parsed.json> --table charges` writes CSV,
+  `--format jsonl` writes the same rows as objects, and `--all DIR` writes
+  every table.
+
+  The reshape is where the project's guarantee is easiest to lose, so: every
+  cited field is followed by a `<field>.locator` column, and `document_id`,
+  `document_sha256` and `parser_version` sit on every row, so a row lifted out
+  of its file still names the bytes it came from. A null is an empty cell,
+  never `0` or `n/a`. Each table's row count is checked against the record
+  count and a mismatch raises rather than writing a short table. Nothing is
+  computed — the export reshapes what was read, and a derived number beside
+  cited ones would be indistinguishable from them. A schedule that prices
+  nothing exports a header with no rows, because a missing file would read as
+  "not exported".
+
+  Columns are derived from `schemas/parsed-schedule-v1.schema.json` rather than
+  listed in the export, so they cannot drift from the model. `notes` and
+  `unparsed` are deliberately not tables, and the exclusion of `unparsed` is
+  checked against the schema: if that record ever gains a cited field the
+  export refuses to run rather than quietly hiding it.
+
+  Rows sort by their first citation's own page, sheet, section and line rather
+  than by the rendered locator text, so page 10 follows page 9, with the whole
+  row as the final tiebreak; two exports of one parse are byte identical. CSV
+  cells a spreadsheet would evaluate are prefixed with an apostrophe, except a
+  leading minus on a number, because a credit is printed as `-0.05` and
+  neutralising it would change what a reader sees. `--snippets` adds the
+  cited text and is off by default (ADR 0003).
+
 - **A parse can be read back into typed records, without a PDF stack.**
   `parse` wrote JSON and nothing read it back: every record had `to_json` and
   none had the inverse, so a downstream project wanting the committed
