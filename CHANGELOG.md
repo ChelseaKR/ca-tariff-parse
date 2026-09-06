@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **A parse can be read back into typed records, without a PDF stack.**
+  `parse` wrote JSON and nothing read it back: every record had `to_json` and
+  none had the inverse, so a downstream project wanting the committed
+  baselines under `data/parsed/` re-implemented the model and, with it, every
+  rule about what a value is allowed to be. `ca_tariff_parse.load` (and
+  `loads`) now rebuilds a `ParsedSchedule` from a file, a mapping or JSON
+  text, and every record carries `from_json`.
+
+  Loading is not trusting. Each leaf goes back through the same constructors a
+  fresh parse uses, so a citation missing a field, a digest that is not 64 hex
+  characters or a page number that is not positive raises `ProvenanceError`
+  and yields no object at all; `assert_fully_cited` then walks the
+  reconstruction independently. Every derived key — a locator, an unparsed
+  span, `line_ratio`, `section_ratio`, `fully_recognized` — is recomputed from
+  the fields beside it and compared, so a payload cannot assert a clean sweep
+  its own counters do not support. The key set is exact in both directions: a
+  missing key and an unknown key are both refused, because either would leave
+  a caller holding an object that looks complete and is not.
+
+  A watch baseline omits the document's verbatim prose on purpose (ADR 0003,
+  ADR 0016), and `load` reads that shape too without flattening the omission
+  into an answer. Such a schedule reports `withheld == ("notes",
+  "unparsed[].sample")`, its `notes` collection refuses to be queried rather
+  than returning nothing, and re-serialising it writes a baseline again — not
+  a `parsed-schedule/v1` payload with `"notes": []`, which would state that the
+  document has no prose.
+
+  The query surface is `schedule.charges.where(...)` over any record
+  collection and `schedule.cite(record, field)`. `where` compares a cited
+  field on its value and a structural field directly; `where(season=None)`
+  selects the charges that state no season, a different question from
+  `where(season="Summer")`; and an unknown field name raises rather than
+  returning an empty result, because an empty result reads as "the schedule
+  states none of these". `cite` raises for a field the document did not state
+  and for structural metadata, rather than handing back a blank.
+
+  Every committed golden file and watch baseline now loads and re-emits byte
+  for byte, which is what the round-trip test asserts: byte equality catches a
+  field the loader silently dropped, where object equality cannot. Reading
+  needs only the standard library — importing the package does not import
+  `pdfplumber`, and a subprocess test makes that import genuinely fail to
+  prove it.
+
 ### Fixed
 
 - **A diff whose two parses state the same parser version no longer reads as

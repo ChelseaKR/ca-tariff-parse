@@ -25,8 +25,11 @@ class UncitedValueError(AssertionError):
 #: read out of the source document. Each is restricted to a closed vocabulary
 #: or a self describing block, checked below.
 STRUCTURAL_KEYS = frozenset(
-    {"schema", "parser_version", "disclaimer", "source", "coverage", "unparsed"}
+    {"schema", "parser_version", "disclaimer", "source", "coverage", "unparsed", "omitted"}
 )
+#: ``omitted`` appears only in the watch baseline projection. It names the
+#: fields that projection leaves out and why, so it describes the payload
+#: rather than quoting the document, and there is nothing in it to cite.
 
 #: Controlled vocabularies. A structural field may only hold one of these.
 VOCABULARIES: dict[str, frozenset[str]] = {
