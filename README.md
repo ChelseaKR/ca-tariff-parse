@@ -427,6 +427,7 @@ parses of one document, as Markdown or, with `--jsonl`, one object per change.
 | `verify-source` | Check local documents against the manifest digests |
 | `diff <old> <new>` | What changed between two parses of one schedule, value by value, with both citations; exits 3 when anything did |
 | `check <parsed.json>` | Which properties of a parse hold, do not hold, or cannot be established; exits 4 when a `--require`d property is not `holds` |
+| `export <parsed.json>` | Flatten the parse into cited tables: one row per record, a `.locator` column beside every cited value |
 | `baseline` | Write the reviewed parse of each pinned document, for the watch to compare against |
 | `watch` | Download each pinned document and diff any publisher revision against its baseline (networked) |
 
@@ -494,6 +495,59 @@ says those denote the same season. Matching them would be inference. And
 `period-window-closure` does not hold on `smud-r-tod` or on the complete
 synthetic fixture, where one credit line carries the period
 `midnight to 6:00 a.m. daily`, a phrase read from prose that no window defines.
+
+### `export`: the same values, one row each
+
+`parse` emits a tree. An analyst comparing thirty schedules in a spreadsheet
+wants one row per charge with the citation beside it.
+
+```
+ca-tariff-parse export data/parsed/pge-e-1.json --table charges > charges.csv
+ca-tariff-parse export data/parsed/pge-e-1.json --all dist/tables --format jsonl
+```
+
+Tables are `charges`, `tou_windows`, `holidays`, `proration`, `conditions`,
+`cross_references` and `applicability`. Every row carries `document_id`,
+`document_sha256` and `parser_version`, so a row lifted out of its file still
+names the bytes it came from, and every cited field is immediately followed by
+a `<field>.locator` column. `--snippets` adds `<field>.snippet` too; it is off
+by default because a snippet carries the document's own text (ADR 0003).
+
+The column order is derived from
+`schemas/parsed-schedule-v1.schema.json`, not listed in the export, so a field
+added to the model and the schema appears without anyone remembering to add a
+column, and a field added to only one of them fails loudly.
+
+Four rules keep a table from saying more than the parse did.
+
+- **A null is an empty cell.** Never `0`, never `n/a`. A charge that states no
+  season states no season, and a spreadsheet will not total it.
+- **Nothing is dropped in the reshape.** Each table's row count is checked
+  against the record count of the parse, and a mismatch raises rather than
+  writing a short table.
+- **Nothing is computed.** There is no annualised price and no hours-per-window
+  column. A derived number sitting in a table of cited ones is
+  indistinguishable from them.
+- **An empty table is a file with a header.** `smud-ssr` prices nothing, so its
+  `charges` table is one header line. A missing file would read as "not
+  exported"; a header with no rows reads as what the parse says.
+
+Rows are sorted by their first citation — on the citation's own page, sheet,
+section and line rather than its rendered text, so page 10 follows page 9 — with
+the whole row as the final tiebreak. Two exports of one parse are byte
+identical. CSV cells that a spreadsheet would evaluate as a formula are
+prefixed with an apostrophe; a leading minus is left alone when the cell is a
+number, because a credit is printed as `-0.05` and neutralising it would change
+what a reader sees.
+
+`export` reads a full parse and a watch baseline alike. The projection removes
+only the verbatim prose, which no table carries, so both produce identical
+tables. `notes` and `unparsed` are deliberately not tables: notes are the
+document's prose rather than records with fields, and an unparsed section
+reports where the parser stopped rather than a value it read, so it has no
+citation to flatten. Excluding `unparsed` is checked against the schema — if
+that record ever gains a cited field, the export refuses to run rather than
+hiding it.
 
 ## The Python API
 

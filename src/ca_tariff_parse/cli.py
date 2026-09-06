@@ -18,6 +18,8 @@ from pathlib import Path
 
 from .check import PROPERTY_IDS, CheckError, check, to_json, to_text, unmet
 from .diff import DiffError, schedule_diff
+from .export import ExportError, render_csv, render_jsonl, rows, table_names
+from .export import columns as export_columns
 from .model import DISCLAIMER, ParsedSchedule
 from .parser import PARSER_VERSION, parse_manifest_document, parse_path
 from .profiles import UnknownProfileError, names, resolve
@@ -255,6 +257,35 @@ def _cmd_check(args: argparse.Namespace) -> int:
     return EXIT_PROPERTY if failed else EXIT_OK
 
 
+def _cmd_export(args: argparse.Namespace) -> int:
+    """Flatten a parse into cited tables, one row per record."""
+    payload = _read_json(args.parsed)
+    if not isinstance(payload, dict):
+        raise ExportError("a parse payload is an object")
+    render = render_jsonl if args.format == "jsonl" else render_csv
+    if args.all:
+        directory = Path(args.all)
+        directory.mkdir(parents=True, exist_ok=True)
+        for table in table_names():
+            order = export_columns(table, snippets=args.snippets)
+            written = directory / f"{table}.{args.format}"
+            # Written even when the table is empty. A missing file reads as
+            # "not exported"; a header with no rows reads as "this schedule
+            # states none of these", which is what the parse says.
+            written.write_text(
+                render(rows(payload, table, snippets=args.snippets), order), encoding="utf-8"
+            )
+            sys.stderr.write(f"{table:<18} {written}\n")
+        return EXIT_OK
+    order = export_columns(args.table, snippets=args.snippets)
+    text = render(rows(payload, args.table, snippets=args.snippets), order)
+    if args.output:
+        Path(args.output).write_text(text, encoding="utf-8")
+    else:
+        sys.stdout.write(text)
+    return EXIT_OK
+
+
 def _cmd_baseline(args: argparse.Namespace) -> int:
     """Write the reviewed parse of each pinned document, from the pinned bytes only."""
     entries = load_manifest(Path(args.manifest))
@@ -433,6 +464,33 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_check.set_defaults(func=_cmd_check)
 
+    p_export = subparsers.add_parser(
+        "export", help="flatten a parse into cited tables, one row per record"
+    )
+    p_export.add_argument("parsed", help="JSON from parse, or a watch baseline")
+    p_export.add_argument(
+        "--table",
+        choices=list(table_names()),
+        metavar="TABLE",
+        help="which table to write. One of: " + ", ".join(table_names()),
+    )
+    p_export.add_argument(
+        "--all",
+        metavar="DIR",
+        help="write every table into this directory instead, one file each",
+    )
+    p_export.add_argument("--format", choices=("csv", "jsonl"), default="csv", help="default: csv")
+    p_export.add_argument(
+        "--snippets",
+        action="store_true",
+        help=(
+            "add a <field>.snippet column beside each locator. Off by default: "
+            "a snippet carries the document's own text (ADR 0003)"
+        ),
+    )
+    p_export.add_argument("-o", "--output", help="write here instead of stdout")
+    p_export.set_defaults(func=_cmd_export)
+
     p_baseline = subparsers.add_parser(
         "baseline", help="write the reviewed parse of each pinned document for the watch"
     )
@@ -474,9 +532,11 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.command == "export" and bool(args.table) == bool(args.all):
+        parser.error("export needs exactly one of --table and --all")
     try:
         result: int = args.func(args)
-    except (SourceError, UnknownProfileError, DiffError) as error:
+    except (SourceError, UnknownProfileError, DiffError, ExportError) as error:
         sys.stderr.write(f"error: {error}\n")
         return EXIT_ERROR
     return result
