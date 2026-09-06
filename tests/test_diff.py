@@ -5,7 +5,7 @@ from __future__ import annotations
 import copy
 import json
 from collections.abc import Callable
-from typing import Any
+from typing import Any, ClassVar
 
 import pytest
 
@@ -176,3 +176,118 @@ def test_the_markdown_report_escapes_table_pipes_in_quotes(parsed: Json) -> None
     assert "Peak \\| $/kWh $1.1500" in report
     assert "| document sha256 |" in report
     assert "not rate advice" in report
+
+
+class TestOccurrenceOrdinals:
+    """`_key_text` numbers repeated identities, and the suffix used to be the
+    literal string "nd" --- correct for exactly one value. The committed
+    baselines already contain identities occurring four times, so real reports
+    rendered "3nd occurrence"; the eleventh would have rendered "11nd"."""
+
+    @pytest.mark.parametrize(
+        ("occurrence", "expected"),
+        [
+            ("#1", "Peak Summer"),
+            ("#2", "Peak Summer (2nd occurrence)"),
+            ("#3", "Peak Summer (3rd occurrence)"),
+            ("#4", "Peak Summer (4th occurrence)"),
+            ("#11", "Peak Summer (11th occurrence)"),
+            ("#12", "Peak Summer (12th occurrence)"),
+            ("#13", "Peak Summer (13th occurrence)"),
+            ("#21", "Peak Summer (21st occurrence)"),
+            ("#22", "Peak Summer (22nd occurrence)"),
+            ("#23", "Peak Summer (23rd occurrence)"),
+            ("#101", "Peak Summer (101st occurrence)"),
+            ("#111", "Peak Summer (111th occurrence)"),
+        ],
+    )
+    def test_the_ordinal_is_correct_including_the_teens(self, occurrence, expected):
+        from ca_tariff_parse.diff import _key_text
+
+        assert _key_text(("Peak Summer", occurrence)) == expected
+
+    def test_no_rendered_ordinal_reads_nd_unless_it_should(self):
+        """The specific regression: any n past 2 must not say "nd"."""
+        from ca_tariff_parse.diff import _key_text
+
+        for n in (3, 4, 5, 11, 12, 13, 21, 23, 101, 111):
+            rendered = _key_text(("x", f"#{n}"))
+            if n % 100 not in (12,) and n % 10 != 2:
+                assert "nd occurrence" not in rendered, rendered
+
+    def test_a_non_numeric_occurrence_is_shown_rather_than_guessed(self):
+        from ca_tariff_parse.diff import _key_text
+
+        assert _key_text(("x", "#odd")) == "x (#odd)"
+
+
+class TestTheCitationNoteIsDerivedNotAsserted:
+    """The report used to print, above every table and unconditionally,
+    "Every line cites where the value was read before and after".
+
+    That is untrue of every added and removed row --- those carry the one
+    citation they have, by construction and by ADR 0016 --- and untrue of some
+    changed rows: a value that is not a cited envelope cites neither side, and
+    an optional cited field absent on one side cites one. A claim about the
+    report that the report itself does not check is the thing this project
+    exists to catch in other people's documents.
+    """
+
+    def test_the_blanket_claim_is_gone(self, parsed: Json) -> None:
+        changed = copy.deepcopy(parsed)
+        _charge(changed, _peak_may)["price"]["amount"]["value"] = "1.1500"
+        markdown = schedule_diff(parsed, changed).to_markdown()
+        assert "Every line cites where the value was read before and after" not in markdown
+
+    def test_a_fully_cited_diff_says_so_and_counts_it(self, parsed: Json) -> None:
+        changed = copy.deepcopy(parsed)
+        _charge(changed, _peak_may)["price"]["amount"]["value"] = "1.1500"
+        delta = schedule_diff(parsed, changed)
+        markdown = delta.to_markdown()
+        n = delta.summary()[CHANGED]
+        assert n >= 1
+        assert f"All {n} changed row(s) cite both sides." in markdown
+
+    def test_added_rows_are_described_as_carrying_one_citation(
+        self, parsed: Json
+    ) -> None:
+        changed = copy.deepcopy(parsed)
+        charges = changed["charges"]
+        extra = copy.deepcopy(charges[0])
+        extra["label"]["value"] = "A charge that only exists in the new parse"
+        charges.append(extra)
+        delta = schedule_diff(parsed, changed)
+        assert delta.summary()[ADDED] >= 1
+        assert (
+            "Added and removed rows carry the one citation they have"
+            in delta.to_markdown()
+        )
+
+    def test_an_uncited_changed_row_is_counted_and_explained(self) -> None:
+        """Counted from the rows, so the sentence cannot drift from them."""
+        from ca_tariff_parse.diff import Change, _citation_note
+
+        both = Change(
+            "charge", ("x", "#1"), CHANGED, "rate", 1, 2,
+            {"locator": "p1"}, {"locator": "p2"},
+        )
+        neither = Change(
+            "window", ("y", "#1"), CHANGED, "residual", True, False, None, None,
+        )
+        one = Change(
+            "window", ("z", "#1"), CHANGED, "start", None, "08:00",
+            None, {"locator": "p3"},
+        )
+
+        class _Delta:
+            changes: ClassVar[list[Change]] = [both, neither, one]
+
+            def summary(self):
+                return {ADDED: 0, REMOVED: 0, CHANGED: 3}
+
+        note = "".join(_citation_note(_Delta()))
+        assert "Of 3 changed row(s)" in note
+        assert "1 cite both sides" in note
+        assert "1 cite one side" in note
+        assert "1 cite neither side" in note
+        assert "A dash in a citation column means exactly that" in note

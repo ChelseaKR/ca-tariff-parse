@@ -302,11 +302,34 @@ def _escape(text: object) -> str:
     return _text(text).replace("\\", "\\\\").replace("|", "\\|").replace("\n", " ")
 
 
+def _ordinal(number: int) -> str:
+    """1 -> "1st", 2 -> "2nd", 3 -> "3rd", 11 -> "11th", 111 -> "111th".
+
+    The suffix used to be the literal string "nd", which is correct for
+    exactly one value. `_records` numbers every repeat of one identity with
+    no upper bound, and the committed baselines already contain identities
+    occurring four times, so real reports rendered "3nd occurrence" and would
+    render "11nd occurrence". The teens are the reason this cannot be a
+    lookup on the last digit alone.
+    """
+    if number % 100 in (11, 12, 13):
+        return f"{number}th"
+    return f"{number}{ {1: 'st', 2: 'nd', 3: 'rd'}.get(number % 10, 'th') }"
+
+
 def _key_text(key: tuple[str, ...]) -> str:
     parts = [part for part in key[:-1] if part]
     label = " · ".join(_escape(part) for part in parts) or "(unlabelled)"
     occurrence = key[-1]
-    return label if occurrence == "#1" else f"{label} ({occurrence[1:]}nd occurrence)"
+    if occurrence == "#1":
+        return label
+    try:
+        ordinal = _ordinal(int(occurrence.lstrip("#")))
+    except ValueError:
+        # An occurrence marker that is not "#<int>" is not something to guess
+        # an ordinal for; show it as it is rather than inventing a suffix.
+        return f"{label} ({_escape(occurrence)})"
+    return f"{label} ({ordinal} occurrence)"
 
 
 def _cite_text(cite: Json | None) -> str:
@@ -347,9 +370,10 @@ def _markdown(delta: ScheduleDiff) -> Iterator[str]:
         )
     yield (
         f"**{counts[ADDED]} added, {counts[REMOVED]} removed, {counts[CHANGED]} changed.** "
-        "A value that only moved on the page is not listed. Every line cites where the "
-        "value was read before and after; check the citation, not this table.\n\n"
+        "A value that only moved on the page is not listed. Check the citations, not "
+        "this table.\n\n"
     )
+    yield from _citation_note(delta)
     for kind, title in _TITLES.items():
         rows = [change for change in delta.changes if change.kind == kind]
         if rows:
@@ -358,6 +382,65 @@ def _markdown(delta: ScheduleDiff) -> Iterator[str]:
         "\n_This report is a comparison of two parses of a published document. It is not "
         "rate advice and not a bill estimate, and the project is not affiliated with any "
         "utility._\n"
+    )
+
+
+def _uncited_sides(delta: ScheduleDiff) -> tuple[int, int]:
+    """(changed rows citing neither side, changed rows citing exactly one)."""
+    neither = one = 0
+    for change in delta.changes:
+        if change.change != CHANGED:
+            continue
+        cites = (change.old_cite is not None) + (change.new_cite is not None)
+        if cites == 0:
+            neither += 1
+        elif cites == 1:
+            one += 1
+    return neither, one
+
+
+def _citation_note(delta: ScheduleDiff) -> Iterator[str]:
+    """Say what the citations actually cover, counted from the rows.
+
+    The report used to assert, above every table and unconditionally, that
+    "Every line cites where the value was read before and after". It is not
+    true of any added or removed row --- those carry the one citation they
+    have, by construction and by ADR 0016 --- and it is not true of every
+    changed row either: a value that is not a cited envelope (the residual
+    flag on a time-of-use window) cites neither side, and an optional cited
+    field absent on one side (a window's clock times) cites one.
+
+    So the sentence is derived from the rows rather than restated. A claim
+    about the report that the report itself does not check is the thing this
+    project exists to catch in other people's documents.
+    """
+    counts = delta.summary()
+    changed = counts[CHANGED]
+    neither, one = _uncited_sides(delta)
+    both = changed - neither - one
+
+    if counts[ADDED] or counts[REMOVED]:
+        yield (
+            "Added and removed rows carry the one citation they have: the side "
+            "the value exists on.\n\n"
+        )
+    if not changed:
+        return
+    if neither == 0 and one == 0:
+        yield (
+            f"All {changed} changed row(s) cite both sides.\n\n"
+        )
+        return
+    parts = [f"{both} cite both sides"] if both else []
+    if one:
+        parts.append(f"{one} cite one side, because the field is optional and "
+                     "absent on the other")
+    if neither:
+        parts.append(f"{neither} cite neither side, because the value is not "
+                     "carried with a citation")
+    yield (
+        f"Of {changed} changed row(s), " + "; ".join(parts) + ". A dash in a "
+        "citation column means exactly that, and is not a missing lookup.\n\n"
     )
 
 
