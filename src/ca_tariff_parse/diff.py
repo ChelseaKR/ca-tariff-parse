@@ -216,9 +216,27 @@ class ScheduleDiff:
         return counts
 
     def to_jsonl(self) -> str:
+        """One object per change, each carrying the stamps of both sides.
+
+        The stamps are repeated on every line rather than written once in a
+        header, so a line lifted out of the file still says which retrieval it
+        came from and which parser read it. A committed report is read back by
+        ``history``, and a reader that had to infer the retrieval date from the
+        filename would be inferring a fact this project insists on reading.
+        """
+        context = {
+            "document_id": self.document_id,
+            "retrieved_at_before": self.old.retrieved_at,
+            "retrieved_at": self.new.retrieved_at,
+            "sha256_before": self.old.sha256,
+            "sha256": self.new.sha256,
+            "parser_version_before": self.old.parser_version,
+            "parser_version": self.new.parser_version,
+            "parser_comparison": self.parser_comparison,
+        }
         lines = [
             json.dumps(
-                {"document_id": self.document_id, **change.to_json()},
+                {**context, **change.to_json()},
                 ensure_ascii=False,
                 sort_keys=False,
             )

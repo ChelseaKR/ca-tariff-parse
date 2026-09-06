@@ -429,6 +429,7 @@ parses of one document, as Markdown or, with `--jsonl`, one object per change.
 | `check <parsed.json>` | Which properties of a parse hold, do not hold, or cannot be established; exits 4 when a `--require`d property is not `holds` |
 | `export <parsed.json>` | Flatten the parse into cited tables: one row per record, a `.locator` column beside every cited value |
 | `calendar <parsed.json>` | Render the stated TOU windows and holidays as iCalendar rules, with a refusal file naming everything it will not express |
+| `history --id <id>` | Rebuild a value's timeline from the committed watch reports, with the gaps in the record left in it |
 | `baseline` | Write the reviewed parse of each pinned document, for the watch to compare against |
 | `watch` | Download each pinned document and diff any publisher revision against its baseline (networked) |
 
@@ -496,6 +497,49 @@ says those denote the same season. Matching them would be inference. And
 `period-window-closure` does not hold on `smud-r-tod` or on the complete
 synthetic fixture, where one credit line carries the period
 `midnight to 6:00 a.m. daily`, a phrase read from prose that no window defines.
+
+### `history`: what a value has been, and where the record stops
+
+```
+ca-tariff-parse history --id smud-r-tod \
+  --match 'kind=energy_usage label="Generation" season=Summer'
+```
+
+walks the committed change reports under `data/changes/` and the reviewed
+baseline under `data/parsed/`, and prints every state a matching record has
+held, each with the retrieval date and the citation of the revision that set
+it, ending with the baseline. `--all` does every record the reports mention;
+`--jsonl` writes one object per timeline.
+
+Everything is built from what is committed. Nothing is fetched and nothing is
+interpolated. Three refusals are the substance of it:
+
+- **A gap is reported, not joined.** Each report states the digest of the bytes
+  on both sides. When one report's "before" digest is not the previous
+  report's "after" digest, a revision is missing between them, and the timeline
+  says so at that point. The values on either side are real; the line between
+  them is not. The same check runs against the reviewed baseline, so a baseline
+  written from bytes no report produced is a gap too.
+- **The order comes from the reports, not the filenames.** A retrieval date is
+  a fact the report states, so it is read from the report. Two reports whose
+  dates run backwards are refused with both dates named, because the order to
+  read them in is exactly what is in doubt.
+- **No leg claims one parser read both sides.** Each leg carries `diff`'s
+  three-state `parser_comparison`, which has no state meaning "the same
+  parser": two equal release stamps cannot establish one, and every build
+  between two releases stamps the same string.
+
+A record no report mentions is listed with one state from the baseline, rather
+than left out — omitting it would make "no result" mean both "no such record"
+and "a record the publisher has not moved". A `--match` term naming a field no
+record kind is identified by is an error, not a term that quietly matches
+nothing; `history` exits 5 when a well-formed match selects no record, which is
+a different exit from "the reports could not be read".
+
+To make this possible, `diff --jsonl` now repeats both sides' retrieval date,
+digest, parser version and `parser_comparison` on every change line. It is
+still one object per change; the stamps travel on each line so a line lifted
+out of the file still says which retrieval it came from.
 
 ### `calendar`: the rules the page states, and a list of the rest
 

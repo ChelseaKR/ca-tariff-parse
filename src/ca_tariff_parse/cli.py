@@ -21,6 +21,9 @@ from .check import PROPERTY_IDS, CheckError, check, to_json, to_text, unmet
 from .diff import DiffError, schedule_diff
 from .export import ExportError, render_csv, render_jsonl, rows, table_names
 from .export import columns as export_columns
+from .history import HistoryError, parse_match, read_legs, timelines
+from .history import to_jsonl as history_jsonl
+from .history import to_text as history_text
 from .loader import load as load_parse
 from .model import DISCLAIMER, ParsedSchedule
 from .parser import PARSER_VERSION, parse_manifest_document, parse_path
@@ -47,6 +50,11 @@ EXIT_CHANGED = 3
 #: own code, so a caller can tell "the property is false or undecidable" from
 #: "the file could not be read".
 EXIT_PROPERTY = 4
+#: ``history --match`` selected no record. Its own code, so a caller can tell
+#: "nothing in this document is identified that way" from "the committed
+#: reports could not be read", which is the difference between a typo in a
+#: match term and a broken record.
+EXIT_NO_MATCH = 5
 
 DEFAULT_BASELINE_DIR = Path("data/parsed")
 DEFAULT_CHANGES_DIR = Path("data/changes")
@@ -288,6 +296,38 @@ def _cmd_export(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_history(args: argparse.Namespace) -> int:
+    """Rebuild a value's timeline from the committed watch reports."""
+    if bool(args.match) == bool(args.all):
+        raise HistoryError("history needs exactly one of --match and --all")
+    criteria = parse_match(args.match) if args.match else None
+    legs = read_legs(Path(args.changes_dir), args.id)
+    baseline_path = Path(args.baseline_dir) / f"{args.id}.json"
+    baseline = None
+    if baseline_path.exists():
+        baseline = _read_json(str(baseline_path))
+        if not isinstance(baseline, dict):
+            raise HistoryError(f"{baseline_path} is not a parse payload")
+    elif not legs:
+        raise HistoryError(
+            f"no committed reports under {args.changes_dir} and no baseline at "
+            f"{baseline_path}; there is nothing committed to build a timeline from"
+        )
+    built = timelines(legs, baseline, criteria)
+    text = history_jsonl(args.id, built) if args.jsonl else history_text(args.id, built)
+    if args.output:
+        Path(args.output).write_text(text, encoding="utf-8")
+    else:
+        sys.stdout.write(text)
+    if not built:
+        sys.stderr.write(
+            f"{args.id}: no record matched {args.match!r}. That is not the same as "
+            "a record that has never changed, which is reported with one state\n"
+        )
+        return EXIT_NO_MATCH
+    return EXIT_OK
+
+
 def _cmd_calendar(args: argparse.Namespace) -> int:
     """Write the time rules the document stated, and the list of what it did not."""
     rendered = render(load_parse(args.parsed))
@@ -510,6 +550,30 @@ def build_parser() -> argparse.ArgumentParser:
     p_export.add_argument("-o", "--output", help="write here instead of stdout")
     p_export.set_defaults(func=_cmd_export)
 
+    p_history = subparsers.add_parser(
+        "history",
+        help="rebuild a value's timeline from the committed watch reports",
+    )
+    p_history.add_argument("--id", required=True, help="the manifest id of the document")
+    p_history.add_argument(
+        "--match",
+        help=(
+            "select records by their identity fields, e.g. "
+            "'kind=energy_usage label=\"Generation\" season=Summer'. A term that "
+            "is not field=value is an error, not a term that matches everything."
+        ),
+    )
+    p_history.add_argument("--all", action="store_true", help="every record the reports mention")
+    p_history.add_argument(
+        "--changes-dir", default=str(DEFAULT_CHANGES_DIR), help="default: data/changes"
+    )
+    p_history.add_argument(
+        "--baseline-dir", default=str(DEFAULT_BASELINE_DIR), help="default: data/parsed"
+    )
+    p_history.add_argument("--jsonl", action="store_true", help="one JSON object per timeline")
+    p_history.add_argument("-o", "--output", help="write here instead of stdout")
+    p_history.set_defaults(func=_cmd_history)
+
     p_calendar = subparsers.add_parser(
         "calendar",
         help="render the stated TOU windows and holidays as iCalendar rules",
@@ -571,7 +635,14 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("export needs exactly one of --table and --all")
     try:
         result: int = args.func(args)
-    except (SourceError, UnknownProfileError, DiffError, ExportError, CalendarError) as error:
+    except (
+        SourceError,
+        UnknownProfileError,
+        DiffError,
+        ExportError,
+        CalendarError,
+        HistoryError,
+    ) as error:
         sys.stderr.write(f"error: {error}\n")
         return EXIT_ERROR
     return result
