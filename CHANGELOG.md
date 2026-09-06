@@ -9,6 +9,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **A `history` verb rebuilds a value's timeline from the committed reports.**
+  The watch writes a diff per revision and a reviewed baseline, and nothing read
+  them back. `history --id <id> --match 'kind=... label=...'` walks the reports
+  in the order they themselves state and prints every state a matching record
+  has held, each with its retrieval date and the citation of the revision that
+  set it, ending with the baseline. `--all` covers every record the reports
+  mention; `--jsonl` writes one object per timeline.
+
+  What it refuses to do is the substance. It does not smooth a gap: each report
+  states the digest of the bytes on both sides, so a report comparing against
+  bytes no committed report produced means a revision is missing, and the
+  timeline says so at that point instead of joining the two ends — including
+  against the reviewed baseline. It does not order by filename: a retrieval
+  date is read from the report, and two reports whose dates run backwards are
+  refused with both dates named. And no leg claims one parser read both sides:
+  every leg carries `diff`'s three-state `parser_comparison`, which still has
+  no state meaning "the same parser".
+
+  A record no report mentions is listed with one state from the baseline rather
+  than omitted, so "no result" cannot mean both "no such record" and "a record
+  nobody has moved". A `--match` naming a field no record kind is identified by
+  is an error rather than a term that quietly matches nothing, and a well-formed
+  match that selects nothing exits 5 — a different code from a read failure.
+
+### Changed
+
+- **`diff --jsonl` now carries both sides' stamps on every change line**:
+  retrieval date, document digest, parser version and `parser_comparison`, for
+  the old side and the new. It is still one object per change. The stamps are
+  repeated per line rather than written once in a header so that a line lifted
+  out of the file still says which retrieval it came from, and so `history` can
+  read a report's retrieval date rather than inferring it from the filename.
+
 - **A `calendar` verb writes the time rules the document stated, and a refusal
   list for the rest.** `calendar <parsed.json> --dir DIR` writes
   `<id>.ics` and `<id>.refused.json`, both always, because a missing refusal
