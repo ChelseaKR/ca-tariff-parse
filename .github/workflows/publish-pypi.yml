@@ -7,10 +7,20 @@
 # and never sees a token with write access to it. Publication uses PyPI
 # trusted publishing (OIDC), so there is no long-lived API token anywhere.
 #
-# The PyPI side has to exist first. On pypi.org, the project `ca-tariff-parse`
-# must list this repository, this workflow file name and the `pypi`
-# environment as a trusted publisher; until it does, the publish job fails
-# closed with PyPI's own error and nothing is uploaded.
+# The PyPI side has to exist first, and only the project owner can create it.
+# On pypi.org, under "Your projects" -> "Publishing", or "Add a pending
+# publisher" while the project does not exist yet:
+#
+#   PyPI Project Name:  ca-tariff-parse
+#   Owner:              ChelseaKR
+#   Repository name:    ca-tariff-parse
+#   Workflow name:      publish-pypi.yml
+#   Environment name:   pypi
+#
+# "Workflow name" is the filename, not the `name:` below; getting it wrong
+# produces a failure that reads like a permissions problem rather than a typo.
+# Until that registration exists, the publish job fails closed with PyPI's own
+# trusted-publisher error and nothing is uploaded.
 name: publish-pypi
 
 on:
