@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **The one action that stands between this project and an installable package
+  is now written down as the form it has to be typed into.** The publish
+  workflow and `docs/ROADMAP.md` both said the project must be "registered on
+  pypi.org with this repository, that workflow file and the `pypi` environment
+  named as its publisher", which is accurate and is not the five labelled
+  fields PyPI's *Add a pending publisher* form actually asks for. Both now
+  carry the values verbatim, and both note that `Workflow name` is the
+  filename rather than the workflow's `name:` field, because getting that one
+  wrong produces a failure that reads like a permissions problem instead of a
+  typo. The name was re-checked free on 2026-09-07, and the roadmap now says
+  what free means here: nothing is reserved until the registration is made.
+  No workflow behaviour changes and nothing is published.
+
 ### Fixed
 
 - **`history --all` no longer reports an empty record as a failed match.** With

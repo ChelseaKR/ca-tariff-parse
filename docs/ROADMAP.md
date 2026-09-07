@@ -316,13 +316,30 @@ changelog says so. The README's install section describes installing from a
 signed tag without cloning.
 
 **Still owner-only.** Publishing under the name `ca-tariff-parse` on PyPI. The
-name was free on 2026-09-01. `.github/workflows/publish-pypi.yml` is written
-and dispatch-only: it refuses a tag that `release.yml` has not turned into a
-published release, builds at the tagged commit, and publishes through PyPI's
-trusted publishing, which needs the project registered on pypi.org with this
-repository, that workflow file and the `pypi` environment named as its
-publisher. Until the owner does that, the package is not on PyPI and the
-README says so.
+name was free on 2026-09-01 and re-checked free on 2026-09-07
+(`pypi.org/pypi/ca-tariff-parse/json` returns 404). Free is not reserved: the
+registration below is what reserves it. `.github/workflows/publish-pypi.yml`
+is written and dispatch-only: it refuses a tag that `release.yml` has not
+turned into a published release, builds at the tagged commit, and publishes
+through PyPI's trusted publishing over OIDC, so no API token is stored in this
+repository and none is wanted.
+
+What the owner has to do, once, on pypi.org, under *Your projects* then
+*Publishing*, or *Add a pending publisher* while the project does not exist
+yet:
+
+| Field | Value |
+| --- | --- |
+| PyPI Project Name | `ca-tariff-parse` |
+| Owner | `ChelseaKR` |
+| Repository name | `ca-tariff-parse` |
+| Workflow name | `publish-pypi.yml` |
+| Environment name | `pypi` |
+
+`Workflow name` is the filename, not the workflow's `name:` field, and getting
+it wrong produces a failure that reads like a permissions problem rather than a
+typo. Until that registration exists, the package is not on PyPI, the publish
+job fails closed at the upload, and the README says so.
 
 **Done when.** A release is on PyPI under the project's name, or the README's
 install section records that the tag is the distribution and the workflow is
