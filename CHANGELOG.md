@@ -23,6 +23,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **A `reconcile` verb audits a URDB record against the cited parse.**
+  OpenEI's Utility Rate Database is the dataset most tools use for California
+  tariffs, and its records carry no citation to a page.
+  `ca-tariff-parse reconcile parsed.json urdb-record.json` reads a record the
+  user downloaded themselves and reports, for each field, whether the parse
+  **confirms** it with a citation, **contradicts** it with both values and the
+  page, has **no statement** about it, or cannot express it at all. Offline;
+  the record is a file the caller supplies and nothing is written back. Exits 0
+  when nothing contradicts, 3 when something does, 2 when the record cannot be
+  read.
+
+  What it refuses to do is the substance. It does not align URDB's
+  index-numbered rate periods with the names the document prints, because
+  neither record states the correspondence; values are compared by membership
+  in a unit family instead, and the report says so. It does not compare a tier
+  that carries an adjustment beside its rate, because `rate + adj` is what a
+  customer pays and the printed price is what this model records. It does not
+  match a credit against a rate. It does not treat a parse with no charges as
+  agreement: `smud-ssr` prices nothing (ADR 0011), so every priced field of a
+  record reconciled against it comes back "no statement". And a record whose
+  start date no charge carries widens the comparison to every charge rather
+  than narrowing it to nothing, so an empty selection can never be printed as
+  silence where there is a disagreement.
+
+  Every key in the record is reported, including the ones the mapping does not
+  cover, each with the reason it is not comparable — so the report is complete
+  over the record rather than quietly partial.
+
 - **A `history` verb rebuilds a value's timeline from the committed reports.**
   The watch writes a diff per revision and a reviewed baseline, and nothing read
   them back. `history --id <id> --match 'kind=... label=...'` walks the reports

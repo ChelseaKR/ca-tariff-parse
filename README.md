@@ -429,6 +429,7 @@ parses of one document, as Markdown or, with `--jsonl`, one object per change.
 | `check <parsed.json>` | Which properties of a parse hold, do not hold, or cannot be established; exits 4 when a `--require`d property is not `holds` |
 | `export <parsed.json>` | Flatten the parse into cited tables: one row per record, a `.locator` column beside every cited value |
 | `calendar <parsed.json>` | Render the stated TOU windows and holidays as iCalendar rules, with a refusal file naming everything it will not express |
+| `reconcile <parsed.json> <urdb.json>` | Audit a URDB rate record you supply against the cited parse, field by field; exits 3 when anything contradicts |
 | `history --id <id>` | Rebuild a value's timeline from the committed watch reports, with the gaps in the record left in it |
 | `baseline` | Write the reviewed parse of each pinned document, for the watch to compare against |
 | `watch` | Download each pinned document and diff any publisher revision against its baseline (networked) |
@@ -651,6 +652,96 @@ reports where the parser stopped rather than a value it read, so it has no
 citation to flatten. Excluding `unparsed` is checked against the schema — if
 that record ever gains a cited field, the export refuses to run rather than
 hiding it.
+
+### `reconcile`: a URDB record against the cited parse
+
+OpenEI's [Utility Rate Database](https://openei.org/wiki/Utility_Rate_Database)
+is the dataset most tools reach for when they need a California tariff, and its
+records carry no citation to a page. `reconcile` audits a record the user
+downloaded themselves against a parse of the document it claims to describe.
+
+```
+ca-tariff-parse reconcile data/parsed/pge-e-1.json my-urdb-record.json
+```
+
+Nothing is fetched. The record is a file you supply; `reconcile` reads it,
+compares it, prints a report and writes nothing back. It never emits a URDB
+record and never fills a field it did not read.
+
+Each field of the record comes back in one of four states:
+
+| State | Means |
+| --- | --- |
+| `confirms` | the parse states this value, in a comparable unit, and here is the citation |
+| `contradicts` | the parse states values of this kind and none of them is this one |
+| `no statement` | the parse read no value of this kind at all |
+| `not comparable` | this model cannot express the field, and the reason is named |
+
+There is deliberately no state meaning "checked out fine". `smud-ssr` prices
+nothing (ADR 0011), so every priced field of any record reconciled against it
+comes back `no statement` — never confirmed, and never contradicted. Reporting
+"nothing to disagree with" as agreement is the same error as printing a
+suppressed cell as zero.
+
+**Every key in the record is reported.** A field the mapping does not cover is
+listed as `not comparable` with its reason rather than dropped, so a reader can
+see the whole record was looked at and exactly how much of it this model can
+speak to.
+
+#### What is compared, and what is not
+
+| URDB field | Compared against |
+| --- | --- |
+| `startdate` | every effective date the parse states — the schedule's own, and each charge's |
+| `fixedchargefirstmeter` | the parse's charges in the unit family `fixedchargeunits` names |
+| `energyratestructure[p][t].rate` | the parse's per-kWh charges |
+| `demandratestructure[p][t].rate` | the parse's per-kW charges |
+| `flatdemandstructure[p][t].rate` | the parse's per-kW charges |
+
+Deliberately not compared, each named in the report with its reason:
+
+- **The schedule matrices** (`energyweekdayschedule` and the other three).
+  URDB names its rate periods by index; the document names them in the words it
+  prints. Neither record states the correspondence, so aligning them would be a
+  guess rather than a reading.
+- **`mincharge`.** This model records the priced line items a page prints.
+  Nothing in a charge states the role "the minimum a bill must reach", and
+  picking one by reading its label text would be a guess.
+- **A tier carrying a non-zero `adj`.** What a customer pays is `rate + adj`;
+  what this model records is the price the page prints. Comparing the bare
+  `rate` against a printed price would confirm a number nobody is billed.
+- **A tier's `max` and `sell`.** A tier boundary and an export rate; this model
+  records a price.
+- **URDB's own metadata** — `label`, `utility`, `eiaid`, `sector`,
+  `description`, `source`, `uri`, `approved` and the rest. Facts about the
+  database, not statements the document makes.
+
+#### Four rules that keep the audit honest
+
+- **Values are compared by membership, not by position.** Because the period
+  correspondence is unstated, `reconcile` asks the only question both records
+  can answer: does the document state this amount, in a comparable unit, on the
+  effective date the record names? A contradiction therefore means the two
+  records disagree about what the schedule prices. That is either a URDB entry
+  error or a gap in this parser, and `reconcile` diagnoses neither.
+- **A date the parse does not carry widens the comparison rather than
+  emptying it.** When the record's `startdate` matches an effective date in the
+  parse, priced fields are compared only against charges effective on that date.
+  When it matches none, they are compared against every charge, and the report
+  says so. Narrowing to nothing would have reported silence where there is a
+  disagreement.
+- **A credit is not a rate.** A credit is a reduction the document prints as a
+  negative amount, and URDB carries that idea elsewhere. Matching one against a
+  rate would confirm a price nobody is billed, so credits are excluded from
+  every comparison.
+- **Numbers are read exactly.** The record's JSON is decoded with
+  `Decimal`, not `float`, so a rate printed `0.1724` is compared as `0.1724`
+  rather than as the nearest binary approximation of it.
+
+`--json` writes the same findings as a `ca-tariff-parse/reconcile/v1` payload.
+`reconcile` exits 0 when nothing contradicts, 3 when something does, and 2 when
+the record cannot be read at all — so a script can tell "the record disagrees"
+from "the record is not readable" without parsing stderr.
 
 ## The Python API
 

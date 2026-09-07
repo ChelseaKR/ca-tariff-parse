@@ -28,6 +28,7 @@ from .loader import load as load_parse
 from .model import DISCLAIMER, ParsedSchedule
 from .parser import PARSER_VERSION, parse_manifest_document, parse_path
 from .profiles import UnknownProfileError, names, resolve
+from .reconcile import ReconcileError, read_record, reconcile, render_json, render_text
 from .sources import (
     DEFAULT_MANIFEST,
     SourceError,
@@ -50,6 +51,10 @@ EXIT_CHANGED = 3
 #: own code, so a caller can tell "the property is false or undecidable" from
 #: "the file could not be read".
 EXIT_PROPERTY = 4
+#: ``reconcile`` could not read the URDB record it was given at all. Shares
+#: its number with :data:`EXIT_COVERAGE` because no single command emits both,
+#: and named separately so a caller reads the meaning its own verb gives it.
+EXIT_UNREADABLE = 2
 #: ``history --match`` selected no record. Its own code, so a caller can tell
 #: "nothing in this document is identified that way" from "the committed
 #: reports could not be read", which is the difference between a typo in a
@@ -294,6 +299,29 @@ def _cmd_export(args: argparse.Namespace) -> int:
     else:
         sys.stdout.write(text)
     return EXIT_OK
+
+
+def _cmd_reconcile(args: argparse.Namespace) -> int:
+    """Audit a URDB record the user supplied against the cited parse."""
+    payload = _read_json(args.parsed)
+    try:
+        record = read_record(Path(args.record).read_text(encoding="utf-8"))
+    except OSError as error:
+        sys.stderr.write(f"error: cannot read {args.record}: {error}\n")
+        return EXIT_UNREADABLE
+    except ReconcileError as error:
+        sys.stderr.write(f"error: {error}\n")
+        return EXIT_UNREADABLE
+    result = reconcile(payload, record)
+    text = render_json(result) if args.json else render_text(result)
+    if args.output:
+        Path(args.output).write_text(text, encoding="utf-8")
+    else:
+        sys.stdout.write(text)
+    contradicted = result.contradicted()
+    for finding in contradicted:
+        sys.stderr.write(f"{result.document_id}: {finding.field} contradicts the parse\n")
+    return EXIT_CHANGED if contradicted else EXIT_OK
 
 
 def _cmd_history(args: argparse.Namespace) -> int:
@@ -601,6 +629,24 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_calendar.set_defaults(func=_cmd_calendar)
 
+    p_reconcile = subparsers.add_parser(
+        "reconcile",
+        help="audit a URDB rate record you supply against the cited parse, field by field",
+    )
+    p_reconcile.add_argument("parsed", help="JSON from parse, or a watch baseline")
+    p_reconcile.add_argument(
+        "record",
+        help=(
+            "a URDB rate record you downloaded yourself, as JSON. Nothing is "
+            "fetched: reconcile is offline."
+        ),
+    )
+    p_reconcile.add_argument(
+        "--json", action="store_true", help="write the report as JSON instead of text"
+    )
+    p_reconcile.add_argument("-o", "--output", help="write the report here instead of stdout")
+    p_reconcile.set_defaults(func=_cmd_reconcile)
+
     p_baseline = subparsers.add_parser(
         "baseline", help="write the reviewed parse of each pinned document for the watch"
     )
@@ -653,6 +699,7 @@ def main(argv: list[str] | None = None) -> int:
         ExportError,
         CalendarError,
         HistoryError,
+        ReconcileError,
     ) as error:
         sys.stderr.write(f"error: {error}\n")
         return EXIT_ERROR
