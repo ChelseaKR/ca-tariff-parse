@@ -1,0 +1,24 @@
+{
+  "label": "SYNTHETICurdbrecord0000000",
+  "uri": "https://apps.openei.org/USURDB/rate/view/SYNTHETICurdbrecord0000000",
+  "sector": "Residential",
+  "name": "Example Service (SYNTHETIC)",
+  "utility": "Example Publisher (SYNTHETIC)",
+  "eiaid": 99999,
+  "description": "A synthetic record in the shape OpenEI's URDB publishes, written for this repository's tests. It describes no real utility and no real price.",
+  "source": "https://example.invalid/synthetic",
+  "startdate": 1777593600,
+  "fixedchargefirstmeter": 11.0,
+  "fixedchargeunits": "$/month",
+  "mincharge": 5.0,
+  "minchargeunits": "$/month",
+  "energyratestructure": [[{ "rate": 1.1, "unit": "kWh" }]],
+  "energyweekdayschedule": [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  ],
+  "energyweekendschedule": [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  ],
+  "demandratestructure": [[{ "rate": 1.234, "unit": "kW" }]],
+  "demandrateunit": "kW"
+}
