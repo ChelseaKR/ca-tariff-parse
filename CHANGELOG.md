@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-07
+
+Seventeen commits since `v0.2.0`, and six of them are verbs a reader can
+run: `export`, `check`, `history`, `calendar`, `load` and `reconcile`.
+The theme underneath them is the same one the project keeps finding --
+a state for what the tool could not decide, kept separate from a clean
+result. `check` has one, `diff` stopped reading equal parser stamps as
+clean when they are indeterminate, and `history` stopped reading an
+empty record as a failed match.
+
+`PARSER_VERSION` moves with the release version -- `test_release_metadata`
+holds the two equal -- so every committed parse was re-captured at 0.3.0.
+The recapture is recorded here because a golden re-captured without a
+stated reason stops being evidence. It was done from the seven source
+documents already on disk, each first confirmed against its `sources.toml`
+sha256 by `make verify-source`, so no document was re-fetched and none
+could have moved underneath it. **The whole diff across all eleven files is
+eleven lines: `parser_version` 0.2.0 -> 0.3.0, one per file. No price, no
+date, no coverage figure and no line count changed.**
+
+A consumer holding a 0.2.0 parse and comparing it against a 0.3.0 one gets
+`PARSER_DIFFERENT` rather than a silent comparison, which is what that
+field is for; `diff.py` already documents that equal stamps are
+`PARSER_INDETERMINATE` rather than proof the same build read both.
+
 ### Changed
 
 - **The one action that stands between this project and an installable package
