@@ -22,13 +22,13 @@ sheet, section and line it was read from.
 Install a signed release without cloning (needs [uv](https://docs.astral.sh/uv/)):
 
 ```bash
-uv tool install "git+https://github.com/ChelseaKR/ca-tariff-parse@v0.2.0"
+uv tool install "git+https://github.com/ChelseaKR/ca-tariff-parse@v0.3.0"
 ca-tariff-parse --version
 ```
 
 Releases are signed annotated tags. CI verifies each one against
 `.github/allowed_signers` before it publishes anything, and
-`git verify-tag v0.2.0` checks the same signature locally once that file is
+`git verify-tag v0.3.0` checks the same signature locally once that file is
 set as your `gpg.ssh.allowedSignersFile`. The package is not on PyPI yet; a
 `publish-pypi` workflow exists and runs only when the maintainer dispatches it.
 
