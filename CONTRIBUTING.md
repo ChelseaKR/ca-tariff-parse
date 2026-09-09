@@ -93,3 +93,12 @@ actually says. For anything with a security dimension see `SECURITY.md`.
 The issue forms ask for exactly that, and there is a second one for a shape
 the parser does not read yet, which asks what on the page settles the reading.
 Opening a pull request loads the checklist above as a template.
+
+## Commercial solicitation
+
+Issues here are not open to bids. They are design records — written so a decision is
+reconstructable later — not scope documents for outside quoting, and unsolicited offers to
+implement one for a fee will be declined.
+
+Contributions through the normal fork-and-PR process are welcome, and `good first issue` is the
+place to start.
