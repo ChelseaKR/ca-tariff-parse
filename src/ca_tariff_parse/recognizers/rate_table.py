@@ -25,6 +25,7 @@ from dataclasses import dataclass
 from ..extract import Line, Word, squash
 from ..model import Charge, Cited, Money
 from ..segment import Section
+from ..trace import fence, refuse
 from .base import (
     LABEL_MARGIN,
     MONEY_RE,
@@ -49,6 +50,46 @@ GROUP_LABEL_RE = re.compile(r"charge\s*\Z", re.IGNORECASE)
 ALL_YEAR_RE = re.compile(r"\A(All Year|All Seasons)\Z", re.IGNORECASE)
 #: Squashed unit that makes a row an energy charge rather than a fixed one.
 ENERGY_UNIT_SQUASHED = "$/kwh"
+
+
+#: Named refusal points. `explain` reports these by identifier, and the ADR on
+#: each is the decision a reader who disagrees with a refusal should argue
+#: with rather than the call site.
+UNIT_NOT_IN_LABEL = fence(
+    "rate_table.unit-not-in-label",
+    adr="ADR 0002",
+    reason=(
+        "the row is priced but its label states no unit, and a price quoted in "
+        "a unit nobody printed is a value this parser did not read"
+    ),
+)
+CELL_NOT_AN_AMOUNT = fence(
+    "rate_table.cell-not-an-amount",
+    adr="ADR 0002",
+    reason=(
+        "a cell in the value area is neither a currency amount nor an explicit "
+        "n/a, so the row is refused whole: skipping the cell would publish the "
+        "rest of the row as though it were the whole row"
+    ),
+)
+VALUE_NOT_UNDER_ONE_COLUMN = fence(
+    "rate_table.value-not-under-one-column",
+    adr="ADR 0004",
+    reason=(
+        "the amount does not sit clearly under one effective-date column, and "
+        "which date a price belongs to is carried entirely by its horizontal "
+        "position on the page"
+    ),
+)
+NO_EFFECTIVE_DATE_HEADER = fence(
+    "rate_table.no-effective-date-header",
+    adr="ADR 0004",
+    reason=(
+        "the section carries the table keyword but no readable row of "
+        "effective-date column headings beneath it, so no amount under it can "
+        "be dated"
+    ),
+)
 
 
 def _find_header(section: Section) -> int | None:
@@ -102,6 +143,13 @@ def _read_value_row(
     if unit_text is None:
         # A priced row whose unit the parser cannot read is never emitted with a
         # guessed unit.
+        refuse(
+            "rate_table",
+            UNIT_NOT_IN_LABEL,
+            page=line.page,
+            line=line.index,
+            detail=label or line.text,
+        )
         return None
 
     kind = "energy_usage" if squash(unit_text) == ENERGY_UNIT_SQUASHED else "fixed_charge"
@@ -124,9 +172,23 @@ def _read_value_row(
             # of three prices comes out carrying two. A second publisher writes
             # a negative as "($0.08140)", which is a real price in a form this
             # parser does not read, so the whole row is refused instead.
+            refuse(
+                "rate_table",
+                CELL_NOT_AN_AMOUNT,
+                page=line.page,
+                line=line.index,
+                detail=word.text,
+            )
             return None
         column = assign(word, columns)
         if column is None:
+            refuse(
+                "rate_table",
+                VALUE_NOT_UNDER_ONE_COLUMN,
+                page=line.page,
+                line=line.index,
+                detail=word.text,
+            )
             return None
         row.append(
             Charge(
@@ -148,6 +210,13 @@ def _read_value_row(
         )
         accounted = True
 
+    # No fence is registered here, and the reason is worth stating rather than
+    # leaving as an omission. `parse` calls this only when some word in the
+    # value area matched an amount or an explicit n/a, and every path through
+    # the loop for such a word either returns early or sets `accounted`. So
+    # this branch cannot be reached from the only caller, and a fence on it
+    # would be a name `explain` could print in a table and never report --
+    # exactly what `test_explain.py`'s fence census refuses.
     return row if accounted else None
 
 
@@ -156,11 +225,26 @@ def parse(section: Section, citer: Citer) -> Emission:
     lines = section.content_lines
     header_at = _find_header(section)
     if header_at is None or header_at + 1 >= len(lines):
+        if lines:
+            refuse(
+                "rate_table",
+                NO_EFFECTIVE_DATE_HEADER,
+                page=lines[0].page,
+                line=lines[0].index,
+                detail=section.heading,
+            )
         return emission
 
     date_line = lines[header_at + 1]
     columns = columns_from(date_line.words)
     if not columns:
+        refuse(
+            "rate_table",
+            NO_EFFECTIVE_DATE_HEADER,
+            page=date_line.page,
+            line=date_line.index,
+            detail=date_line.text,
+        )
         return emission
 
     boundary = min(column.x0 for column in columns) - LABEL_MARGIN

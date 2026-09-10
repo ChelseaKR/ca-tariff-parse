@@ -422,6 +422,7 @@ parses of one document, as Markdown or, with `--jsonl`, one object per change.
 | --- | --- |
 | `parse <doc>` | Emit the structured schedule as JSON |
 | `coverage <doc>` | Report what was accounted for and what was not |
+| `explain <doc> [p.3 L11]` | Name the recognizer that read a line, or the fence that refused it, with the ADR the fence comes from |
 | `sources` | List the documents in the manifest |
 | `fetch` | Download source documents (networked) |
 | `verify-source` | Check local documents against the manifest digests |
@@ -455,6 +456,49 @@ anything else that wants the numbers rather than the prose. Every value in it
 is selected out of `parse`'s own report rather than computed a second time, so
 the two cannot come to disagree, and `--min-coverage` gates identically either
 way.
+
+### `explain`: which rule read a line, or which fence refused it
+
+`coverage` reports that a line went unread and gives a coarse reason -- "3 of
+13 lines in a recognized section matched no rule". That is true, and it does
+not say which recognizer got closest to the line or what stopped it. Reading
+the source was the only way to find out, which made a refusal legible to
+whoever wrote the parser and to nobody else. Refusals are this project's
+deliverable, so that was the wrong reader.
+
+```
+ca-tariff-parse explain sources/E-1.pdf --id pge-e-1 p.3 L11
+ca-tariff-parse explain parsed.txt --section II.A
+ca-tariff-parse explain --fences          # every fence, with its ADR
+```
+
+Every line lands in one of four states, and the fourth is the one that had to
+exist:
+
+| state | what it means |
+| --- | --- |
+| `consumed` | a recognizer claimed the line and emitted from it; it is named |
+| `refused` | a recognizer reached the line and a **named fence** stopped it -- the fence, its ADR, its own reason, and what it saw on the page |
+| `examined` | a recognizer claimed the line's section, read it and took nothing from this line, with no fence firing |
+| `unclaimed` | no recognizer claimed the line's section at all |
+
+The last two are not the same fact, and neither is the same as `refused`.
+`refused` means the page states something this parser will not read the way it
+is written; `unclaimed` means there is no rule here whose shape matches the
+section, so no fence *could* have fired. That is the distinction ADR 0018
+draws by hand -- **"unstated on the page" is not "unread by this parser"** --
+and it is why `explain` never offers a nearest fence. A closest rule picked by
+proximity would be a value invented from an absence, which is the defect this
+project exists to refuse.
+
+The report prints two numbers, not one: how many of the parser's registered
+fences the document reached, out of how many exist. A count of refusals says
+nothing about how much of the refusal vocabulary an input exercised.
+
+`explain` runs the parse inside a recording context and reports what it did.
+Nothing in the package reads a trace back while parsing, so tracing cannot
+change what `parse` emits -- `tests/test_explain.py` parses every committed
+fixture with and without a trace open and compares the JSON as bytes.
 
 ### `check`: what a parse does and does not settle
 
