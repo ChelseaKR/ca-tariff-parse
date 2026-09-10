@@ -1,0 +1,48 @@
+
+         EXAMPLE MUNICIPAL UTILITY (SYNTHETIC)                        Sheet No. SYN-3-1
+         Resolution No. SYN-00-00 adopted January 1, 2026 Effective: February 1, 2026
+
+
+                                                            Example Service (SYNTHETIC)
+                                                            Rate Schedule SYN-3
+
+
+         I. Example Refused Rows
+               A. Example Rate
+
+                                                          Effective as of  Effective as of
+                                                          May 1, 2026      January 1, 2027
+                    Example Unitless Charge                $11.00            $12.00
+                    Example Mixed Cells per meter          $13.00            TBD
+                    Example Adrift Charge per meter        $14.00                                   $15.00
+
+               B. Example Table With No Dates
+
+                    Effective as of
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

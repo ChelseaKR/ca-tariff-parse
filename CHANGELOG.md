@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `explain` names the recognizer that read a line, or the named fence that
+  refused it, with the ADR the fence comes from and what it saw on the page.
+  Every line lands in one of four states, and `unclaimed` -- no recognizer
+  claimed the line's section, so no fence could have fired -- is a first-class
+  answer rather than a gap. `explain` never offers a nearest fence: a closest
+  rule chosen by proximity would be a value invented from an absence.
+- `explain --fences` lists every fence the parser can report. The report also
+  prints how many of them a document reached, out of how many exist, because a
+  count of refusals says nothing about how much of the vocabulary ran.
+- `ca_tariff_parse.trace`, the channel recognizers record into. Recording is
+  off unless a caller opens it and nothing reads a trace back while parsing,
+  so `parse` emits the same bytes either way -- asserted over every committed
+  fixture rather than stated.
+- Two fixtures written to trip fences: `SYNTHETIC-example-refused-rows.txt`
+  and `SYNTHETIC-example-unclosed-bracket.txt`, the second carrying the ADR
+  0014 case of a label that opens a bracket the publisher never closes.
+
+### Changed
+
+- Nothing in `parse`'s output. The engine now records which recognizer was
+  offered each section, which claimed it, and which lines each consumed; none
+  of it reaches the emitted document.
+
 ## [0.3.0] - 2026-09-07
 
 Seventeen commits since `v0.2.0`, and six of them are verbs a reader can

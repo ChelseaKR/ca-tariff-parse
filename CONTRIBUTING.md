@@ -43,6 +43,43 @@ the tests against the coverage floor. It must exit 0.
 - The real published PDFs are not committed. Run `make fetch` to download them
   and `make verify-source` to confirm the digests still match.
 
+## Naming a fence
+
+A **fence** is a place a recognizer stops reading, given a name so that
+`explain` can report it and a census can group refusals across documents.
+`ca_tariff_parse.trace.fence()` registers one at module scope:
+
+```python
+BRACKET_UNCLOSED = fence(
+    "sheet_rates.bracket-unclosed",
+    adr="ADR 0014",
+    reason="the row's label opens a bracket it never closes, and ...",
+)
+```
+
+Four rules, each of which a test enforces.
+
+- **The identifier is `<recognizer>.<what-was-not-readable>`,** in lower case
+  with hyphens, and it is stable across releases. It is what a census groups
+  on and what a contributor quotes in an unread-shape report; renaming one
+  silently re-partitions every count derived from it.
+- **`adr` names the decision the fence comes from**, so a reader who disagrees
+  with a refusal has one document to argue with instead of a call site to
+  reverse engineer.
+- **`reason` is about the page, in the present tense** -- what the document
+  does or does not state -- not about the code. It is printed to somebody who
+  has the PDF open and not the source.
+- **A fence must be reachable.** `tests/test_explain.py` fails naming any
+  registered fence that no committed fixture trips. A name `explain --fences`
+  prints and can never report is a claim about the parser that is not true of
+  it. If a branch cannot be reached from its caller, do not register a fence
+  on it -- say in a comment that it is unreachable and why. One was removed
+  that way on the day the registry was written.
+
+`refuse()` is called unconditionally at the fence, never behind a check for
+whether anything is recording. It is a no-op with no trace open, and one code
+path cannot drift from itself.
+
 ## Changing parsed output
 
 `tests/golden/` holds the committed output of parsing the real schedules. If a
