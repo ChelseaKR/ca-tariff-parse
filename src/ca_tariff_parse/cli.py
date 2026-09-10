@@ -19,6 +19,8 @@ from pathlib import Path
 from .calendar import CalendarError, render, summary
 from .check import PROPERTY_IDS, CheckError, check, to_json, to_text, unmet
 from .diff import DiffError, schedule_diff
+from .explain import SelectorError, explain, fence_table, parse_selectors
+from .explain import to_text as explain_text
 from .export import ExportError, render_csv, render_jsonl, rows, table_names
 from .export import columns as export_columns
 from .history import HistoryError, parse_match, read_legs, timelines
@@ -39,6 +41,7 @@ from .sources import (
     local_state,
     verify,
 )
+from .trace import recording
 from .watch import CHANGED, ERROR, manifest_with, watch, write_baseline
 
 EXIT_OK = 0
@@ -179,6 +182,40 @@ def _cmd_coverage(args: argparse.Namespace) -> int:
     if args.min_coverage is not None and coverage.line_ratio < args.min_coverage:
         return EXIT_COVERAGE
     return EXIT_OK
+
+
+def _cmd_explain(args: argparse.Namespace) -> int:
+    """Say what every recognizer did to the lines asked about.
+
+    The parse runs inside a recording context, so what is reported is what the
+    parse actually did rather than a second pass reasoning about it. Nothing
+    in the package reads a trace back while parsing, which is why this cannot
+    change what `parse` emits -- `tests/test_explain.py` compares the two as
+    bytes.
+    """
+    if args.fences:
+        sys.stdout.write(fence_table())
+        return EXIT_OK
+    try:
+        selectors = parse_selectors(args.where)
+    except SelectorError as error:
+        sys.stderr.write(f"error: {error}\n")
+        return EXIT_ERROR
+    if selectors and args.section:
+        sys.stderr.write("error: give line selectors or --section, not both\n")
+        return EXIT_ERROR
+
+    with recording() as trace:
+        parsed = _load(args)
+    explanation = explain(parsed, trace, selectors=selectors, section=args.section)
+
+    if args.json:
+        sys.stdout.write(json.dumps(explanation.to_json(), indent=2, ensure_ascii=False) + "\n")
+    else:
+        sys.stdout.write(explain_text(explanation))
+    # A selector naming a line the document does not have is an error, not an
+    # empty answer: the two are indistinguishable in the output otherwise.
+    return EXIT_ERROR if explanation.not_found else EXIT_OK
 
 
 def _cmd_sources(args: argparse.Namespace) -> int:
@@ -501,6 +538,27 @@ def build_parser() -> argparse.ArgumentParser:
         help="write the same figures as JSON instead of the text report",
     )
     p_coverage.set_defaults(func=_cmd_coverage)
+
+    p_explain = subparsers.add_parser(
+        "explain",
+        help="name the recognizer that read a line, or the fence that refused it",
+    )
+    add_document(p_explain)
+    p_explain.add_argument(
+        "where",
+        nargs="*",
+        default=[],
+        metavar="SELECTOR",
+        help="lines to explain, as 'p.3 L11' or '3:11'; omit for every content line",
+    )
+    p_explain.add_argument("--section", help="explain every line of one section, e.g. II.A")
+    p_explain.add_argument(
+        "--fences",
+        action="store_true",
+        help="list every fence this parser can report, with its ADR, and stop",
+    )
+    p_explain.add_argument("--json", action="store_true", help="emit the report as JSON")
+    p_explain.set_defaults(func=_cmd_explain)
 
     p_sources = subparsers.add_parser("sources", help="list documents in the manifest")
     add_manifest(p_sources)

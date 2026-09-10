@@ -80,6 +80,7 @@ from ..extract import Line, Word, normalize, squash
 from ..model import Charge, Cited, Money
 from ..profiles import DocumentProfile
 from ..segment import Section
+from ..trace import fence, refuse
 from .base import (
     BRACKET_MONEY_RE,
     COLUMN_TOLERANCE,
@@ -231,6 +232,21 @@ def _heading_text(
         edge = min(column.x0 for column in naming.columns)
         words = [word for word in words if word.x1 <= edge]
     return normalize(" ".join(word.text for word in words))
+
+
+#: Named refusal points, reported by `explain`. Each names the decision it
+#: comes from rather than describing itself, so a reader who disagrees with a
+#: refusal has one document to argue with.
+BRACKET_UNCLOSED = fence(
+    "sheet_rates.bracket-unclosed",
+    adr="ADR 0014",
+    reason=(
+        "the row's label opens a bracket it never closes, and the line beneath "
+        "it does not close exactly one it did not open. A bracket that never "
+        "closes states nothing that can be read to an end, so the row carrying "
+        "it is the first half of a name and is refused rather than published"
+    ),
+)
 
 
 def _opens_one_bracket(text: str) -> bool:
@@ -769,7 +785,19 @@ def _run[R: (_Row, _WideRow)](
             rows.pop()
     # A label still opening a bracket was broken at a line ending the page did
     # not let this parser join. It is the first half of a name, and refused.
-    return [row for row in rows if not _unbalanced(row.label)], position
+    kept = []
+    for row in rows:
+        if _unbalanced(row.label):
+            refuse(
+                "sheet_rates",
+                BRACKET_UNCLOSED,
+                page=row.line.page,
+                line=row.line.index,
+                detail=row.label,
+            )
+            continue
+        kept.append(row)
+    return kept, position
 
 
 def _wide_blocks(

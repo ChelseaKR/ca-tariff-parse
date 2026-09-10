@@ -38,6 +38,7 @@ from .recognizers import (
 from .recognizers.base import Citer, Emission
 from .segment import Section, segment
 from .sources import SourceEntry
+from .trace import offer, place, took
 
 PARSER_VERSION = "0.3.0"
 
@@ -65,29 +66,56 @@ def _run_recognizers(
     # that does not is simply skipped, so this is a flat, data driven list
     # rather than a chain of branches that grows harder to read with every
     # new recognizer.
-    shapes: list[tuple[Callable[[Section], bool], Callable[[Section], Emission]]] = [
-        (rate_table.claims, lambda s: rate_table.parse(s, citer)),
+    shapes: list[tuple[str, Callable[[Section], bool], Callable[[Section], Emission]]] = [
+        ("rate_table", rate_table.claims, lambda s: rate_table.parse(s, citer)),
         (
+            "sheet_rates",
             lambda s: sheet_rates.claims(s, profile),
             lambda s: sheet_rates.parse(s, citer, profile, effective_by_page),
         ),
-        (transition_table.claims, lambda s: transition_table.parse(s, citer, profile)),
-        (dated_charge.claims, lambda s: dated_charge.parse(s, citer)),
-        (credit.claims, lambda s: credit.parse(s, citer, effective)),
-        (billing_periods.claims, lambda s: billing_periods.parse(s, citer)),
         (
+            "transition_table",
+            transition_table.claims,
+            lambda s: transition_table.parse(s, citer, profile),
+        ),
+        ("dated_charge", dated_charge.claims, lambda s: dated_charge.parse(s, citer)),
+        ("credit", credit.claims, lambda s: credit.parse(s, citer, effective)),
+        ("billing_periods", billing_periods.claims, lambda s: billing_periods.parse(s, citer)),
+        (
+            "period_list",
             lambda s: period_list.claims(s, profile),
             lambda s: period_list.parse(s, citer, profile),
         ),
-        (cross_reference.claims, lambda s: cross_reference.parse(s, citer)),
-        (lambda s: applicability.claims(s, headings), lambda s: applicability.parse(s, citer)),
-        (lambda s: proration.claims(s, citer.doc), lambda s: proration.parse(s, citer)),
-        (condition_list.claims, lambda s: condition_list.parse(s, citer)),
+        ("cross_reference", cross_reference.claims, lambda s: cross_reference.parse(s, citer)),
+        (
+            "applicability",
+            lambda s: applicability.claims(s, headings),
+            lambda s: applicability.parse(s, citer),
+        ),
+        (
+            "proration",
+            lambda s: proration.claims(s, citer.doc),
+            lambda s: proration.parse(s, citer),
+        ),
+        ("condition_list", condition_list.claims, lambda s: condition_list.parse(s, citer)),
     ]
     for section in sections:
-        for claims, parse in shapes:
-            if claims(section):
-                combined.extend(parse(section))
+        place(
+            [((line.page, line.index), line.text) for line in section.content_lines],
+            section.section_id,
+        )
+        for name, claims, parse in shapes:
+            # Both outcomes are recorded. A recognizer that declined a section
+            # examined it, and the difference between "no rule looked at this
+            # line" and "every rule looked and none matched" is the whole
+            # question `explain` exists to answer.
+            claimed = claims(section)
+            offer(section.section_id, name, claimed=claimed)
+            if not claimed:
+                continue
+            emitted = parse(section)
+            took(name, emitted.consumed)
+            combined.extend(emitted)
     return combined
 
 
@@ -109,6 +137,7 @@ def parse_document(
         profile,
         header.sheet_effective_dates(doc, citer),
     )
+    took("header", front_consumed)
     emission.consumed |= front_consumed
 
     # Segmentation itself understands a heading: it is what produced the
@@ -120,6 +149,7 @@ def parse_document(
     for section in segmented.sections:
         if section.level > 0 and section.content_lines and not section.heading_inline:
             emission.take(section.content_lines[0])
+            took("segment", {(section.content_lines[0].page, section.content_lines[0].index)})
 
     unparsed: list[UnparsedSection] = []
     recognized_lines = 0
