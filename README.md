@@ -139,6 +139,42 @@ Seven published schedules from two publishers are in the manifest. None of them
 parses completely, and the figure for each is an output of the tool rather than
 a claim made here.
 
+### The frame, and the fraction of it this covers
+
+The per-document figures below say how much of each pinned document was read.
+They say nothing at all about how much of California is pinned, and a reader
+could take seven schedules for the set. So, as two numbers:
+
+> **California has 59 retail electric service territories. This repository
+> pins documents from 2 of them.**
+
+The 59 is measured rather than estimated. It is the count of entities in the
+California Energy Commission's *Electric Load Serving Entities (IOU/POU)*
+dataset — 47 publicly owned utilities, 6 investor-owned, 4 cooperatives and 2
+tribal — retrieved 2026-08-23. (Community choice aggregators are not among them:
+a CCA's footprint overlays another entity's distribution territory rather than
+being one of its own.) Broken down, this repository covers **1 of the 6
+investor-owned utilities** — one of the three large ones — and **1 of the 47
+publicly owned**.
+
+That ratio is not a target and nothing here is planned around raising it. It is
+published because a coverage table without it invites the reading that the
+table *is* the state, which is the same mistake as reading a suppressed cell as
+zero — an unexamined thing rendered as a measured one.
+
+**Adding the other two large investor-owned utilities is not planned, and the
+obstacle is not the download.** ADR 0005 and ADR 0006 record what a second
+publisher actually cost: a document profile, a second outline reader for a
+keyword column, and three schedules that parsed at 0% until both existed. `docs/ROADMAP.md` says
+under *Not in this plan* that a third publisher waits until the second is
+finished, "because the second publisher is not finished: three of its schedules
+are pinned and most of two of them is still unread" — and that widening the
+surface before the understanding is the wrong trade. Pinning a third publisher's
+residential time-of-use schedule as the seam test for that profile is tracked at
+[#52](https://github.com/ChelseaKR/ca-tariff-parse/issues/52). Until it happens,
+the number above is 2 of 59, and it is written here rather than left to be
+inferred.
+
 | Schedule | Publisher | Lines recognized | Charges | Windows | Holidays | Proration rules | Conditions |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | R-TOD, residential time-of-day | SMUD | 125/151 (82.8%) | 42 | 5 | 11 | 1 | 4 |
