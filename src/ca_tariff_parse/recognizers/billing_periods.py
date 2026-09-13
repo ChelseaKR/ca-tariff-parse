@@ -34,7 +34,7 @@ from itertools import pairwise
 from ..extract import Line, Word
 from ..model import Cited, Holiday, TouWindow
 from ..segment import Section
-from .base import MONEY_RE, PERIOD_ALTERNATION, Citer, Emission
+from .base import CLOCK_TIME, MONEY_RE, PERIOD_ALTERNATION, Citer, Emission
 
 #: Clear space, in points, left either side of a derived column boundary.
 COLUMN_MARGIN = 10.0
@@ -67,8 +67,7 @@ SEASON_SPAN_RE = re.compile(
 )
 HOLIDAY_INTRO_RE = re.compile(r"\bholidays?\b.*:\s*\Z", re.IGNORECASE)
 HOLIDAY_HEADER_SQUASHED = "holidaymonthdate"
-#: A clock time as tariffs write them: "5:00 p.m.", "6 a.m.", "noon", "midnight".
-_TIME = r"(?:\d{1,2}(?::\d{2})?\s*[ap]\.?m\.?|noon|midnight)"
+_TIME = CLOCK_TIME
 #: A window definition states when the period runs. Requiring one of these
 #: words keeps a priced table row out of the window table: a transition
 #: schedule prints "Non-Summer Off-Peak per kWh $0.1237", which lines up in the
@@ -85,7 +84,11 @@ PLAIN_RANGE_RE = re.compile(
     rf"(?P<start>{_TIME})\s+and\s+(?P<end>{_TIME})\s*\.?\s*\Z",
     re.IGNORECASE,
 )
-RESIDUAL_RE = re.compile(r"\AAll other hours\b", re.IGNORECASE)
+#: A period the document defines by exclusion. Both publishers open the phrase
+#: the same way and finish it differently -- "All other hours, including
+#: weekends and holidays" and "All other times" -- and what makes it residual is
+#: the exclusion, not the noun.
+RESIDUAL_RE = re.compile(r"\AAll other (?:hours|times)\b", re.IGNORECASE)
 
 
 #: Horizontal gap, in points, that separates two headings of a table.

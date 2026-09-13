@@ -146,7 +146,7 @@ a claim made here.
 | CI-TOD1, commercial and industrial time-of-day | SMUD | 142/201 (70.6%) | 85 | 5 | 11 | 3 | 3 |
 | SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 | 0 | 0 |
 | E-1, residential | PG&E | 84/247 (34.0%) | 53 | 0 | 0 | 0 | 0 |
-| E-TOU-C, residential time-of-use | PG&E | 53/346 (15.3%) | 23 | 0 | 0 | 0 | 0 |
+| E-TOU-C, residential time-of-use | PG&E | 59/346 (17.1%) | 23 | 4 | 0 | 0 | 0 |
 | B-1, small general service | PG&E | 157/477 (32.9%) | 59 | 0 | 0 | 0 | 0 |
 
 `make coverage-real` reproduces the table from the fetched documents, and
@@ -212,6 +212,51 @@ such table, or one under a different header, is untouched by this and keeps
 being read line by line as before. The full account, including the case that
 originally looked like it needed a spacing threshold and did not, is in
 [ADR 0007](docs/adr/0007-read-a-merged-cell-from-its-own-border.md).
+
+### The time-of-use periods, where the publisher sets them as a list
+
+`E-TOU-C` is titled *Residential Time-of-Use (Peak Pricing 4 - 9 p.m. Every
+Day)* and its parse carried no time-of-use windows at all. The sheet states
+four. They are not in a table -- the table reader recovers its column
+boundaries from the alignment of the period names, and there are no columns
+here -- they are a list, set under a season heading in the special conditions
+part:
+
+```
+Summer (service from June 1 through September 30):
+
+Peak: 4:00 p.m. to 9:00 p.m. All days
+
+Off-Peak: All other times
+```
+
+So the parser was wrong and the sheet was not. A second reader takes a season
+heading that states a part of the year and the period lines under it; a period
+line with no season in force emits nothing, because a window under a season
+nobody published is the failure ADR 0005 records from the first pass over this
+publisher.
+
+**And `B-1` prints what looks like the same list and is not one.** Its
+definitions wrap, and the wrapped half is set far right of the rows:
+
+```
+Peak: 4:00 p.m. to 9:00 p.m. Every day, including weekends
+                             and holidays
+```
+
+Read as a list that publishes `Every day, including weekends` as the whole
+rule -- a holiday rule saying the opposite of the page. The page says which
+case it is by position: a line set right of the rows is part of the block they
+sit in, so a group whose last row is followed by one is refused whole. `B-1`
+reads no windows, and that zero is now a refusal with a reason rather than
+silence. See
+[ADR 0020](docs/adr/0020-a-list-is-not-a-table-and-a-wrap-is-not-a-row.md).
+
+**`E-TOU-C` reads no holidays because the document lists none.** The word
+"holiday" does not appear anywhere in it and both Peak periods run "All days".
+That is a statement about the sheet, and `tests/test_realdoc.py` pins it: the
+day the publisher adds a holiday list, that test fails rather than the count
+staying quietly at zero.
 
 ### What is still refused on the second publisher
 

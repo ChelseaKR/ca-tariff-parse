@@ -84,6 +84,12 @@ PERIOD_NAMES = (
 )
 PERIOD_ALTERNATION = "|".join(name.replace(" ", r"\s+") for name in PERIOD_NAMES)
 
+#: A clock time as tariffs write them: "5:00 p.m.", "6 a.m.", "noon",
+#: "midnight". Shared because two recognizers read the same times out of two
+#: different shapes -- a three-column table and a list under a season heading --
+#: and a second copy of this pattern would drift from the first.
+CLOCK_TIME = r"(?:\d{1,2}(?::\d{2})?\s*[ap]\.?m\.?|noon|midnight)"
+
 #: A unit phrase anchored on a currency sign, e.g. "$/kWh" or "$ per monthly
 #: max kW". When a label carries one, it is the unit, because the publisher
 #: wrote the currency in it.

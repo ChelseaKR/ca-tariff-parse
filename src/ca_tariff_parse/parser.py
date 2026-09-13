@@ -29,6 +29,7 @@ from .recognizers import (
     cross_reference,
     dated_charge,
     header,
+    period_list,
     proration,
     rate_table,
     sheet_rates,
@@ -74,6 +75,10 @@ def _run_recognizers(
         (dated_charge.claims, lambda s: dated_charge.parse(s, citer)),
         (credit.claims, lambda s: credit.parse(s, citer, effective)),
         (billing_periods.claims, lambda s: billing_periods.parse(s, citer)),
+        (
+            lambda s: period_list.claims(s, profile),
+            lambda s: period_list.parse(s, citer, profile),
+        ),
         (cross_reference.claims, lambda s: cross_reference.parse(s, citer)),
         (lambda s: applicability.claims(s, headings), lambda s: applicability.parse(s, citer)),
         (lambda s: proration.claims(s, citer.doc), lambda s: proration.parse(s, citer)),
