@@ -885,7 +885,7 @@ prices quoted from the sheets with their unit, effective date and heading.
 | Responsible-Tech Framework | Applies: the no-fabrication rule, the refusal cases and the published coverage figure are the core design. |
 | Code Quality | Applies: ruff, strict mypy, complexity ceiling, 85% coverage floor. |
 | Security & Supply-Chain | Applies: SHA-pinned actions, least-privilege tokens, secret scanning, SAST, dependency scanning, lockfile. |
-| CI/CD | Applies: `make verify` is the gate and CI runs the same target. |
+| CI/CD | Applies, with one gap: `make verify` is the gate and CI runs the same target on every pull request, but `main` requires no status check — it has no ruleset and no branch protection (measured 2026-09-13) — so a red run reports rather than blocks a merge. Requiring the `verify` job is a live repository setting and the intent. |
 | Release & Versioning | Applies: SemVer with a signed-tag release workflow that separates verification from publication. |
 | Observability | Applies: Tier C (library and CLI). No hosted route, so tracing is out of scope for that tier; the tool emits no telemetry by design. |
 | Performance | N/A: no hosted route and no shipped HTML. Parsing one local document has no latency budget to gate on. |
