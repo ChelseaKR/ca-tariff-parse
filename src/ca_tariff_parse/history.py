@@ -50,9 +50,11 @@ from .diff import (
     SPECS,
     Spec,
 )
+from .watch import Look
 
 __all__ = [
     "ABSENT",
+    "OBSERVATION_SUMMARY_SCHEMA",
     "Event",
     "HistoryError",
     "Leg",
@@ -62,6 +64,11 @@ __all__ = [
     "to_jsonl",
     "to_text",
 ]
+
+#: The header line ``--jsonl`` writes for the observation record. Its own id,
+#: because it is a statement about what has been looked at rather than about a
+#: value the document states.
+OBSERVATION_SUMMARY_SCHEMA = "ca-tariff-parse/history-observation/v1"
 
 #: What a record's value is before it first appears, and after it is removed.
 #: A distinct object rather than ``None`` so that "the document did not carry
@@ -468,8 +475,13 @@ def _cite_text(cite: Mapping[str, Any] | None) -> str:
     return str(cite.get("locator") or "no citation")
 
 
-def to_text(document_id: str, built: Sequence[Timeline]) -> str:
+def to_text(document_id: str, built: Sequence[Timeline], look: Look | None = None) -> str:
     lines = [f"# History of {document_id}", ""]
+    if look is not None:
+        lines.append("## The observation record")
+        lines.append("")
+        lines.append(look.sentence())
+        lines.append("")
     if not built:
         lines.append(
             "Nothing to show. Either no record matched, or no committed change "
@@ -525,8 +537,22 @@ def to_text(document_id: str, built: Sequence[Timeline]) -> str:
     return "".join(line + "\n" for line in lines)
 
 
-def to_jsonl(document_id: str, built: Sequence[Timeline]) -> str:
+def to_jsonl(document_id: str, built: Sequence[Timeline], look: Look | None = None) -> str:
+    """One object per timeline, headed by the observation record where there is one.
+
+    The header line is emitted even when no timeline follows it, because an
+    empty file would state "no record moved" and "nothing ever looked" with the
+    same zero bytes.
+    """
     rendered = []
+    if look is not None:
+        rendered.append(
+            json.dumps(
+                {"schema": OBSERVATION_SUMMARY_SCHEMA, **look.to_json()},
+                ensure_ascii=False,
+                sort_keys=False,
+            )
+        )
     for line in built:
         payload = {"document_id": document_id, **line.to_json()}
         rendered.append(json.dumps(payload, ensure_ascii=False, sort_keys=False))

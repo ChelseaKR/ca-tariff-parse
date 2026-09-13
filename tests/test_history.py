@@ -22,12 +22,22 @@ from ca_tariff_parse.cli import EXIT_NO_MATCH, EXIT_OK, main
 from ca_tariff_parse.diff import PARSER_DIFFERENT, PARSER_INDETERMINATE, schedule_diff
 from ca_tariff_parse.history import (
     ABSENT,
+    OBSERVATION_SUMMARY_SCHEMA,
     HistoryError,
     parse_match,
     read_legs,
     timelines,
 )
-from ca_tariff_parse.watch import dump, project
+from ca_tariff_parse.watch import (
+    ERROR,
+    NEVER_LOOKED,
+    UNCHANGED,
+    Outcome,
+    append_observation,
+    dump,
+    observation,
+    project,
+)
 
 from .conftest import GOLDEN
 
@@ -349,6 +359,8 @@ def test_all_with_no_committed_reports_is_not_a_failed_match(tmp_path: Path, cap
             str(tmp_path / "changes"),
             "--baseline-dir",
             str(tmp_path / "parsed"),
+            "--watch-log",
+            str(tmp_path / "watch-log.jsonl"),
             "--all",
         ]
     )
@@ -400,6 +412,8 @@ def _run(root: Path, match: str | None, *extra: str) -> str:
         str(root / "changes"),
         "--baseline-dir",
         str(root / "parsed"),
+        "--watch-log",
+        str(root / "watch-log.jsonl"),
         *(["--match", match] if match else ["--all"]),
         *extra,
     ]
@@ -425,8 +439,13 @@ def test_the_command_needs_exactly_one_of_match_and_all(scenario: Path) -> None:
 def test_jsonl_carries_one_object_per_timeline(scenario: Path) -> None:
     text = _run(scenario, MOVING, "--jsonl")
     lines = [json.loads(line) for line in text.splitlines()]
-    assert lines
-    for line in lines:
+    # The first line is the observation record, named by its own schema id so a
+    # consumer can tell it from a timeline rather than counting lines.
+    assert lines[0]["schema"] == OBSERVATION_SUMMARY_SCHEMA
+    timelines_out = lines[1:]
+    assert timelines_out
+    for line in timelines_out:
+        assert "schema" not in line
         assert line["document_id"] == DOC
         assert {"kind", "key", "identity", "events", "current", "gaps"} <= set(line)
 
@@ -464,3 +483,59 @@ def test_an_absent_value_is_named_rather_than_left_blank(scenario: Path) -> None
     assert event_lines, text
     for line in event_lines:
         assert line.rstrip().endswith("→ (not in the document)"), line
+
+
+# The observation record
+# ---------------------------------------------------------------------------
+#
+# A document with no change report and a document nothing has ever looked at
+# produce the same timeline. They are different statements, and `history` has
+# to say which of the two it is reporting.
+
+
+def test_a_timeline_says_whether_anything_ever_looked(tmp_path: Path) -> None:
+    _committed_baseline_only(tmp_path)
+
+    never = _run(tmp_path, None)
+    assert "No committed observation records a look" in never
+    assert "has ever been examined" in never
+
+    append_observation(
+        tmp_path / "watch-log.jsonl",
+        observation("2026-09-07", [Outcome(DOC, UNCHANGED, "pinned")], parser_version="0.3.0"),
+    )
+    looked = _run(tmp_path, None)
+    assert "records 1 look(s)" in looked
+    assert "found the bytes the manifest pins" in looked
+    # The timeline itself is unchanged; only the statement about looking moved.
+    assert "Nothing to show." in never and "Nothing to show." in looked
+
+
+def test_the_jsonl_header_is_written_even_when_no_timeline_follows(tmp_path: Path) -> None:
+    """An empty file would state "no record moved" and "nothing ever looked"
+    with the same zero bytes."""
+    _committed_baseline_only(tmp_path)
+    lines = [json.loads(line) for line in _run(tmp_path, None, "--jsonl").splitlines()]
+    assert len(lines) == 1
+    assert lines[0]["schema"] == OBSERVATION_SUMMARY_SCHEMA
+    assert lines[0]["looks"] == 0
+    assert lines[0]["last_state"] == NEVER_LOOKED
+
+
+def test_the_committed_log_and_the_committed_reports_are_read_from_different_files(
+    tmp_path: Path,
+) -> None:
+    """A change report is evidence of a revision; the log is evidence of a look.
+    Conflating them is how "nothing changed" comes to mean "nothing happened"."""
+    _committed_baseline_only(tmp_path)
+    append_observation(
+        tmp_path / "watch-log.jsonl",
+        observation(
+            "2026-09-07", [Outcome(DOC, ERROR, "connection reset")], parser_version="0.3.0"
+        ),
+    )
+    text = _run(tmp_path, None)
+    assert "unknown rather than unchanged" in text
+    # Nothing was committed under data/changes: the statement above comes from
+    # the log alone, which is the separation this test is about.
+    assert list((tmp_path / "changes").glob("*.jsonl")) == []

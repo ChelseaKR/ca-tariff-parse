@@ -5,8 +5,14 @@
 # the last reviewed parse (data/parsed/<id>.json), and opens one pull request
 # per revised document carrying the diff report, the new baseline and the
 # manifest entry's new digest. It never merges anything and never commits a
-# PDF. An unchanged document produces nothing; a download that fails makes
-# the run fail, so silence always means "looked, and nothing changed".
+# PDF.
+#
+# Every run, including a run in which nothing moved, appends one line to
+# data/watch-log.jsonl and commits it to main. That file is the only thing
+# standing between "looked, and nothing changed" and "nobody has ever looked",
+# which are different statements that a repository with no change reports
+# otherwise renders identically. See ADR 0019. A download that fails is an
+# error, never "unchanged", and it is recorded as one.
 #
 # The manifest's pinned digest is a review gate (ADR 0003). This workflow does
 # the first half of that review in advance and hands the decision to a person.
@@ -58,10 +64,44 @@ jobs:
           uv run ca-tariff-parse watch --summary "${RUNNER_TEMP}/overview.json" --timeout 90
           echo "exit=$?" >> "${GITHUB_OUTPUT}"
           # The overview run rewrote the manifest and baselines for anything
-          # revised. Each proposal below is rebuilt from a clean main so that
-          # one pull request carries exactly one document.
+          # revised, and appended this run to data/watch-log.jsonl. Each
+          # proposal below is rebuilt from a clean main so that one pull
+          # request carries exactly one document; the log is not reverted,
+          # because the look happened whatever the diff turns out to say.
           git checkout -q -- sources/sources.toml data/parsed
           git clean -fdq data/changes
+
+      - name: Record that it looked, whatever it found
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/watch-log.jsonl
+          # Exactly one file, and only ever an addition to it. A run that would
+          # commit anything else has gone wrong and must not push at all.
+          staged="$(git diff --cached --name-only)"
+          if [ "${staged}" != "data/watch-log.jsonl" ]; then
+            echo "::error::expected only data/watch-log.jsonl staged, got: ${staged:-nothing}"
+            exit 1
+          fi
+          if [ "$(git diff --cached --numstat | cut -f2)" != "0" ]; then
+            echo "::error::the observation log lost lines; a look already recorded is evidence"
+            exit 1
+          fi
+          git commit -q -m "tariff-watch: looked at every pinned document" \
+            -m "One line per run of the watch, appended whether or not anything moved. Without it a repository whose publishers revised nothing is byte for byte a repository whose watch has never run."
+          # main is unprotected and this job holds the only writer, but a human
+          # merge can still land between the checkout and the push.
+          for attempt in 1 2 3; do
+            if git push -q origin HEAD:main; then
+              exit 0
+            fi
+            git fetch -q origin main
+            git rebase -q origin/main || { git rebase --abort; true; }
+            sleep 5
+          done
+          echo "::error::could not record this run; the log would be silently short a look"
+          exit 1
 
       - name: Propose one pull request per revised document
         env:
@@ -94,7 +134,10 @@ jobs:
 
             # Re-run for this one document so the commit carries only its change.
             summary="${RUNNER_TEMP}/${id}.json"
-            uv run ca-tariff-parse watch --id "${id}" --summary "${summary}" --timeout 90 || true
+            # --no-log: this is a second look inside a run the log already
+            # records, not a run of its own.
+            uv run ca-tariff-parse watch --id "${id}" --summary "${summary}" \
+              --no-log --timeout 90 || true
             state="$(jq -r '.outcomes[0].state' "${summary}")"
             if [ "${state}" != "changed" ]; then
               echo "::warning::${id} read as ${state} on the second look; nothing proposed. $(jq -r '.outcomes[0].detail' "${summary}")"

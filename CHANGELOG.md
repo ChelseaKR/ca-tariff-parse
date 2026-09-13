@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **The watch records that it looked, whether or not anything moved.** Every
+  run now appends one line to `data/watch-log.jsonl`
+  (`ca-tariff-parse/watch-observation/v1`) naming the date, the parser version,
+  and every document it examined with the state it was found in --
+  `unchanged`, `changed` or `error` -- and the scheduled workflow commits it to
+  `main`. Without it, a repository whose publishers revised nothing was byte
+  for byte a repository whose watch had never run, and the two were reported as
+  the same thing: `tariff-watch.yml` has run twice, both runs found all seven
+  pinned documents serving the pinned bytes, and the repository carried no way
+  to say so. A document the log has never named is reported as `never looked`
+  in words rather than as a count of zero, and a run that could not download a
+  document is recorded as leaving the publisher's current bytes *unknown*,
+  which is neither changed nor unchanged. See
+  [ADR 0019](docs/adr/0019-a-look-is-recorded-even-when-nothing-moved.md).
+- `watch --log` / `--no-log`, and `history --watch-log`.
+
+### Changed
+
+- **`history` opens with the observation record.** "No committed report
+  mentions this record" and "nothing has ever examined this document" are
+  different answers, and the timeline gave them the same shape. `--jsonl`
+  writes that record as its first line under its own schema id
+  (`ca-tariff-parse/history-observation/v1`), including when no timeline
+  follows, because an empty file would state both answers in the same zero
+  bytes. A consumer reading `history --jsonl` should filter on `schema` rather
+  than count lines.
+- The two runs that predate the log are backfilled from their own workflow
+  output, each carrying a `backfilled_from` block naming the run id and URL.
+  Their `sha256` and `bytes` are `null`, because the runs printed neither and a
+  derivation is not an observation.
+
 ## [0.3.0] - 2026-09-07
 
 Seventeen commits since `v0.2.0`, and six of them are verbs a reader can

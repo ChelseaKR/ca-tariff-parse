@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import tomllib
 from collections.abc import Callable
 from pathlib import Path
@@ -17,10 +18,17 @@ from ca_tariff_parse.watch import (
     BASELINE_SCHEMA,
     CHANGED,
     ERROR,
+    NEVER_LOOKED,
+    OBSERVATION_SCHEMA,
     UNCHANGED,
+    ObservationError,
     Outcome,
+    append_observation,
+    looks_at,
     manifest_with,
+    observation,
     project,
+    read_observations,
     watch_entry,
     write_baseline,
 )
@@ -222,6 +230,8 @@ def _watch_args(tmp_path: Path, manifest: Path) -> list[str]:
         "2026-09-01",
         "--summary",
         str(tmp_path / "summary.json"),
+        "--log",
+        str(tmp_path / "watch-log.jsonl"),
     ]
 
 
@@ -341,3 +351,175 @@ def test_diff_command_exit_codes(tmp_path: Path, capsys: pytest.CaptureFixture[s
 
     assert main(["diff", str(old), str(other)]) == EXIT_ERROR
     assert "not parses of one document" in capsys.readouterr().err
+
+
+# --- the observation log -------------------------------------------------------
+#
+# A run that finds nothing writes no change report. Without a record of the run
+# itself, a repository whose publishers revised nothing is byte for byte a
+# repository whose watch has never run, and the second is reported as the first.
+
+
+def _log(tmp_path: Path) -> Path:
+    return tmp_path / "watch-log.jsonl"
+
+
+def test_a_run_that_found_nothing_still_records_that_it_looked(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, entry = _manifest(tmp_path)
+    _seed(tmp_path, entry)
+    monkeypatch.setattr("ca_tariff_parse.cli.download", _cli_downloader(OLD))
+
+    assert main(_watch_args(tmp_path, manifest)) == EXIT_OK
+
+    assert not (tmp_path / "changes").exists(), "nothing changed, so nothing is reported"
+    records = read_observations(_log(tmp_path))
+    assert len(records) == 1
+    assert records[0]["schema"] == OBSERVATION_SCHEMA
+    assert records[0]["looked_at"] == "2026-09-01"
+    assert [(d["id"], d["state"]) for d in records[0]["documents"]] == [("syn", UNCHANGED)]
+    look = looks_at(records, "syn")
+    assert (look.ever, look.looks, look.last_state) == (True, 1, UNCHANGED)
+    assert "found the bytes the manifest pins" in look.sentence()
+
+
+def test_a_run_that_could_not_look_is_recorded_as_unknown_not_as_unchanged(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, entry = _manifest(tmp_path)
+    _seed(tmp_path, entry)
+
+    def failing(entry: SourceEntry, root: Path, *, timeout: float) -> Path:  # noqa: ARG001
+        raise OSError("connection reset")
+
+    monkeypatch.setattr("ca_tariff_parse.cli.download", failing)
+    assert main(_watch_args(tmp_path, manifest)) == EXIT_ERROR
+
+    look = looks_at(read_observations(_log(tmp_path)), "syn")
+    assert look.last_state == ERROR
+    assert "unknown rather than unchanged" in look.sentence()
+
+
+def test_the_log_is_appended_so_an_earlier_look_is_never_restated(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, entry = _manifest(tmp_path)
+    _seed(tmp_path, entry)
+    monkeypatch.setattr("ca_tariff_parse.cli.download", _cli_downloader(OLD))
+    assert main(_watch_args(tmp_path, manifest)) == EXIT_OK
+    first = _log(tmp_path).read_text(encoding="utf-8")
+
+    args = _watch_args(tmp_path, manifest)
+    args[args.index("--date") + 1] = "2026-09-08"
+    assert main(args) == EXIT_OK
+
+    text = _log(tmp_path).read_text(encoding="utf-8")
+    assert text.startswith(first), "the earlier line is evidence and is not rewritten"
+    look = looks_at(read_observations(_log(tmp_path)), "syn")
+    assert (look.looks, look.first, look.last) == (2, "2026-09-01", "2026-09-08")
+
+
+def test_no_log_records_nothing_and_is_therefore_not_the_default(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest, entry = _manifest(tmp_path)
+    _seed(tmp_path, entry)
+    monkeypatch.setattr("ca_tariff_parse.cli.download", _cli_downloader(OLD))
+
+    assert main([*_watch_args(tmp_path, manifest), "--no-log"]) == EXIT_OK
+
+    assert not _log(tmp_path).exists()
+    assert looks_at(read_observations(_log(tmp_path)), "syn").ever is False
+
+
+def test_never_looked_is_not_reported_as_a_count_of_zero() -> None:
+    look = looks_at([], "syn")
+    assert look.ever is False
+    assert look.to_json()["last_state"] == NEVER_LOOKED
+    sentence = look.sentence()
+    assert "has ever been examined" in sentence
+    # The sentence must not read as a statement about the document's stability.
+    assert "unchanged" not in sentence
+
+
+def test_a_damaged_log_is_an_error_rather_than_an_empty_record(tmp_path: Path) -> None:
+    path = _log(tmp_path)
+    assert read_observations(path) == [], "a log that does not exist is not damaged"
+
+    path.write_text("not json\n", encoding="utf-8")
+    with pytest.raises(ObservationError, match="not JSON"):
+        read_observations(path)
+
+    path.write_text(json.dumps({"schema": "something/else", "documents": []}) + "\n", "utf-8")
+    with pytest.raises(ObservationError, match="states schema"):
+        read_observations(path)
+
+    path.write_text(json.dumps({"schema": OBSERVATION_SCHEMA}) + "\n", "utf-8")
+    with pytest.raises(ObservationError, match="names no documents"):
+        read_observations(path)
+
+
+def test_the_state_reported_is_the_one_the_latest_date_states(tmp_path: Path) -> None:
+    """The date is read from the record, never inferred from the file's order."""
+    path = _log(tmp_path)
+    append_observation(
+        path, observation("2026-09-08", [Outcome("syn", UNCHANGED, "")], parser_version="0.0.0")
+    )
+    append_observation(
+        path, observation("2026-09-01", [Outcome("syn", ERROR, "")], parser_version="0.0.0")
+    )
+
+    look = looks_at(read_observations(path), "syn")
+    assert (look.first, look.last, look.last_state) == ("2026-09-01", "2026-09-08", UNCHANGED)
+
+
+def test_every_document_a_run_looked_at_is_named_in_its_own_right() -> None:
+    """A run that examined two of three documents cannot read as one that examined three."""
+    record = observation(
+        "2026-09-01",
+        [Outcome("a", UNCHANGED, "pinned"), Outcome("b", ERROR, "connection reset")],
+        parser_version="0.3.0",
+    )
+    assert [d["id"] for d in record["documents"]] == ["a", "b"]
+    assert looks_at([record], "c").ever is False
+
+
+# --- the record this repository actually carries -------------------------------
+
+
+COMMITTED_LOG = REPO_ROOT / "data" / "watch-log.jsonl"
+WATCH_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "tariff-watch.yml"
+
+
+def test_the_committed_observation_log_reads_back_and_names_every_pinned_document() -> None:
+    records = read_observations(COMMITTED_LOG)
+    assert records, "the log exists so that 'nothing has looked' is a readable state"
+    pinned = {entry.id for entry in load_manifest(REPO_ROOT / "sources" / "sources.toml")}
+    for record in records:
+        named = {document["id"] for document in record["documents"]}
+        assert named == pinned, (
+            f"the run on {record['looked_at']} names {sorted(named)}, "
+            f"but the manifest pins {sorted(pinned)}"
+        )
+    for document_id in pinned:
+        assert looks_at(records, document_id).ever
+
+
+def test_the_scheduled_watch_records_every_run_and_only_the_second_look_opts_out() -> None:
+    """The overview run is the run. A per-document re-run inside it is not a
+    second run, and recording it would inflate the count of looks."""
+    workflow = WATCH_WORKFLOW.read_text(encoding="utf-8")
+    # Continuations are joined first: a flag on the second line of a wrapped
+    # command is on the command, and a scanner reading raw lines would miss it.
+    joined = re.sub(r"\\\n\s*", " ", workflow)
+    invocations = [
+        line for line in joined.splitlines() if "ca-tariff-parse watch" in line.split("#", 1)[0]
+    ]
+    assert len(invocations) == 2, invocations
+    overview, second_look = invocations
+    assert "--summary" in overview and "--no-log" not in overview
+    assert "--id" in second_look and "--no-log" in second_look
+    # The record has to leave the runner, or it is not a record.
+    assert "git add data/watch-log.jsonl" in workflow
+    assert "git push -q origin HEAD:main" in workflow
