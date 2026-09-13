@@ -31,6 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   publisher adds later fails a test rather than leaving the count at zero.
 - The residual test now reads "All other times" as well as "All other hours".
   What makes a period residual is the exclusion, not the noun.
+- `tests/test_period_list.py` reaches each of the new reader's refusals
+  directly. The real document exercises the happy path and none of them -- its
+  own introductory line is not followed by a period line, so the
+  season-must-name-a-part-of-the-year test never has to reject anything there --
+  and a refusal no fixture reaches is a refusal nothing checks.
 
 See [ADR 0020](docs/adr/0020-a-list-is-not-a-table-and-a-wrap-is-not-a-row.md).
 The other six pinned documents are untouched: every golden file and every other
