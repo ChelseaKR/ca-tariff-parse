@@ -2,7 +2,7 @@
 
 Applicability language decides who a rate applies to, so it is carried across
 word for word. The only interpretation is a coarse ``disposition`` label, and
-that label never replaces the text it summarises.
+that label never replaces the text it summarizes.
 """
 
 from __future__ import annotations

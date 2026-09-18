@@ -21,7 +21,7 @@ readable by the existing date patterns) entirely from sentence structure
 rather than table geometry, for a shape seen exactly once.
 
 `tests/test_realdoc.py::test_a_prose_only_schedule_emits_no_charge` already
-asserts, and is named for, the current behaviour: `smud-ssr` emits zero
+asserts, and is named for, the current behavior: `smud-ssr` emits zero
 charges, on purpose, and that is treated as the honest outcome rather than a
 gap to be closed by more code. This ADR is that decision written down,
 because the roadmap listed the shape as merely unaddressed and a roadmap
@@ -30,7 +30,7 @@ entry reads as a standing intention to eventually close it.
 ## Decision
 
 This stays refused, deliberately, not for lack of a rule that could read
-this one sentence, but because of what closing it would generalise into.
+this one sentence, but because of what closing it would generalize into.
 
 A rule narrow enough to read only this exact sentence would be a rule
 fitted to n=1: every part of it -- the label coming from the section title
@@ -42,7 +42,7 @@ general case and which are this document's own phrasing. Every other
 prose-reading rule in this parser (`condition_list.py`'s intro sentence,
 `cross_reference.py`'s "Refer to Rate Schedule", `applicability.py`'s
 exclusion phrases) was written against a phrase repeated across at least
-two schedules, which is what let the rule be a real generalisation rather
+two schedules, which is what let the rule be a real generalization rather
 than a transcription of one sentence into code that happens to look like a
 rule.
 
@@ -67,4 +67,4 @@ which is the exact difference this parser's citations exist to preserve.
   to a roadmap item itself rather than to a single row.
 - A future document that repeats this same sentence, or one close to it,
   on a second schedule would be grounds to revisit this decision with an
-  actual generalisation available -- not grounds to guess at one now.
+  actual generalization available -- not grounds to guess at one now.

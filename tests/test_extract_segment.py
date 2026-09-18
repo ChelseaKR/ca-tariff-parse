@@ -132,8 +132,8 @@ def test_layout_from_path_flags_a_synthetic_fixture(complete_fixture: Path) -> N
     assert layout_from_path(complete_fixture).synthetic is True
 
 
-def test_logical_rows_merges_a_vertically_centred_cell() -> None:
-    """A centred period label sits between the two wrapped halves of its row."""
+def test_logical_rows_merges_a_vertically_centered_cell() -> None:
+    """A centered period label sits between the two wrapped halves of its row."""
 
     def line(index: int, top: float) -> Line:
         return Line(page=1, index=index, top=top, words=(Word("x", 10.0, 20.0),), furniture=False)

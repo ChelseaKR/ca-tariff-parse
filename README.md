@@ -129,7 +129,7 @@ emit:
 **Coverage is a published output, not an implicit claim.** Every parse reports
 how many content lines it accounted for, and everything it did not understand
 appears in `unparsed` with its location and reason. Nothing is ever silently
-dropped: unrecognised text is still carried verbatim in `notes`. A document
+dropped: unrecognized text is still carried verbatim in `notes`. A document
 containing a section the parser does not understand cannot produce the same
 output as one it fully understands, and there is a test that proves it.
 
@@ -139,6 +139,42 @@ Seven published schedules from two publishers are in the manifest. None of them
 parses completely, and the figure for each is an output of the tool rather than
 a claim made here.
 
+### The frame, and the fraction of it this covers
+
+The per-document figures below say how much of each pinned document was read.
+They say nothing at all about how much of California is pinned, and a reader
+could take seven schedules for the set. So, as two numbers:
+
+> **California has 59 retail electric service territories. This repository
+> pins documents from 2 of them.**
+
+The 59 is measured rather than estimated. It is the count of entities in the
+California Energy Commission's *Electric Load Serving Entities (IOU/POU)*
+dataset — 47 publicly owned utilities, 6 investor-owned, 4 cooperatives and 2
+tribal — retrieved 2026-08-23. (Community choice aggregators are not among them:
+a CCA's footprint overlays another entity's distribution territory rather than
+being one of its own.) Broken down, this repository covers **1 of the 6
+investor-owned utilities** — one of the three large ones — and **1 of the 47
+publicly owned**.
+
+That ratio is not a target and nothing here is planned around raising it. It is
+published because a coverage table without it invites the reading that the
+table *is* the state, which is the same mistake as reading a suppressed cell as
+zero — an unexamined thing rendered as a measured one.
+
+**Adding the other two large investor-owned utilities is not planned, and the
+obstacle is not the download.** ADR 0005 and ADR 0006 record what a second
+publisher actually cost: a document profile, a second outline reader for a
+keyword column, and three schedules that parsed at 0% until both existed. `docs/ROADMAP.md` says
+under *Not in this plan* that a third publisher waits until the second is
+finished, "because the second publisher is not finished: three of its schedules
+are pinned and most of two of them is still unread" — and that widening the
+surface before the understanding is the wrong trade. Pinning a third publisher's
+residential time-of-use schedule as the seam test for that profile is tracked at
+[#52](https://github.com/ChelseaKR/ca-tariff-parse/issues/52). Until it happens,
+the number above is 2 of 59, and it is written here rather than left to be
+inferred.
+
 | Schedule | Publisher | Lines recognized | Charges | Windows | Holidays | Proration rules | Conditions |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | R-TOD, residential time-of-day | SMUD | 125/151 (82.8%) | 42 | 5 | 11 | 1 | 4 |
@@ -146,7 +182,7 @@ a claim made here.
 | CI-TOD1, commercial and industrial time-of-day | SMUD | 142/201 (70.6%) | 85 | 5 | 11 | 3 | 3 |
 | SSR, solar and storage | SMUD | 49/76 (64.5%) | 0 | 0 | 0 | 0 | 0 |
 | E-1, residential | PG&E | 84/247 (34.0%) | 53 | 0 | 0 | 0 | 0 |
-| E-TOU-C, residential time-of-use | PG&E | 53/346 (15.3%) | 23 | 0 | 0 | 0 | 0 |
+| E-TOU-C, residential time-of-use | PG&E | 59/346 (17.1%) | 23 | 4 | 0 | 0 | 0 |
 | B-1, small general service | PG&E | 157/477 (32.9%) | 59 | 0 | 0 | 0 | 0 |
 
 `make coverage-real` reproduces the table from the fetched documents, and
@@ -213,6 +249,51 @@ being read line by line as before. The full account, including the case that
 originally looked like it needed a spacing threshold and did not, is in
 [ADR 0007](docs/adr/0007-read-a-merged-cell-from-its-own-border.md).
 
+### The time-of-use periods, where the publisher sets them as a list
+
+`E-TOU-C` is titled *Residential Time-of-Use (Peak Pricing 4 - 9 p.m. Every
+Day)* and its parse carried no time-of-use windows at all. The sheet states
+four. They are not in a table -- the table reader recovers its column
+boundaries from the alignment of the period names, and there are no columns
+here -- they are a list, set under a season heading in the special conditions
+part:
+
+```
+Summer (service from June 1 through September 30):
+
+Peak: 4:00 p.m. to 9:00 p.m. All days
+
+Off-Peak: All other times
+```
+
+So the parser was wrong and the sheet was not. A second reader takes a season
+heading that states a part of the year and the period lines under it; a period
+line with no season in force emits nothing, because a window under a season
+nobody published is the failure ADR 0005 records from the first pass over this
+publisher.
+
+**And `B-1` prints what looks like the same list and is not one.** Its
+definitions wrap, and the wrapped half is set far right of the rows:
+
+```
+Peak: 4:00 p.m. to 9:00 p.m. Every day, including weekends
+                             and holidays
+```
+
+Read as a list that publishes `Every day, including weekends` as the whole
+rule -- a holiday rule saying the opposite of the page. The page says which
+case it is by position: a line set right of the rows is part of the block they
+sit in, so a group whose last row is followed by one is refused whole. `B-1`
+reads no windows, and that zero is now a refusal with a reason rather than
+silence. See
+[ADR 0020](docs/adr/0020-a-list-is-not-a-table-and-a-wrap-is-not-a-row.md).
+
+**`E-TOU-C` reads no holidays because the document lists none.** The word
+"holiday" does not appear anywhere in it and both Peak periods run "All days".
+That is a statement about the sheet, and `tests/test_realdoc.py` pins it: the
+day the publisher adds a holiday list, that test fails rather than the count
+staying quietly at zero.
+
 ### What is still refused on the second publisher
 
 Most of it, and each refusal is a case where a value could otherwise be wrong.
@@ -265,8 +346,8 @@ Most of it, and each refusal is a case where a value could otherwise be wrong.
   that a running head runs: the line naming the schedule is the one that
   appears on every sheet, wherever the publisher sets it, and a sentence ending
   in the word "schedule" appears once. Both publishers' codes are read now, and
-  so is a title where the page settles which neighbouring line it is. Where
-  both neighbours repeat, no title is read. See
+  so is a title where the page settles which neighboring line it is. Where
+  both neighbors repeat, no title is read. See
   [ADR 0015](docs/adr/0015-a-running-head-runs.md). The remaining three
   identity fields are null for this publisher because the page states no
   value for them, not because one went unread: `Resolution` is printed as a
@@ -279,7 +360,7 @@ A **filing change marker** -- a bracketed capital such as `(R)` beside a
 revised line, or a change bar in the right margin -- is no longer one of
 these, when the marker is the only thing on the line: it is now read as
 furniture, the same category as a running header, rather than reported as
-unrecognised content. A marker attached to real text is untouched, exactly
+unrecognized content. A marker attached to real text is untouched, exactly
 as printed inside whatever citation quotes that line. See ADR 0010. On a row
 read across named columns the same markers fall between the cells as well as
 after them, and are skipped there for the same reason.
@@ -312,7 +393,7 @@ full account of that first pass is in
 turned out to be general was the machinery that made the failure legible rather
 than dangerous: the positional layout model, the citation and audit rules, the
 coverage accounting, and above all the refusals. A rate table whose shape is
-not recognised produces nothing rather than something plausible.
+not recognized produces nothing rather than something plausible.
 
 What is left unaccounted for on the four SMUD schedules is largely genuine
 narrative: critical peak pricing terms, service voltage definitions, metering
@@ -369,12 +450,12 @@ relax the check.
 `sources/sources.toml` records where a document came from. It is not a claim of
 permission, endorsement, or any relationship with the publisher.
 
-Retrieval honours `robots.txt` and is a handful of requests, never a crawl.
+Retrieval honors `robots.txt` and is a handful of requests, never a crawl.
 `robots.txt` for a host is read before anything is fetched from it, and a
 publisher that disallows the path is not fetched from at all.
 
 Requests identify themselves as `ca-tariff-parse/<version>` with a link back to
-this repository, so a publisher can recognise them in a log **and** refuse them
+this repository, so a publisher can recognize them in a log **and** refuse them
 by name:
 
 ```
@@ -382,7 +463,7 @@ User-agent: ca-tariff-parse
 Disallow: /
 ```
 
-That group is honoured. Until 2026-09-06 it was not: the tool sent a spoofed
+That group is honored. Until 2026-09-06 it was not: the tool sent a spoofed
 desktop Chrome header, which `urllib.robotparser` reduces to the token
 `mozilla`, so no named group was ever selected and only a `User-agent: *` group
 could refuse a fetch.
@@ -421,13 +502,27 @@ repository whose watch had never run. Those are different statements, and
 publishing the second as the first is this project's own defining defect
 pointed the other way.
 
-So **every run appends one line to `data/watch-log.jsonl`**, committed to
-`main` whether or not anything moved. Each line names the date, the parser
-version, and every document the run examined with the state it was found in:
-`unchanged`, `changed`, or `error` -- because a download that failed leaves
-what the publisher serves *unknown*, which is neither. A run that examined six
-of seven documents cannot read as one that examined all seven, because every
-document is named in its own right.
+So **every run appends one line to `watch-log.jsonl` on the `watch-log`
+branch**, whether or not anything moved. Each line opens with a sentence of the
+form `looked at 2026-09-14T14:32:30Z, found 0 changes across 7 documents`. It
+then gives the counts behind the sentence, the parser version, and every
+document the run examined with the state it was found in: `unchanged`,
+`changed`, or `error`. A download that failed leaves what the publisher serves
+*unknown*, which is neither, and the sentence says so rather than counting it
+as unchanged. A run that examined six of seven documents cannot read as one
+that examined all seven, because every document is named in its own right.
+
+**A quiet week is a line that says `found 0 changes`. A missed week is a week
+with no line.** The branch's history has one commit per run, with that sentence
+as its message. The record lives on its own branch because `main` is protected
+and the workflow's token cannot push to it. The workflow only fast-forwards the
+branch, never force-pushes, and fails rather than recreating it if it has gone
+missing. `main` carries no copy. Read the record with
+
+```sh
+make watch-log        # copies it to data/watch-log.jsonl (ignored) and prints the last run
+git log --format='%cs %s' origin/watch-log
+```
 
 `history` opens with that record, and a document the log has never named is
 reported in words rather than as a count of zero:
@@ -435,18 +530,19 @@ reported in words rather than as a count of zero:
 ```
 ## The observation record
 
-No committed observation records a look at pge-e-tou-c. Nothing here says this
-document has ever been examined, so the absence of a change report is not
-evidence that it has not changed.
+The observation log read here records no look at pge-e-tou-c. Nothing here
+says this document has ever been examined, so the absence of a change report
+is not evidence that it has not changed. The scheduled watch keeps its log on
+the watch-log branch; `make watch-log` fetches it.
 ```
 
-As of the log's first two lines, both backfilled from the runs' own output, the
-watch has looked twice -- a manual run on 2026-09-02 and the scheduled run on
-2026-09-07 -- and found every pinned document serving the pinned bytes both
-times. **It has opened no pull request because nothing has changed, not because
-nothing has run.** Two observations over eleven days are two observations: the
-log makes the count readable, it does not make it large. See
-[ADR 0019](docs/adr/0019-a-look-is-recorded-even-when-nothing-moved.md).
+As of the log's first three lines, all backfilled from the runs' own output,
+the watch has looked three times -- a manual run on 2026-09-02 and the scheduled
+runs on 2026-09-07 and 2026-09-14 -- and found every pinned document serving
+the pinned bytes each time. **It has opened no pull request because nothing has
+changed, not because nothing has run.** Three observations over twelve days are
+three observations: the log makes the count readable, it does not make it
+large. See [ADR 0019](docs/adr/0019-a-look-is-recorded-even-when-nothing-moved.md).
 
 `ca-tariff-parse diff old.json new.json` runs the same comparison on any two
 parses of one document, as Markdown or, with `--jsonl`, one object per change.
@@ -457,6 +553,7 @@ parses of one document, as Markdown or, with `--jsonl`, one object per change.
 | --- | --- |
 | `parse <doc>` | Emit the structured schedule as JSON |
 | `coverage <doc>` | Report what was accounted for and what was not |
+| `explain <doc> [p.3 L11]` | Name the recognizer that read a line, or the fence that refused it, with the ADR the fence comes from |
 | `sources` | List the documents in the manifest |
 | `fetch` | Download source documents (networked) |
 | `verify-source` | Check local documents against the manifest digests |
@@ -490,6 +587,49 @@ anything else that wants the numbers rather than the prose. Every value in it
 is selected out of `parse`'s own report rather than computed a second time, so
 the two cannot come to disagree, and `--min-coverage` gates identically either
 way.
+
+### `explain`: which rule read a line, or which fence refused it
+
+`coverage` reports that a line went unread and gives a coarse reason -- "3 of
+13 lines in a recognized section matched no rule". That is true, and it does
+not say which recognizer got closest to the line or what stopped it. Reading
+the source was the only way to find out, which made a refusal legible to
+whoever wrote the parser and to nobody else. Refusals are this project's
+deliverable, so that was the wrong reader.
+
+```
+ca-tariff-parse explain sources/E-1.pdf --id pge-e-1 p.3 L11
+ca-tariff-parse explain parsed.txt --section II.A
+ca-tariff-parse explain --fences          # every fence, with its ADR
+```
+
+Every line lands in one of four states, and the fourth is the one that had to
+exist:
+
+| state | what it means |
+| --- | --- |
+| `consumed` | a recognizer claimed the line and emitted from it; it is named |
+| `refused` | a recognizer reached the line and a **named fence** stopped it -- the fence, its ADR, its own reason, and what it saw on the page |
+| `examined` | a recognizer claimed the line's section, read it and took nothing from this line, with no fence firing |
+| `unclaimed` | no recognizer claimed the line's section at all |
+
+The last two are not the same fact, and neither is the same as `refused`.
+`refused` means the page states something this parser will not read the way it
+is written; `unclaimed` means there is no rule here whose shape matches the
+section, so no fence *could* have fired. That is the distinction ADR 0018
+draws by hand -- **"unstated on the page" is not "unread by this parser"** --
+and it is why `explain` never offers a nearest fence. A closest rule picked by
+proximity would be a value invented from an absence, which is the defect this
+project exists to refuse.
+
+The report prints two numbers, not one: how many of the parser's registered
+fences the document reached, out of how many exist. A count of refusals says
+nothing about how much of the refusal vocabulary an input exercised.
+
+`explain` runs the parse inside a recording context and reports what it did.
+Nothing in the package reads a trace back while parsing, so tracing cannot
+change what `parse` emits -- `tests/test_explain.py` parses every committed
+fixture with and without a trace open and compares the JSON as bytes.
 
 ### `check`: what a parse does and does not settle
 
@@ -548,7 +688,8 @@ it, ending with the baseline. `--all` does every record the reports mention;
 `--jsonl` writes one object per timeline, headed by the observation record
 under its own schema id.
 
-Every timeline opens with what `data/watch-log.jsonl` says has been looked at,
+Every timeline opens with what the observation log (`--watch-log`, default
+`data/watch-log.jsonl`, filled by `make watch-log`) says has been looked at,
 because "no report mentions this record" and "nothing has ever examined this
 document" are different answers, and a timeline that gave them the same shape
 would be the thing this command exists to avoid.
@@ -670,7 +811,7 @@ Four rules keep a table from saying more than the parse did.
 - **Nothing is dropped in the reshape.** Each table's row count is checked
   against the record count of the parse, and a mismatch raises rather than
   writing a short table.
-- **Nothing is computed.** There is no annualised price and no hours-per-window
+- **Nothing is computed.** There is no annualized price and no hours-per-window
   column. A derived number sitting in a table of cited ones is
   indistinguishable from them.
 - **An empty table is a file with a header.** `smud-ssr` prices nothing, so its
@@ -682,7 +823,7 @@ section and line rather than its rendered text, so page 10 follows page 9 — wi
 the whole row as the final tiebreak. Two exports of one parse are byte
 identical. CSV cells that a spreadsheet would evaluate as a formula are
 prefixed with an apostrophe; a leading minus is left alone when the cell is a
-number, because a credit is printed as `-0.05` and neutralising it would change
+number, because a credit is printed as `-0.05` and neutralizing it would change
 what a reader sees.
 
 `export` reads a full parse and a watch baseline alike. The projection removes
@@ -821,7 +962,7 @@ the outside instead of from the parser.
 **An omission is not an empty answer.** A watch baseline drops the document's
 verbatim prose on purpose (ADR 0003, ADR 0016). A schedule loaded from one
 carries `schedule.withheld == ("notes", "unparsed[].sample")`, its `notes`
-refuse to be queried at all rather than answering "none", and re-serialising it
+refuse to be queried at all rather than answering "none", and re-serializing it
 writes a baseline again — never a full parse with `"notes": []`, which would
 state that the document has no prose. It has prose; the projection dropped it.
 
@@ -860,7 +1001,7 @@ the package without the PDF stack present and `load` still works; only
    publisher drew to span several rows is captured as the single merged cell
    it is rather than guessed at from spacing.
 2. **Segment.** Lines are grouped into the document's own outline, so every
-   value can cite a part and an unrecognised part can be named rather than
+   value can cite a part and an unrecognized part can be named rather than
    lost. Two outlines are known: statute-style numbering (roman parts, lettered
    subsections) and a keyword set in a column with the body beside it. Which
    one a document uses comes from its profile, because the page does not say.
@@ -870,7 +1011,7 @@ the package without the PDF stack present and `load` still works; only
    a verbatim note.
 5. **Audit.** The provenance walk runs before anything is written.
 
-Tests run against clearly labelled synthetic fixtures, so the suite works
+Tests run against clearly labeled synthetic fixtures, so the suite works
 offline and without redistributing a publisher's document. One fixture is
 written in a keyword outline with accounting-bracket negatives and a
 supersession header, so the profile is exercised in CI too, and parsing it
@@ -890,7 +1031,7 @@ prices quoted from the sheets with their unit, effective date and heading.
 | Responsible-Tech Framework | Applies: the no-fabrication rule, the refusal cases and the published coverage figure are the core design. |
 | Code Quality | Applies: ruff, strict mypy, complexity ceiling, 85% coverage floor. |
 | Security & Supply-Chain | Applies: SHA-pinned actions, least-privilege tokens, secret scanning, SAST, dependency scanning, lockfile. |
-| CI/CD | Applies: `make verify` is the gate and CI runs the same target. |
+| CI/CD | Applies, with one gap: `make verify` is the gate and CI runs the same target on every pull request, but `main` requires no status check — it has no ruleset and no branch protection (measured 2026-09-13) — so a red run reports rather than blocks a merge. Requiring the `verify` job is a live repository setting and the intent. |
 | Release & Versioning | Applies: SemVer with a signed-tag release workflow that separates verification from publication. |
 | Observability | Applies: Tier C (library and CLI). No hosted route, so tracing is out of scope for that tier; the tool emits no telemetry by design. |
 | Performance | N/A: no hosted route and no shipped HTML. Parsing one local document has no latency budget to gate on. |
@@ -916,7 +1057,7 @@ make coverage-real # report parse coverage of every fetched document
 would have to prove before it lands, and what has already been decided
 against.
 
-## Licence
+## License
 
 Apache-2.0. See `LICENSE`.
 

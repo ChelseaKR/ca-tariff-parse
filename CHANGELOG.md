@@ -9,24 +9,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `explain` names the recognizer that read a line, or the named fence that
+  refused it, with the ADR the fence comes from and what it saw on the page.
+  Every line lands in one of four states, and `unclaimed` -- no recognizer
+  claimed the line's section, so no fence could have fired -- is a first-class
+  answer rather than a gap. `explain` never offers a nearest fence: a closest
+  rule chosen by proximity would be a value invented from an absence.
+- `explain --fences` lists every fence the parser can report. The report also
+  prints how many of them a document reached, out of how many exist, because a
+  count of refusals says nothing about how much of the vocabulary ran.
+- `ca_tariff_parse.trace`, the channel recognizers record into. Recording is
+  off unless a caller opens it and nothing reads a trace back while parsing,
+  so `parse` emits the same bytes either way -- asserted over every committed
+  fixture rather than stated.
+- Two fixtures written to trip fences: `SYNTHETIC-example-refused-rows.txt`
+  and `SYNTHETIC-example-unclosed-bracket.txt`, the second carrying the ADR
+  0014 case of a label that opens a bracket the publisher never closes.
 - **The watch records that it looked, whether or not anything moved.** Every
-  run now appends one line to `data/watch-log.jsonl`
-  (`ca-tariff-parse/watch-observation/v1`) naming the date, the parser version,
-  and every document it examined with the state it was found in --
-  `unchanged`, `changed` or `error` -- and the scheduled workflow commits it to
-  `main`. Without it, a repository whose publishers revised nothing was byte
-  for byte a repository whose watch had never run, and the two were reported as
-  the same thing: `tariff-watch.yml` has run twice, both runs found all seven
-  pinned documents serving the pinned bytes, and the repository carried no way
-  to say so. A document the log has never named is reported as `never looked`
-  in words rather than as a count of zero, and a run that could not download a
-  document is recorded as leaving the publisher's current bytes *unknown*,
-  which is neither changed nor unchanged. See
-  [ADR 0019](docs/adr/0019-a-look-is-recorded-even-when-nothing-moved.md).
-- `watch --log` / `--no-log`, and `history --watch-log`.
+  run appends one line (`ca-tariff-parse/watch-observation/v1`) that opens with
+  `looked at <time>, found <n> changes across <k> documents`, gives the counts
+  behind it and the parser version, and names every document it examined with
+  the state it was found in: `unchanged`, `changed` or `error`. The scheduled
+  workflow keeps that log on a dedicated `watch-log` branch, never on `main`,
+  so a quiet week is a line that says `found 0 changes` and a missed week is a
+  week with no line. Without it, a repository whose publishers revised nothing
+  was byte for byte a repository whose watch had never run: `tariff-watch.yml`
+  has run three times, every run found all seven pinned documents serving the
+  pinned bytes, and the repository had no way to say so. A document the log has
+  never named is reported as `never looked` in words rather than as a count of
+  zero. A document a run could not download is recorded as leaving the
+  publisher's current bytes *unknown*, which is neither changed nor unchanged.
+  See [ADR 0019](docs/adr/0019-a-look-is-recorded-even-when-nothing-moved.md).
+- `watch --log` / `--no-log`, `history --watch-log`, and `make watch-log`, which
+  copies the branch's log to the ignored `data/watch-log.jsonl`.
 
 ### Changed
 
+- Nothing in `parse`'s output. The engine now records which recognizer was
+  offered each section, which claimed it, and which lines each consumed; none
+  of it reaches the emitted document.
 - **`history` opens with the observation record.** "No committed report
   mentions this record" and "nothing has ever examined this document" are
   different answers, and the timeline gave them the same shape. `--jsonl`
@@ -35,10 +56,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   follows, because an empty file would state both answers in the same zero
   bytes. A consumer reading `history --jsonl` should filter on `schema` rather
   than count lines.
-- The two runs that predate the log are backfilled from their own workflow
-  output, each carrying a `backfilled_from` block naming the run id and URL.
-  Their `sha256` and `bytes` are `null`, because the runs printed neither and a
-  derivation is not an observation.
+- **The record never touches `main`.** `main` is protected by the
+  `protect-main` ruleset and the workflow's token cannot push to it. The
+  workflow fast-forwards the `watch-log` branch only. It refuses to commit
+  anything but one added line, and it fails rather than recreating the branch
+  if the branch has gone missing. The sentence and a per-document table go to
+  the run summary before the push, so a failed push still leaves the look
+  readable. `tests/test_watch.py` lints the workflow for a push to `main`, a
+  forced push and a `+` refspec.
+- The three runs that predate the log are backfilled on the branch from their
+  own workflow output, each carrying a `backfilled_from` block naming the run
+  id and URL, with `looked_at` read from the run's step timings. Their `sha256`
+  and `bytes` are `null`, because the runs printed neither and a derivation is
+  not an observation.
+
+### Fixed
+
+- **`E-TOU-C` read zero time-of-use windows, and it is the schedule named after
+  them (#75).** The sheet states four -- Peak and Off-Peak under each of two
+  seasons -- as a list under a season heading rather than as the three-column
+  table the window reader recovers its columns from, so nothing looked. A
+  second recognizer reads the list: a season heading that states a part of the
+  year, and the `<period>: <definition>` lines under it, where the definition
+  has to say when the period runs. Coverage on that document goes from 53/346
+  (15.3%) to 59/346 (17.1%).
+- **A wrapped definition is no longer read as a finished one.** `B-1` prints a
+  list of the same shape whose definitions wrap onto a line set far right of
+  the rows; the first draft of the reader published one window defined as
+  `4:00 p.m. to 9:00 p.m. Every day, including weekends`, without its `and
+  holidays`. A group whose last row is followed by a line set further right
+  than the rows is refused whole. `B-1` reads no windows, as before, and now
+  for a stated reason.
+- `tests/test_realdoc.py` asserted `tou_windows == ()` for all three of the
+  second publisher's schedules. It is written per document now, each zero with
+  the reason it is zero. `E-TOU-C`'s zero holidays is pinned as a fact about
+  the document -- the word does not appear in it -- so a holiday list the
+  publisher adds later fails a test rather than leaving the count at zero.
+- The residual test now reads "All other times" as well as "All other hours".
+  What makes a period residual is the exclusion, not the noun.
+- `tests/test_period_list.py` reaches each of the new reader's refusals
+  directly. The real document exercises the happy path and none of them -- its
+  own introductory line is not followed by a period line, so the
+  season-must-name-a-part-of-the-year test never has to reject anything there --
+  and a refusal no fixture reaches is a refusal nothing checks.
+
+See [ADR 0020](docs/adr/0020-a-list-is-not-a-table-and-a-wrap-is-not-a-row.md).
+The other six pinned documents are untouched: every golden file and every other
+committed baseline is byte for byte unchanged.
 
 ## [0.3.0] - 2026-09-07
 
@@ -71,14 +135,14 @@ field is for; `diff.py` already documents that equal stamps are
   is now written down as the form it has to be typed into.** The publish
   workflow and `docs/ROADMAP.md` both said the project must be "registered on
   pypi.org with this repository, that workflow file and the `pypi` environment
-  named as its publisher", which is accurate and is not the five labelled
+  named as its publisher", which is accurate and is not the five labeled
   fields PyPI's *Add a pending publisher* form actually asks for. Both now
   carry the values verbatim, and both note that `Workflow name` is the
   filename rather than the workflow's `name:` field, because getting that one
   wrong produces a failure that reads like a permissions problem instead of a
   typo. The name was re-checked free on 2026-09-07, and the roadmap now says
   what free means here: nothing is reserved until the registration is made.
-  No workflow behaviour changes and nothing is published.
+  No workflow behavior changes and nothing is published.
 
 ### Fixed
 
@@ -216,7 +280,7 @@ field is for; `diff.py` already documents that equal stamps are
   row as the final tiebreak; two exports of one parse are byte identical. CSV
   cells a spreadsheet would evaluate are prefixed with an apostrophe, except a
   leading minus on a number, because a credit is printed as `-0.05` and
-  neutralising it would change what a reader sees. `--snippets` adds the
+  neutralizing it would change what a reader sees. `--snippets` adds the
   cited text and is off by default (ADR 0003).
 
 - **A parse can be read back into typed records, without a PDF stack.**
@@ -242,7 +306,7 @@ field is for; `diff.py` already documents that equal stamps are
   ADR 0016), and `load` reads that shape too without flattening the omission
   into an answer. Such a schedule reports `withheld == ("notes",
   "unparsed[].sample")`, its `notes` collection refuses to be queried rather
-  than returning nothing, and re-serialising it writes a baseline again — not
+  than returning nothing, and re-serializing it writes a baseline again — not
   a `parsed-schedule/v1` payload with `"notes": []`, which would state that the
   document has no prose.
 
@@ -279,7 +343,7 @@ field is for; `diff.py` already documents that equal stamps are
   carries the note for its state, the watch summary carries
   `parser_comparison`, and the tariff-watch pull request template carries the
   matching review item in all three cases instead of only the first.
-- **A `robots.txt` group naming this tool by name is now honoured.** Fetches
+- **A `robots.txt` group naming this tool by name is now honored.** Fetches
   sent a spoofed desktop Chrome `User-Agent`, which `urllib.robotparser`
   reduces to the token `mozilla` before matching a group. No plausible
   `User-agent:` line matches that, so no named group was ever selected and only
@@ -384,7 +448,7 @@ field is for; `diff.py` already documents that equal stamps are
   opening one pull request per revised document for a person to review.
   It merges nothing and never commits a PDF.
 - `download` in `sources.py`, split out of `fetch`: the half that touches
-  the network, without the digest check. `fetch` is unchanged in behaviour.
+  the network, without the digest check. `fetch` is unchanged in behavior.
   Only the watch calls `download` on its own, because looking at bytes that
   may not be the pinned bytes is its purpose.
 
@@ -398,7 +462,7 @@ The first signed tag from `main`. Everything below was on `main` before the tag 
   title. The line naming a schedule is the one that runs across the sheets,
   wherever the publisher sets it, which is what tells it from a body sentence
   ending in the word "schedule" that matches the same shape on one sheet. The
-  title is the neighbouring line that repeats, and only when exactly one of the
+  title is the neighboring line that repeats, and only when exactly one of the
   two does; where both repeat, none is read. See ADR 0015. Content lines
   recognized go from 135 to 157 on `pge-b-1`, 43 to 53 on `pge-e-tou-c` and 60
   to 67 on `pge-e-1`.
@@ -479,7 +543,7 @@ The first signed tag from `main`. Everything below was on `main` before the tag 
 - `change_markers` on the document profile: the single capital letters a
   publisher sets in brackets beside a revised line. A line carrying nothing
   but one such marker, or the literal change bar a whole changed paragraph is
-  flagged with, is now read as furniture rather than unrecognised content. A
+  flagged with, is now read as furniture rather than unrecognized content. A
   marker attached to real text is untouched, since stripping it would edit a
   quotation. `pge-tariff-book` names the six letters observed across its
   three schedules (`R`, `N`, `I`, `D`, `L`, `T`); the default names none. See
@@ -549,7 +613,7 @@ The first signed tag from `main`. Everything below was on `main` before the tag 
   `mismatched`.
 - `fetch` now actually checks the host's `robots.txt` before downloading a
   document, refusing a path the publisher has disallowed. The README already
-  documented this as retrieval's behaviour; the code did not do it — a
+  documented this as retrieval's behavior; the code did not do it — a
   manifest entry pointing at a newly disallowed path would have been fetched
   anyway. A host with no reachable `robots.txt` is still read as allowing
   everything, so this adds no new failure mode for the documents already in
@@ -590,7 +654,7 @@ endorsed by, or approved by SMUD or any other utility.
 - Recognizers for the effective-date rate tables, dated charge blocks, per-unit
   credits, time-of-use and holiday tables, cross references to sibling
   schedules, and applicability statements.
-- Labelled synthetic fixtures so the suite runs offline without redistributing
+- Labeled synthetic fixtures so the suite runs offline without redistributing
   a publisher's document, plus committed golden output for the real schedules.
 - Two further published schedules in the manifest, chosen to be unlike the two
   residential sheets the parser was written against: a commercial
@@ -626,11 +690,11 @@ endorsed by, or approved by SMUD or any other utility.
   sheets of one schedule different effective days, so a price is dated from the
   footer of the sheet it is printed on rather than from the document.
 - `group` on a charge, recording the heading of the block of rows a price was
-  read from. Without it a row labelled "Income Tier 1" would not say which of a
+  read from. Without it a row labeled "Income Tier 1" would not say which of a
   sheet's several tables it came from.
 - `--profile` on `parse` and `coverage`, for a document that is not in the
   manifest. Registered documents take theirs from the manifest.
-- A labelled synthetic fixture in a keyword outline with accounting-bracket
+- A labeled synthetic fixture in a keyword outline with accounting-bracket
   negatives and a supersession header, so the profile is exercised offline in
   CI and the same fixture read with no profile has to refuse all three.
 
@@ -647,7 +711,7 @@ endorsed by, or approved by SMUD or any other utility.
   schedule of future prices lines up in the same three columns as a window
   table, and one of its rows was emitted as a window whose definition was a
   price.
-- "Off-Peak Saver" is no longer labelled "Off-Peak". They are separate periods
+- "Off-Peak Saver" is no longer labeled "Off-Peak". They are separate periods
   with separate prices.
 - The holiday table's columns are read from its own three headings instead of
   fixed coordinates, which found no holidays at all on a sheet whose table sits
@@ -663,7 +727,7 @@ endorsed by, or approved by SMUD or any other utility.
   column "TIME PERIOD" and two windows were emitted under a season called
   "PERIOD". A season states a part of the year, and a window whose season
   cannot be read is not emitted.
-- A sheet number a page announces as cancelled is never cited as that page's
+- A sheet number a page announces as canceled is never cited as that page's
   own. A publisher that prints "Revised Cal. P.U.C. Sheet No. X" above
   "Cancelling Revised Cal. P.U.C. Sheet No. Y" had every citation on the page
   pointing at the withdrawn sheet. Which word announces the supersession now

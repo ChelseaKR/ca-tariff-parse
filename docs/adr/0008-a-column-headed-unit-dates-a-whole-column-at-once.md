@@ -50,7 +50,7 @@ some unrelated reason.
 
 Every row's label is whatever sits left of the "Unit" column, read as one
 run of text the way a table row's label always is here. Everything to its
-right is assigned to the "Unit" column or a year column by nearest centre,
+right is assigned to the "Unit" column or a year column by nearest center,
 [`assign`](../../src/ca_tariff_parse/recognizers/base.py), the same
 attribution rule every other unruled table in this parser uses. A word that
 fits no column refuses the row whole: this is the same discipline ADR 0004

@@ -1,6 +1,6 @@
 """Parse the time-of-use window table and the holiday table.
 
-The window table uses a vertically centred season cell that spans several
+The window table uses a vertically centered season cell that spans several
 period rows::
 
                     Peak        Weekdays between 5:00 p.m. and 8:00 p.m.
@@ -9,7 +9,7 @@ period rows::
     (Jun 1 - Sept 30)           during the Peak hours.
                     Off-Peak    All other hours, including weekends and holidays.
 
-Because the season label is centred rather than top aligned, seasons are
+Because the season label is centered rather than top aligned, seasons are
 recovered by treating the first fragment of each season label as the boundary
 between groups.
 
@@ -34,7 +34,7 @@ from itertools import pairwise
 from ..extract import Line, Word
 from ..model import Cited, Holiday, TouWindow
 from ..segment import Section
-from .base import MONEY_RE, PERIOD_ALTERNATION, Citer, Emission
+from .base import CLOCK_TIME, MONEY_RE, PERIOD_ALTERNATION, Citer, Emission
 
 #: Clear space, in points, left either side of a derived column boundary.
 COLUMN_MARGIN = 10.0
@@ -44,7 +44,7 @@ ALIGN_TOLERANCE = 1.5
 PERIOD_RE = re.compile(rf"\A(?:{PERIOD_ALTERNATION})\Z", re.IGNORECASE)
 PARENTHETICAL_RE = re.compile(r"\A\(.+\)\Z")
 _MONTH = r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?"
-#: A season's date range, written either parenthesised ("(Jun 1 - Sept 30)") or
+#: A season's date range, written either parenthesized ("(Jun 1 - Sept 30)") or
 #: bare ("October 1 -May 31"). Both forms are a continuation of the season name
 #: set above them, not a season of their own.
 DATE_RANGE_RE = re.compile(
@@ -67,8 +67,7 @@ SEASON_SPAN_RE = re.compile(
 )
 HOLIDAY_INTRO_RE = re.compile(r"\bholidays?\b.*:\s*\Z", re.IGNORECASE)
 HOLIDAY_HEADER_SQUASHED = "holidaymonthdate"
-#: A clock time as tariffs write them: "5:00 p.m.", "6 a.m.", "noon", "midnight".
-_TIME = r"(?:\d{1,2}(?::\d{2})?\s*[ap]\.?m\.?|noon|midnight)"
+_TIME = CLOCK_TIME
 #: A window definition states when the period runs. Requiring one of these
 #: words keeps a priced table row out of the window table: a transition
 #: schedule prints "Non-Summer Off-Peak per kWh $0.1237", which lines up in the
@@ -85,7 +84,11 @@ PLAIN_RANGE_RE = re.compile(
     rf"(?P<start>{_TIME})\s+and\s+(?P<end>{_TIME})\s*\.?\s*\Z",
     re.IGNORECASE,
 )
-RESIDUAL_RE = re.compile(r"\AAll other hours\b", re.IGNORECASE)
+#: A period the document defines by exclusion. Both publishers open the phrase
+#: the same way and finish it differently -- "All other hours, including
+#: weekends and holidays" and "All other times" -- and what makes it residual is
+#: the exclusion, not the noun.
+RESIDUAL_RE = re.compile(r"\AAll other (?:hours|times)\b", re.IGNORECASE)
 
 
 #: Horizontal gap, in points, that separates two headings of a table.
@@ -159,8 +162,8 @@ def logical_rows(lines: list[Line]) -> list[list[Line]]:
     """Group wrapped text lines into the table rows a reader sees.
 
     A cell that wraps sets its lines close together, while separate rows are
-    spaced further apart, and a vertically centred cell can sit between the two
-    wrapped halves of its neighbour. Splitting on a threshold derived from the
+    spaced further apart, and a vertically centered cell can sit between the two
+    wrapped halves of its neighbor. Splitting on a threshold derived from the
     table's own median gap recovers the real rows instead of assuming one text
     line is one row.
     """
@@ -240,8 +243,8 @@ def _continues_a_season(text: str) -> bool:
     """True when this season-column fragment belongs to the label above it.
 
     A season is written as a name followed by its date range, and the two
-    halves are often set on separate rows of a vertically centred cell. One
-    sheet parenthesises the range, "(Jun 1 - Sept 30)", and another does not,
+    halves are often set on separate rows of a vertically centered cell. One
+    sheet parenthesizes the range, "(Jun 1 - Sept 30)", and another does not,
     "October 1 -May 31". Reading the bare form as a season of its own split
     "Summer" from its own dates and left half the windows unattributed.
     """
@@ -269,7 +272,7 @@ def _season_labels(rows: list[list[Line]], columns: WindowColumns) -> list[Seaso
 def _season_for(labels: list[SeasonLabel], position: int) -> tuple[list[Line], str] | None:
     """Find the season group a row belongs to, or ``None`` if it has no season.
 
-    The label is centred over its group rather than sitting at the top of it, so
+    The label is centered over its group rather than sitting at the top of it, so
     the group runs until the first row of the next label.
 
     A label that does not state a part of the year is not a season, and the

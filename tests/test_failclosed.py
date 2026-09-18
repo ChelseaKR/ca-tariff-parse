@@ -1,7 +1,7 @@
 """A section the parser did not understand must change the output.
 
 This is the load-bearing test for the whole project. If a document containing
-an unrecognised part could produce the same output as one the parser fully
+an unrecognized part could produce the same output as one the parser fully
 understands, then coverage would be an unfalsifiable claim and a caller would
 have no way to tell a complete parse from a partial one.
 """
@@ -20,7 +20,7 @@ def test_an_unknown_section_changes_the_output(
     partial = parse_path(unknown_fixture).to_json()
 
     assert understood != partial, (
-        "a document with an unrecognised section produced output identical to a "
+        "a document with an unrecognized section produced output identical to a "
         "fully understood one, which would make the coverage report meaningless"
     )
     assert understood["coverage"] != partial["coverage"]
@@ -39,7 +39,7 @@ def test_an_unknown_section_is_reported_not_dropped(unknown_fixture: Path) -> No
 
     assert parsed.coverage.fully_recognized is False
     assert parsed.coverage.unrecognized_lines > 0
-    assert parsed.unparsed, "the unrecognised section vanished from the report"
+    assert parsed.unparsed, "the unrecognized section vanished from the report"
 
     reported = {item.section for item in parsed.unparsed}
     assert "V" in reported

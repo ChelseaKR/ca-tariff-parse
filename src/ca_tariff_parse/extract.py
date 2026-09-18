@@ -185,7 +185,7 @@ def sheet_numbers(line: Line, profile: DocumentProfile) -> list[str]:
 
     A sheet that replaces an earlier one prints both numbers, as in "Revised
     Cal. P.U.C. Sheet No. 61362-E" over "Cancelling Revised Cal. P.U.C. Sheet
-    No. 61247-E". The cancelled number names the sheet this page is *not*, so
+    No. 61247-E". The canceled number names the sheet this page is *not*, so
     citing it would point every value on the page at a superseded document.
 
     Which word announces that is the publisher's filing convention and comes

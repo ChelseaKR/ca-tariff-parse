@@ -50,7 +50,7 @@ to residential or agricultural service for which a residential or agricultural s
 That is a wrapped sentence, and it matches the shape exactly. It appears on one
 sheet. `B-1` appears on eleven.
 
-**The title is the neighbouring line that repeats on every one of those sheets,
+**The title is the neighboring line that repeats on every one of those sheets,
 and only when exactly one of the two does.** Where the first publisher sets its
 title above, the line below is body text and changes sheet to sheet, and that
 is what says which is the title. Where the second sets its title below, the
@@ -60,9 +60,9 @@ the page says which of the two names the schedule.
 That produces different answers for documents of the same publisher, and the
 reason is worth stating rather than smoothing over: on `pge-b-1` the line above
 reads "U 39 Oakland, California" on some sheets and "U 39 San Francisco,
-California" on others, so only one neighbour runs and the title is read. On
-`pge-e-1` and `pge-e-tou-c` both neighbours run and no title is read. The rule
-is not claiming to recognise a title. It is reporting whether the page
+California" on others, so only one neighbor runs and the title is read. On
+`pge-e-1` and `pge-e-tou-c` both neighbors run and no title is read. The rule
+is not claiming to recognize a title. It is reporting whether the page
 distinguishes one, and on two of these documents it does not.
 
 ## What stays null, and why that is a finding
@@ -77,7 +77,7 @@ distinguishes one, and on two of these documents it does not.
   reason `sheet_effective_dates` exists.
 
 A null here is a true statement about a document that does not carry the field.
-Filling one in from a neighbouring sheet, or from the manifest, would make the
+Filling one in from a neighboring sheet, or from the manifest, would make the
 output say something the page does not.
 
 ## Consequences

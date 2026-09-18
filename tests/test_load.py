@@ -178,8 +178,8 @@ def test_an_unparsed_span_that_disagrees_with_its_pages_is_refused(
 
 
 def test_an_unknown_key_is_refused_rather_than_dropped(golden_payload: dict[str, Any]) -> None:
-    broken = mutate(golden_payload, lambda p: p["charges"][0].update({"annualised": 123.0}))
-    with pytest.raises(SchemaError, match="annualised"):
+    broken = mutate(golden_payload, lambda p: p["charges"][0].update({"annualized": 123.0}))
+    with pytest.raises(SchemaError, match="annualized"):
         load(broken)
 
 

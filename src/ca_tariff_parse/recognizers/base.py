@@ -72,7 +72,7 @@ def read_amount(token: str, profile: DocumentProfile) -> str | None:
 
 #: Time-of-use period names as the published schedules write them, longest
 #: first so that "Off-Peak Saver" is never truncated to "Off-Peak". These are
-#: distinct periods with distinct prices, and labelling one as the other would
+#: distinct periods with distinct prices, and labeling one as the other would
 #: attach a price to the wrong window.
 PERIOD_NAMES = (
     "Super Off-Peak",
@@ -83,6 +83,12 @@ PERIOD_NAMES = (
     "Peak",
 )
 PERIOD_ALTERNATION = "|".join(name.replace(" ", r"\s+") for name in PERIOD_NAMES)
+
+#: A clock time as tariffs write them: "5:00 p.m.", "6 a.m.", "noon",
+#: "midnight". Shared because two recognizers read the same times out of two
+#: different shapes -- a three-column table and a list under a season heading --
+#: and a second copy of this pattern would drift from the first.
+CLOCK_TIME = r"(?:\d{1,2}(?::\d{2})?\s*[ap]\.?m\.?|noon|midnight)"
 
 #: A unit phrase anchored on a currency sign, e.g. "$/kWh" or "$ per monthly
 #: max kW". When a label carries one, it is the unit, because the publisher
@@ -254,7 +260,7 @@ class Citer:
 
 #: Horizontal gap, in points, that separates two column headings.
 COLUMN_GAP = 8.0
-#: Distance, in points, a value may sit from a column centre and still be read
+#: Distance, in points, a value may sit from a column center and still be read
 #: as belonging to it. Beyond this the assignment is treated as ambiguous.
 COLUMN_TOLERANCE = 45.0
 #: Clear space, in points, left of the first column of values, used to split a

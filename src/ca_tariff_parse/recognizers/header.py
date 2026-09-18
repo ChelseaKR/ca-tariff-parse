@@ -62,7 +62,7 @@ def sheet_effective_dates(doc: LayoutDoc, citer: Citer) -> dict[int, Cited[str]]
 
     A page whose furniture states no date, or states two that disagree, is
     absent from the result, and a recognizer that needs a date for that page
-    emits nothing rather than borrowing a neighbouring sheet's.
+    emits nothing rather than borrowing a neighboring sheet's.
     """
     found: dict[int, list[Cited[str]]] = {}
     for page in doc.pages:
@@ -107,7 +107,7 @@ def _running_schedule(
     schedule, is that a running head runs. The code has to be named on more
     sheets than any other candidate and on at least two, or nothing is read.
 
-    **The title** is the neighbouring line that repeats on every one of those
+    **The title** is the neighboring line that repeats on every one of those
     sheets, and only when exactly one of the two does. One publisher sets the
     title above the schedule line and the line below it is body text, which
     changes sheet to sheet; that is what says which is the title. Another sets
@@ -139,17 +139,17 @@ def _running_schedule(
         "below": [below for _, _, _, below in running],
     }
     repeating: dict[str, list[Line]] = {}
-    for name, neighbours in sides.items():
-        if any(neighbour is None for neighbour in neighbours):
+    for name, neighbors in sides.items():
+        if any(neighbor is None for neighbor in neighbors):
             continue
-        present = [neighbour for neighbour in neighbours if neighbour is not None]
+        present = [neighbor for neighbor in neighbors if neighbor is not None]
         if not present[0].text.strip():
             continue
-        if len({neighbour.text for neighbour in present}) != 1:
+        if len({neighbor.text for neighbor in present}) != 1:
             continue
         repeating[name] = present
     if len(repeating) != 1:
-        # Neither neighbour runs, or both do. A publisher that sets a
+        # Neither neighbor runs, or both do. A publisher that sets a
         # regulatory identifier above the schedule line and the title below it
         # repeats both, and nothing on the page says which one names it.
         return code, None, consumed
@@ -188,10 +188,10 @@ def parse_identity(
                     effective = citer.text(line, FRONT, match.group("effective").strip())
                 continue
 
-            # A supersession header prints the cancelled sheet number as well
+            # A supersession header prints the canceled sheet number as well
             # as this page's own. Only the numbers the page asserts as its own
             # are recorded, so the schedule is never described by a sheet it
-            # replaced. The cancelling line is still consumed, because it is
+            # replaced. The canceling line is still consumed, because it is
             # accounted for even though nothing is read from it.
             if SHEET_RE.search(text):
                 consumed.add((line.page, line.index))

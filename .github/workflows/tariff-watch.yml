@@ -8,11 +8,19 @@
 # PDF.
 #
 # Every run, including a run in which nothing moved, appends one line to
-# data/watch-log.jsonl and commits it to main. That file is the only thing
-# standing between "looked, and nothing changed" and "nobody has ever looked",
-# which are different statements that a repository with no change reports
-# otherwise renders identically. See ADR 0019. A download that fails is an
-# error, never "unchanged", and it is recorded as one.
+# watch-log.jsonl on the `watch-log` branch -- "looked at <time>, found <n>
+# changes", with every document named -- and pushes it there. That line is the
+# only thing standing between "looked, and nothing changed" and "nobody looked
+# this week", which are different statements that a repository with no change
+# reports otherwise renders identically. A quiet week is a line that says so;
+# a missed week is a line that is not there. See ADR 0019. A download that
+# fails is an error, never "unchanged", and it is recorded as one.
+#
+# The log never touches `main`, which the protect-main ruleset protects and
+# this workflow's token cannot push to. The `watch-log` branch holds that one
+# file and a README, has no code on it, and is only ever fast-forwarded: no
+# step here force-pushes, and a missing branch fails the run rather than being
+# quietly recreated empty over the record it replaced.
 #
 # The manifest's pinned digest is a review gate (ADR 0003). This workflow does
 # the first half of that review in advance and hands the decision to a person.
@@ -48,7 +56,7 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
           version: ${{ env.UV_VERSION }}
           python-version: "3.12"
@@ -57,53 +65,100 @@ jobs:
       - name: Install the locked dependency set
         run: uv sync --locked
 
+      # The record lives on its own branch, checked out beside main rather than
+      # over it. A branch that is not there is not recreated here: an empty log
+      # would read as a watch that never looked, over the record it replaced.
+      - name: Check out the observation log
+        id: log
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/watch-log"
+          if git fetch -q origin "+refs/heads/watch-log:refs/remotes/origin/watch-log"; then
+            rmdir "${RUNNER_TEMP}/watch-log"
+            git worktree add -q --detach "${RUNNER_TEMP}/watch-log" origin/watch-log
+            echo "present=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "present=false" >> "${GITHUB_OUTPUT}"
+          fi
+
       - name: Look at every pinned document
         id: overview
         run: |
           set +e
-          uv run ca-tariff-parse watch --summary "${RUNNER_TEMP}/overview.json" --timeout 90
+          uv run ca-tariff-parse watch --summary "${RUNNER_TEMP}/overview.json" --timeout 90 \
+            --log "${RUNNER_TEMP}/watch-log/watch-log.jsonl"
           echo "exit=$?" >> "${GITHUB_OUTPUT}"
           # The overview run rewrote the manifest and baselines for anything
-          # revised, and appended this run to data/watch-log.jsonl. Each
-          # proposal below is rebuilt from a clean main so that one pull
+          # revised, and appended this run to the observation log beside main.
+          # Each proposal below is rebuilt from a clean main so that one pull
           # request carries exactly one document; the log is not reverted,
           # because the look happened whatever the diff turns out to say.
           git checkout -q -- sources/sources.toml data/parsed
           git clean -fdq data/changes
 
       - name: Record that it looked, whatever it found
+        env:
+          LOG_PRESENT: ${{ steps.log.outputs.present }}
         run: |
           set -euo pipefail
+          log="${RUNNER_TEMP}/watch-log/watch-log.jsonl"
+          if [ ! -s "${log}" ]; then
+            echo "::error::the watch wrote no observation; this run's look is not recorded anywhere"
+            exit 1
+          fi
+          line="$(tail -n 1 "${log}")"
+          sentence="$(jq -r '.summary' <<< "${line}")"
+          # On the run page first, so the sentence survives a push that fails.
+          {
+            echo "## Tariff watch"
+            echo
+            echo "**${sentence}**"
+            echo
+            echo "| document | state | detail |"
+            echo "| --- | --- | --- |"
+            jq -r '.documents[] | "| \(.id) | \(.state) | \(.detail) |"' <<< "${line}"
+            echo
+          } >> "${GITHUB_STEP_SUMMARY}"
+          if [ "${LOG_PRESENT}" != "true" ]; then
+            echo "::error::the watch-log branch is missing, so this look cannot be added to the record; restore the branch rather than starting a new log (ADR 0019)"
+            exit 1
+          fi
+          cd "${RUNNER_TEMP}/watch-log"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/watch-log.jsonl
-          # Exactly one file, and only ever an addition to it. A run that would
-          # commit anything else has gone wrong and must not push at all.
+          git add watch-log.jsonl
+          # Exactly one file, and exactly one line added to it. A run that
+          # would commit anything else, or remove a line, has gone wrong and
+          # must not push at all: a look already recorded is evidence.
           staged="$(git diff --cached --name-only)"
-          if [ "${staged}" != "data/watch-log.jsonl" ]; then
-            echo "::error::expected only data/watch-log.jsonl staged, got: ${staged:-nothing}"
+          if [ "${staged}" != "watch-log.jsonl" ]; then
+            echo "::error::expected only watch-log.jsonl staged, got: ${staged:-nothing}"
             exit 1
           fi
-          if [ "$(git diff --cached --numstat | cut -f2)" != "0" ]; then
-            echo "::error::the observation log lost lines; a look already recorded is evidence"
+          if [ "$(git diff --cached --numstat)" != "$(printf '1\t0\twatch-log.jsonl')" ]; then
+            echo "::error::expected exactly one line added and none removed: $(git diff --cached --numstat)"
             exit 1
           fi
-          git commit -q -m "tariff-watch: looked at every pinned document" \
-            -m "One line per run of the watch, appended whether or not anything moved. Without it a repository whose publishers revised nothing is byte for byte a repository whose watch has never run."
-          # main is unprotected and this job holds the only writer, but a human
-          # merge can still land between the checkout and the push.
-          for attempt in 1 2 3; do
-            if git push -q origin HEAD:main; then
+          git commit -q -m "tariff-watch: ${sentence}"
+          # Fast-forward only: nothing here force-pushes. The concurrency group
+          # makes this job the only writer, so a rejected push means someone
+          # else moved the branch, and the look is replayed on top of it.
+          for _ in 1 2 3; do
+            if git push -q origin HEAD:refs/heads/watch-log; then
+              echo "recorded: ${sentence}"
               exit 0
             fi
-            git fetch -q origin main
-            git rebase -q origin/main || { git rebase --abort; true; }
+            git fetch -q origin "+refs/heads/watch-log:refs/remotes/origin/watch-log"
+            git rebase -q origin/watch-log || { git rebase --abort; true; }
             sleep 5
           done
           echo "::error::could not record this run; the log would be silently short a look"
           exit 1
 
+      # Proposals do not wait on the record: a revision is worth a pull
+      # request even in a run that could not log itself.
       - name: Propose one pull request per revised document
+        if: ${{ !cancelled() }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -112,15 +167,6 @@ jobs:
           date="$(jq -r '.date' "${overview}")"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          {
-            echo "## Tariff watch, ${date}"
-            echo
-            echo "| document | state | detail |"
-            echo "| --- | --- | --- |"
-            jq -r '.outcomes[] | "| \(.id) | \(.state) | \(.detail) |"' "${overview}"
-            echo
-          } >> "${GITHUB_STEP_SUMMARY}"
 
           for id in $(jq -r '.outcomes[] | select(.state == "changed") | .id' "${overview}"); do
             branch="tariff-watch/${id}/${date}"
@@ -190,7 +236,12 @@ jobs:
             echo "opened a pull request for ${id}" >> "${GITHUB_STEP_SUMMARY}"
           done
 
-          if [ "${{ steps.overview.outputs.exit }}" != "0" ]; then
+      - name: Fail if the watch could not look at every document
+        if: ${{ !cancelled() }}
+        env:
+          WATCH_EXIT: ${{ steps.overview.outputs.exit }}
+        run: |
+          if [ "${WATCH_EXIT}" != "0" ]; then
             echo "::error::the watch could not look at every document; see the summary"
             exit 1
           fi

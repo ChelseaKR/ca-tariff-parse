@@ -6,10 +6,12 @@ import hashlib
 import json
 import re
 import tomllib
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from pathlib import Path
+from typing import Any
 
 import pytest
+import yaml
 
 from ca_tariff_parse.cli import EXIT_CHANGED, EXIT_ERROR, EXIT_OK, main
 from ca_tariff_parse.parser import parse_manifest_document, parse_path
@@ -27,6 +29,7 @@ from ca_tariff_parse.watch import (
     looks_at,
     manifest_with,
     observation,
+    observation_sentence,
     project,
     read_observations,
     watch_entry,
@@ -190,7 +193,7 @@ def test_manifest_with_replaces_the_four_pinned_facts_and_nothing_else() -> None
     for entry_id in before:
         if entry_id != "pge-b-1":
             assert after[entry_id] == before[entry_id]
-    # The comments the manifest carries survive, because nothing re-serialised it.
+    # The comments the manifest carries survive, because nothing re-serialized it.
     assert "A second publisher, added to find out" in out
     assert out.count("[[document]]") == text.count("[[document]]")
 
@@ -364,21 +367,33 @@ def _log(tmp_path: Path) -> Path:
     return tmp_path / "watch-log.jsonl"
 
 
+def _clock(monkeypatch: pytest.MonkeyPatch, *times: str) -> None:
+    """Pin the moment each run looks, in order."""
+    queue: Iterator[str] = iter(times)
+    monkeypatch.setattr("ca_tariff_parse.cli._utc_now", lambda: next(queue))
+
+
 def test_a_run_that_found_nothing_still_records_that_it_looked(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     manifest, entry = _manifest(tmp_path)
     _seed(tmp_path, entry)
     monkeypatch.setattr("ca_tariff_parse.cli.download", _cli_downloader(OLD))
+    _clock(monkeypatch, "2026-09-01T14:23:41Z")
 
     assert main(_watch_args(tmp_path, manifest)) == EXIT_OK
 
     assert not (tmp_path / "changes").exists(), "nothing changed, so nothing is reported"
     records = read_observations(_log(tmp_path))
     assert len(records) == 1
-    assert records[0]["schema"] == OBSERVATION_SCHEMA
-    assert records[0]["looked_at"] == "2026-09-01"
-    assert [(d["id"], d["state"]) for d in records[0]["documents"]] == [("syn", UNCHANGED)]
+    record = records[0]
+    assert record["schema"] == OBSERVATION_SCHEMA
+    assert record["looked_at"] == "2026-09-01T14:23:41Z"
+    # A quiet week is a line that says so, with the time and a count of zero.
+    assert record["summary"] == "looked at 2026-09-01T14:23:41Z, found 0 changes across 1 document"
+    assert (record["examined"], record["changes"], record["errors"]) == (1, 0, 0)
+    assert [(d["id"], d["state"]) for d in record["documents"]] == [("syn", UNCHANGED)]
+    assert record["summary"] in capsys.readouterr().out
     look = looks_at(records, "syn")
     assert (look.ever, look.looks, look.last_state) == (True, 1, UNCHANGED)
     assert "found the bytes the manifest pins" in look.sentence()
@@ -407,6 +422,7 @@ def test_the_log_is_appended_so_an_earlier_look_is_never_restated(
     manifest, entry = _manifest(tmp_path)
     _seed(tmp_path, entry)
     monkeypatch.setattr("ca_tariff_parse.cli.download", _cli_downloader(OLD))
+    _clock(monkeypatch, "2026-09-01T14:23:41Z", "2026-09-08T14:24:02Z")
     assert main(_watch_args(tmp_path, manifest)) == EXIT_OK
     first = _log(tmp_path).read_text(encoding="utf-8")
 
@@ -417,7 +433,11 @@ def test_the_log_is_appended_so_an_earlier_look_is_never_restated(
     text = _log(tmp_path).read_text(encoding="utf-8")
     assert text.startswith(first), "the earlier line is evidence and is not rewritten"
     look = looks_at(read_observations(_log(tmp_path)), "syn")
-    assert (look.looks, look.first, look.last) == (2, "2026-09-01", "2026-09-08")
+    assert (look.looks, look.first, look.last) == (
+        2,
+        "2026-09-01T14:23:41Z",
+        "2026-09-08T14:24:02Z",
+    )
 
 
 def test_no_log_records_nothing_and_is_therefore_not_the_default(
@@ -459,19 +479,44 @@ def test_a_damaged_log_is_an_error_rather_than_an_empty_record(tmp_path: Path) -
     with pytest.raises(ObservationError, match="names no documents"):
         read_observations(path)
 
+    # A line that does not say when it looked cannot separate a quiet week from
+    # a missed one, which is the only question the log exists to answer.
+    path.write_text(json.dumps({"schema": OBSERVATION_SCHEMA, "documents": []}) + "\n", "utf-8")
+    with pytest.raises(ObservationError, match="does not say when it looked"):
+        read_observations(path)
 
-def test_the_state_reported_is_the_one_the_latest_date_states(tmp_path: Path) -> None:
-    """The date is read from the record, never inferred from the file's order."""
+
+def test_the_state_reported_is_the_one_the_latest_time_states(tmp_path: Path) -> None:
+    """The time is read from the record, never inferred from the file's order."""
     path = _log(tmp_path)
+    later, earlier = "2026-09-08T14:24:02Z", "2026-09-01T14:23:41Z"
     append_observation(
-        path, observation("2026-09-08", [Outcome("syn", UNCHANGED, "")], parser_version="0.0.0")
+        path, observation(later, [Outcome("syn", UNCHANGED, "")], parser_version="0.0.0")
     )
     append_observation(
-        path, observation("2026-09-01", [Outcome("syn", ERROR, "")], parser_version="0.0.0")
+        path, observation(earlier, [Outcome("syn", ERROR, "")], parser_version="0.0.0")
     )
 
     look = looks_at(read_observations(path), "syn")
-    assert (look.first, look.last, look.last_state) == ("2026-09-01", "2026-09-08", UNCHANGED)
+    assert (look.first, look.last, look.last_state) == (earlier, later, UNCHANGED)
+
+
+def test_the_sentence_counts_changes_and_never_counts_an_unread_document_as_unchanged() -> None:
+    at = "2026-09-21T14:23:41Z"
+    quiet = [Outcome("a", UNCHANGED, ""), Outcome("b", UNCHANGED, "")]
+    assert observation_sentence(at, quiet) == f"looked at {at}, found 0 changes across 2 documents"
+
+    moved = [Outcome("a", CHANGED, ""), Outcome("b", UNCHANGED, "")]
+    assert observation_sentence(at, moved) == f"looked at {at}, found 1 change across 2 documents"
+
+    unread = [Outcome("a", UNCHANGED, ""), Outcome("b", ERROR, "connection reset")]
+    sentence = observation_sentence(at, unread)
+    assert sentence.startswith(f"looked at {at}, found 0 changes across 2 documents; ")
+    assert "1 could not be read, so whether it has changed is unknown" in sentence
+
+    record = observation(at, unread, parser_version="0.0.0")
+    assert (record["examined"], record["changes"], record["errors"]) == (2, 0, 1)
+    assert record["summary"] == sentence
 
 
 def test_every_document_a_run_looked_at_is_named_in_its_own_right() -> None:
@@ -485,41 +530,127 @@ def test_every_document_a_run_looked_at_is_named_in_its_own_right() -> None:
     assert looks_at([record], "c").ever is False
 
 
-# --- the record this repository actually carries -------------------------------
+# --- the scheduled workflow ------------------------------------------------------
+#
+# The workflow runs only on a schedule and on dispatch, so no pull request
+# exercises it. These tests are its lint: they read the file and fail on the
+# shapes that would lose a look or push somewhere this project does not allow.
 
-
-COMMITTED_LOG = REPO_ROOT / "data" / "watch-log.jsonl"
 WATCH_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "tariff-watch.yml"
+LOG_BRANCH = "watch-log"
 
 
-def test_the_committed_observation_log_reads_back_and_names_every_pinned_document() -> None:
-    records = read_observations(COMMITTED_LOG)
-    assert records, "the log exists so that 'nothing has looked' is a readable state"
-    pinned = {entry.id for entry in load_manifest(REPO_ROOT / "sources" / "sources.toml")}
-    for record in records:
-        named = {document["id"] for document in record["documents"]}
-        assert named == pinned, (
-            f"the run on {record['looked_at']} names {sorted(named)}, "
-            f"but the manifest pins {sorted(pinned)}"
-        )
-    for document_id in pinned:
-        assert looks_at(records, document_id).ever
+def _watch_steps() -> list[dict[str, Any]]:
+    workflow = yaml.safe_load(WATCH_WORKFLOW.read_text(encoding="utf-8"))
+    steps: list[dict[str, Any]] = workflow["jobs"]["watch"]["steps"]
+    return steps
+
+
+def _step(name: str) -> dict[str, Any]:
+    matches = [step for step in _watch_steps() if step.get("name") == name]
+    assert len(matches) == 1, f"expected one step named {name!r}, found {len(matches)}"
+    return matches[0]
+
+
+def _commands(script: str) -> list[str]:
+    """Shell lines with continuations joined and comments dropped.
+
+    A flag on the second line of a wrapped command is on the command, and a
+    scanner reading raw lines would miss it; a comment that names a command
+    is not a command.
+    """
+    joined = re.sub(r"\\\n\s*", " ", script)
+    lines = (line.split("#", 1)[0].strip() for line in joined.splitlines())
+    return [line for line in lines if line]
+
+
+def _all_commands() -> list[str]:
+    return [line for step in _watch_steps() for line in _commands(str(step.get("run", "")))]
 
 
 def test_the_scheduled_watch_records_every_run_and_only_the_second_look_opts_out() -> None:
     """The overview run is the run. A per-document re-run inside it is not a
     second run, and recording it would inflate the count of looks."""
-    workflow = WATCH_WORKFLOW.read_text(encoding="utf-8")
-    # Continuations are joined first: a flag on the second line of a wrapped
-    # command is on the command, and a scanner reading raw lines would miss it.
-    joined = re.sub(r"\\\n\s*", " ", workflow)
-    invocations = [
-        line for line in joined.splitlines() if "ca-tariff-parse watch" in line.split("#", 1)[0]
-    ]
+    invocations = [line for line in _all_commands() if "ca-tariff-parse watch" in line]
     assert len(invocations) == 2, invocations
     overview, second_look = invocations
     assert "--summary" in overview and "--no-log" not in overview
+    assert '--log "${RUNNER_TEMP}/watch-log/watch-log.jsonl"' in overview
     assert "--id" in second_look and "--no-log" in second_look
-    # The record has to leave the runner, or it is not a record.
-    assert "git add data/watch-log.jsonl" in workflow
-    assert "git push -q origin HEAD:main" in workflow
+
+
+def test_the_watch_never_pushes_to_main() -> None:
+    """main is protected and the watch's token cannot push to it. Every push the
+    workflow makes goes to the log branch or to a proposal branch."""
+    pushes = [line for line in _all_commands() if re.search(r"\bgit\s+push\b", line)]
+    assert pushes, "a workflow that never pushes cannot record anything"
+    targets = []
+    for push in pushes:
+        assert not re.search(r"(:|\s)(refs/heads/)?main\b", push), push
+        match = re.search(r"\bgit\s+push\s+(?:-\S+\s+)*origin\s+([^\s;]+)", push)
+        assert match, f"a push whose remote and refspec cannot be read: {push}"
+        targets.append(match.group(1))
+    assert set(targets) == {"HEAD:refs/heads/watch-log", '"${branch}"'}, targets
+
+
+def test_the_watch_never_rewrites_a_branch() -> None:
+    """A look already recorded is evidence. Nothing may force a push over it."""
+    for line in _all_commands():
+        if not re.search(r"\bgit\s+push\b", line):
+            continue
+        assert "--force" not in line and not re.search(r"\s-f\b", line), line
+        assert not re.search(r"\s\+\S*:", line), f"a + refspec forces: {line}"
+
+
+def test_the_record_step_appends_exactly_one_line_and_says_what_it_found() -> None:
+    record = _step("Record that it looked, whatever it found")
+    commands = _commands(str(record["run"]))
+    script = "\n".join(commands)
+    assert "git add watch-log.jsonl" in commands
+    # Exactly one line added and none removed, checked before anything is committed.
+    assert "$(printf '1\\t0\\twatch-log.jsonl')" in script
+    assert script.index("--numstat") < script.index("git commit")
+    # The sentence -- "looked at <time>, found <n> changes" -- is the commit
+    # message and goes on the run page before the push is attempted, so a push
+    # that fails still leaves it readable.
+    assert "jq -r '.summary'" in script
+    assert 'git commit -q -m "tariff-watch: ${sentence}"' in commands
+    assert script.index("GITHUB_STEP_SUMMARY") < script.index("git push")
+    # A run that could not push fails; it does not report success.
+    assert script.rstrip().endswith("exit 1")
+
+
+def test_a_missing_log_branch_fails_the_run_instead_of_starting_a_fresh_log() -> None:
+    """An empty log reads as a watch that never looked. Recreating the branch
+    would publish that over the record it replaced."""
+    checkout = _step("Check out the observation log")
+    commands = _commands(str(checkout["run"]))
+    assert any("refs/heads/watch-log" in line and "git fetch" in line for line in commands)
+    assert not any("--orphan" in line for line in _all_commands())
+    record = _step("Record that it looked, whatever it found")
+    assert "steps.log.outputs.present" in str(record.get("env", {}))
+    assert 'if [ "${LOG_PRESENT}" != "true" ]; then' in _commands(str(record["run"]))
+
+
+def test_a_proposal_does_not_wait_on_the_record() -> None:
+    """A revision is worth a pull request even in a run that could not log itself."""
+    assert _step("Propose one pull request per revised document").get("if") == "${{ !cancelled() }}"
+    verdict = _step("Fail if the watch could not look at every document")
+    assert verdict.get("if") == "${{ !cancelled() }}"
+    names = [step.get("name") for step in _watch_steps()]
+    assert names.index("Record that it looked, whatever it found") < names.index(
+        "Propose one pull request per revised document"
+    )
+
+
+def test_the_workflow_reads_no_step_output_through_template_interpolation_in_shell() -> None:
+    """Step outputs reach a shell through env:, never through ${{ }} in run:."""
+    for step in _watch_steps():
+        assert "${{ steps." not in str(step.get("run", "")), step.get("name")
+
+
+def test_main_does_not_carry_the_observation_log() -> None:
+    """The log lives on its branch. A copy on main would drift from it, so a
+    local copy, made by `make watch-log` or by a local run, is ignored."""
+    ignored = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
+    assert "data/watch-log.jsonl" in ignored

@@ -2,7 +2,7 @@
 
 The watch writes a diff per revision and a reviewed baseline. `history` reads
 them back. The risk in a timeline is that it looks continuous: a missing
-revision joined to its neighbours, a retrieval order guessed from filenames, a
+revision joined to its neighbors, a retrieval order guessed from filenames, a
 run of reports presented as though one parser read them all. Each of those is
 a test here.
 """
@@ -497,12 +497,15 @@ def test_a_timeline_says_whether_anything_ever_looked(tmp_path: Path) -> None:
     _committed_baseline_only(tmp_path)
 
     never = _run(tmp_path, None)
-    assert "No committed observation records a look" in never
+    assert "The observation log read here records no look" in never
+    assert "`make watch-log` fetches it" in never
     assert "has ever been examined" in never
 
     append_observation(
         tmp_path / "watch-log.jsonl",
-        observation("2026-09-07", [Outcome(DOC, UNCHANGED, "pinned")], parser_version="0.3.0"),
+        observation(
+            "2026-09-07T14:30:38Z", [Outcome(DOC, UNCHANGED, "pinned")], parser_version="0.3.0"
+        ),
     )
     looked = _run(tmp_path, None)
     assert "records 1 look(s)" in looked
@@ -531,7 +534,9 @@ def test_the_committed_log_and_the_committed_reports_are_read_from_different_fil
     append_observation(
         tmp_path / "watch-log.jsonl",
         observation(
-            "2026-09-07", [Outcome(DOC, ERROR, "connection reset")], parser_version="0.3.0"
+            "2026-09-07T14:30:38Z",
+            [Outcome(DOC, ERROR, "connection reset")],
+            parser_version="0.3.0",
         ),
     )
     text = _run(tmp_path, None)

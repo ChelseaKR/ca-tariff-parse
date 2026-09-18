@@ -222,7 +222,7 @@ def test_an_absent_document_reports_not_fetched(entries, tmp_path: Path) -> None
 
 
 def test_fetch_refuses_a_path_robots_txt_disallows(entries, tmp_path: Path, monkeypatch) -> None:
-    """The README promises retrieval honours robots.txt; ``fetch`` must too.
+    """The README promises retrieval honors robots.txt; ``fetch`` must too.
 
     A host whose robots.txt disallows every path must never reach the second
     request that would download the document itself.
@@ -352,7 +352,7 @@ def test_the_user_agent_identifies_this_tool_rather_than_a_browser() -> None:
     """The header used to claim to be Chrome 128.
 
     That broke the README's promise in both directions at once. It gave the
-    publisher no server-side way to recognise the request, and
+    publisher no server-side way to recognize the request, and
     ``urllib.robotparser`` reduced it to the token ``mozilla``, which no
     plausible ``User-agent:`` line matches --- so no named group was ever
     selected and only a ``User-agent: *`` group could refuse a fetch.
@@ -394,7 +394,7 @@ def test_a_robots_group_naming_this_tool_refuses_the_fetch(
 def test_a_robots_group_naming_a_different_agent_does_not_apply(
     entries, tmp_path: Path, monkeypatch
 ) -> None:
-    """Honouring by-name rules must not mean honouring everyone else's."""
+    """Honoring by-name rules must not mean honoring everyone else's."""
     entry = find(entries, "smud-r-tod")
     payload = b"a stand-in for the published document, not the real bytes"
     matching = dataclasses.replace(

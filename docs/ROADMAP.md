@@ -387,7 +387,7 @@ Stated so that the plan's silence is not read as an omission.
   Whether its reports are ever offered elsewhere is a separate decision,
   gated on the watch having run unattended for a season and caught a real
   revision cleanly, and on the manifest covering schedules a reader would
-  recognise; nothing in this plan assumes it, and no rule may be widened to
+  recognize; nothing in this plan assumes it, and no rule may be widened to
   make it so.
 
 ## Done
@@ -454,7 +454,7 @@ landed rather than repeated here.
 - **A price stated inside a sentence**, as the solar and storage schedule
   states its export compensation rate. This stays refused: not for lack of a
   rule that could read this one sentence, but because a rule fitted to a
-  single example is not a generalisation, and this price is additionally
+  single example is not a generalization, and this price is additionally
   stated as provisional on a formula defined elsewhere, which an ordinary
   `Charge` has no way to say. See ADR 0011 for the full reasoning; the
   existing test asserting `smud-ssr` emits zero charges is the specification,

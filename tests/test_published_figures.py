@@ -103,3 +103,34 @@ def test_the_table_states_the_reproducing_command() -> None:
     """A reader can check the table without reading this test."""
     text = README.read_text(encoding="utf-8")
     assert re.search(r"`make coverage-real` reproduces the table", text)
+
+
+#: The sentence that says how much of California this covers. The denominator
+#: is measured elsewhere and cited in the README; the numerator is a fact about
+#: this repository, so it is checked against the manifest rather than trusted.
+FRACTION_RE = re.compile(r"pins documents from \*{0,2}(\d+)\*{0,2} of them")
+FRAME_RE = re.compile(r"California has \*{0,2}(\d+)\*{0,2} retail electric service territories")
+
+
+def test_the_stated_fraction_is_the_manifest_the_repository_actually_pins() -> None:
+    """A coverage table with no frame invites the reading that the table is the
+    state. The frame is written down; this keeps its numerator true."""
+    text = README.read_text(encoding="utf-8")
+    stated = FRACTION_RE.search(text)
+    assert stated, "the README no longer says what fraction of the frame it covers"
+    publishers = {entry.publisher for entry in load_manifest(MANIFEST)}
+    assert int(stated.group(1)) == len(publishers), (
+        f"the README says {stated.group(1)} publisher(s) are pinned; the manifest "
+        f"pins {len(publishers)}: {sorted(publishers)}"
+    )
+
+
+def test_the_frame_names_where_its_own_number_came_from() -> None:
+    """The denominator is not this project's measurement, so it cites one."""
+    text = README.read_text(encoding="utf-8")
+    frame = FRAME_RE.search(text)
+    assert frame, "the README no longer states the frame the fraction is out of"
+    frame_paragraph = text[frame.start() : frame.start() + 900]
+    assert "California Energy Commission" in frame_paragraph
+    assert "Electric Load Serving Entities" in frame_paragraph
+    assert "2026-08-23" in frame_paragraph, "a retrieved count states when it was retrieved"

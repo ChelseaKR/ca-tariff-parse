@@ -19,6 +19,8 @@ from pathlib import Path
 from .calendar import CalendarError, render, summary
 from .check import PROPERTY_IDS, CheckError, check, to_json, to_text, unmet
 from .diff import DiffError, schedule_diff
+from .explain import SelectorError, explain, fence_table, parse_selectors
+from .explain import to_text as explain_text
 from .export import ExportError, render_csv, render_jsonl, rows, table_names
 from .export import columns as export_columns
 from .history import HistoryError, parse_match, read_legs, timelines
@@ -39,6 +41,7 @@ from .sources import (
     local_state,
     verify,
 )
+from .trace import recording
 from .watch import (
     CHANGED,
     ERROR,
@@ -76,8 +79,16 @@ DEFAULT_BASELINE_DIR = Path("data/parsed")
 DEFAULT_CHANGES_DIR = Path("data/changes")
 #: Where the watch records that it looked, whatever it found. A run that
 #: finds nothing writes no change report, so without this an unrevised
-#: corpus and a watch that has never run leave identical repositories.
+#: corpus and a watch that has never run leave identical repositories. This
+#: is a local, ignored path: the scheduled workflow keeps the record on the
+#: ``watch-log`` branch, and ``make watch-log`` copies it here.
 DEFAULT_WATCH_LOG = Path("data/watch-log.jsonl")
+
+
+def _utc_now() -> str:
+    """The moment a run looked, as ISO 8601 UTC to the second."""
+    now = datetime.datetime.now(datetime.UTC).replace(microsecond=0)
+    return now.isoformat().replace("+00:00", "Z")
 
 
 def _load(args: argparse.Namespace) -> ParsedSchedule:
@@ -194,6 +205,40 @@ def _cmd_coverage(args: argparse.Namespace) -> int:
     if args.min_coverage is not None and coverage.line_ratio < args.min_coverage:
         return EXIT_COVERAGE
     return EXIT_OK
+
+
+def _cmd_explain(args: argparse.Namespace) -> int:
+    """Say what every recognizer did to the lines asked about.
+
+    The parse runs inside a recording context, so what is reported is what the
+    parse actually did rather than a second pass reasoning about it. Nothing
+    in the package reads a trace back while parsing, which is why this cannot
+    change what `parse` emits -- `tests/test_explain.py` compares the two as
+    bytes.
+    """
+    if args.fences:
+        sys.stdout.write(fence_table())
+        return EXIT_OK
+    try:
+        selectors = parse_selectors(args.where)
+    except SelectorError as error:
+        sys.stderr.write(f"error: {error}\n")
+        return EXIT_ERROR
+    if selectors and args.section:
+        sys.stderr.write("error: give line selectors or --section, not both\n")
+        return EXIT_ERROR
+
+    with recording() as trace:
+        parsed = _load(args)
+    explanation = explain(parsed, trace, selectors=selectors, section=args.section)
+
+    if args.json:
+        sys.stdout.write(json.dumps(explanation.to_json(), indent=2, ensure_ascii=False) + "\n")
+    else:
+        sys.stdout.write(explain_text(explanation))
+    # A selector naming a line the document does not have is an error, not an
+    # empty answer: the two are indistinguishable in the output otherwise.
+    return EXIT_ERROR if explanation.not_found else EXIT_OK
 
 
 def _cmd_sources(args: argparse.Namespace) -> int:
@@ -457,11 +502,9 @@ def _cmd_watch(args: argparse.Namespace) -> int:
         # Written for every run, including the run that found nothing. A watch
         # that only leaves a trace when something moved cannot tell a reader
         # whether it has ever looked.
-        log = append_observation(
-            Path(args.log),
-            observation(today, outcomes, parser_version=PARSER_VERSION),
-        )
-        sys.stdout.write(f"looked at {len(outcomes)} document(s); recorded in {log}\n")
+        record = observation(_utc_now(), outcomes, parser_version=PARSER_VERSION)
+        log = append_observation(Path(args.log), record)
+        sys.stdout.write(f"{record['summary']}; recorded in {log}\n")
     return EXIT_ERROR if any(outcome.state == ERROR for outcome in outcomes) else EXIT_OK
 
 
@@ -526,6 +569,27 @@ def build_parser() -> argparse.ArgumentParser:
         help="write the same figures as JSON instead of the text report",
     )
     p_coverage.set_defaults(func=_cmd_coverage)
+
+    p_explain = subparsers.add_parser(
+        "explain",
+        help="name the recognizer that read a line, or the fence that refused it",
+    )
+    add_document(p_explain)
+    p_explain.add_argument(
+        "where",
+        nargs="*",
+        default=[],
+        metavar="SELECTOR",
+        help="lines to explain, as 'p.3 L11' or '3:11'; omit for every content line",
+    )
+    p_explain.add_argument("--section", help="explain every line of one section, e.g. II.A")
+    p_explain.add_argument(
+        "--fences",
+        action="store_true",
+        help="list every fence this parser can report, with its ADR, and stop",
+    )
+    p_explain.add_argument("--json", action="store_true", help="emit the report as JSON")
+    p_explain.set_defaults(func=_cmd_explain)
 
     p_sources = subparsers.add_parser("sources", help="list documents in the manifest")
     add_manifest(p_sources)
@@ -639,7 +703,8 @@ def build_parser() -> argparse.ArgumentParser:
         default=str(DEFAULT_WATCH_LOG),
         help=(
             "the log of what the watch has looked at, whatever it found "
-            "(default: data/watch-log.jsonl)"
+            "(default: data/watch-log.jsonl; `make watch-log` fetches the "
+            "scheduled watch's log from the watch-log branch)"
         ),
     )
     p_history.add_argument("--jsonl", action="store_true", help="one JSON object per timeline")
@@ -717,7 +782,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--log",
         default=str(DEFAULT_WATCH_LOG),
         help=(
-            "append one line recording this run, whatever it found (default: data/watch-log.jsonl)"
+            "append one line recording when this run looked and what it found, "
+            "whatever it found (default: data/watch-log.jsonl)"
         ),
     )
     p_watch.add_argument(

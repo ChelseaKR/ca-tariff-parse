@@ -20,8 +20,10 @@ record: an unrevised corpus and a watch that had never run produced byte
 identical repositories. "No change" and "nobody looked" are different
 statements and this project's defining defect is publishing the second as the
 first, so every run now appends one line to an **observation log**
-(:data:`OBSERVATION_SCHEMA`) naming what it looked at and what it found ---
-including, and especially, a run in which nothing moved. See ADR 0019.
+(:data:`OBSERVATION_SCHEMA`) naming when it looked, what it looked at and what
+it found --- including, and especially, a run in which nothing moved. The
+scheduled workflow keeps that log on the ``watch-log`` branch rather than on
+``main``. See ADR 0019.
 """
 
 from __future__ import annotations
@@ -30,7 +32,7 @@ import dataclasses
 import json
 import re
 import tomllib
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -86,7 +88,7 @@ def project(payload: Json) -> Json:
 
 
 def dump(payload: Json) -> str:
-    """The one serialisation every baseline and report uses, so diffs are byte-stable."""
+    """The one serialization every baseline and report uses, so diffs are byte-stable."""
     return json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=False) + "\n"
 
 
@@ -249,7 +251,7 @@ def manifest_with(
     """The manifest text with one entry's four pinned facts replaced, and nothing else.
 
     The manifest is hand maintained and carries comments that explain each
-    publisher; rewriting it through a TOML serialiser would lose them. So the
+    publisher; rewriting it through a TOML serializer would lose them. So the
     four lines are substituted in place, inside the one ``[[document]]`` block
     that names ``entry_id``, each exactly once, and the result has to load as
     TOML before it is returned.
@@ -277,11 +279,11 @@ class ObservationError(ValueError):
 
 @dataclass(frozen=True, slots=True)
 class Look:
-    """What the committed observation log says about one document.
+    """What an observation log says about one document.
 
     ``looks`` is a count of runs that named this document, not of revisions.
-    A document with ``looks == 0`` has never been examined by any run whose
-    record was committed, and that is a different statement from a document
+    A document with ``looks == 0`` has never been examined by any run the log
+    records, and that is a different statement from a document
     looked at eleven times that never moved. Keeping them apart is the whole
     reason this record exists.
     """
@@ -309,9 +311,11 @@ class Look:
         """One sentence a reader can act on, never a bare zero."""
         if not self.ever:
             return (
-                f"No committed observation records a look at {self.document_id}. "
+                f"The observation log read here records no look at {self.document_id}. "
                 "Nothing here says this document has ever been examined, so the "
-                "absence of a change report is not evidence that it has not changed."
+                "absence of a change report is not evidence that it has not changed. "
+                "The scheduled watch keeps its log on the watch-log branch; "
+                "`make watch-log` fetches it."
             )
         span = (
             f"on {self.first}"
@@ -330,21 +334,53 @@ class Look:
             ),
         }.get(self.last_state or "", f"recorded the state {self.last_state!r}")
         return (
-            f"The committed observation log records {self.looks} look(s) at "
+            f"The observation log read here records {self.looks} look(s) at "
             f"{self.document_id}, {span}. The most recent, on {self.last}, {found}."
         )
 
 
-def observation(date: str, outcomes: Iterable[Outcome], *, parser_version: str) -> Json:
+def _count(number: int, noun: str) -> str:
+    return f"{number} {noun}" if number == 1 else f"{number} {noun}s"
+
+
+def observation_sentence(looked_at: str, outcomes: Sequence[Outcome]) -> str:
+    """``looked at <time>, found <n> changes``, with what could not be read.
+
+    Written for every run, so that a quiet week is a line that says so and a
+    missed week is a line that is not there. A document the run could not
+    read is never counted as unchanged: it is named as unknown.
+    """
+    changes = sum(outcome.state == CHANGED for outcome in outcomes)
+    errors = sum(outcome.state == ERROR for outcome in outcomes)
+    sentence = (
+        f"looked at {looked_at}, found {_count(changes, 'change')} "
+        f"across {_count(len(outcomes), 'document')}"
+    )
+    if errors:
+        sentence += (
+            f"; {errors} could not be read, so whether "
+            f"{'it has' if errors == 1 else 'they have'} changed is unknown"
+        )
+    return sentence
+
+
+def observation(looked_at: str, outcomes: Iterable[Outcome], *, parser_version: str) -> Json:
     """One run of the watch, as the line the log keeps.
 
-    Deliberately not a summary: every document the run looked at is named with
-    what was found for it, so a run that examined six of seven documents cannot
-    read as a run that examined all seven.
+    ``looked_at`` is the UTC time the run looked, to the second. The counts
+    and the sentence are a convenience for a reader scanning the log. The
+    per-document list is the record: every document the run looked at is
+    named with what was found for it, so a run that examined six of seven
+    documents cannot read as a run that examined all seven.
     """
+    looked = list(outcomes)
     return {
         "schema": OBSERVATION_SCHEMA,
-        "looked_at": date,
+        "looked_at": looked_at,
+        "summary": observation_sentence(looked_at, looked),
+        "examined": len(looked),
+        "changes": sum(outcome.state == CHANGED for outcome in looked),
+        "errors": sum(outcome.state == ERROR for outcome in looked),
         "parser_version": parser_version,
         "documents": [
             {
@@ -354,7 +390,7 @@ def observation(date: str, outcomes: Iterable[Outcome], *, parser_version: str) 
                 "sha256": outcome.sha256,
                 "bytes": outcome.bytes,
             }
-            for outcome in outcomes
+            for outcome in looked
         ],
     }
 
@@ -399,6 +435,8 @@ def read_observations(path: Path) -> list[Json]:
             )
         if not isinstance(record.get("documents"), list):
             raise ObservationError(f"{path.name} line {number} names no documents")
+        if not isinstance(record.get("looked_at"), str) or not record["looked_at"]:
+            raise ObservationError(f"{path.name} line {number} does not say when it looked")
         records.append(record)
     return records
 
@@ -406,11 +444,12 @@ def read_observations(path: Path) -> list[Json]:
 def looks_at(observations: Iterable[Json], document_id: str) -> Look:
     """What the log records for one document.
 
-    ``last_state`` is taken from the latest date the log states for this
-    document, and where two lines share that date, from the later of them in
-    file order. The date is read from the record rather than inferred from the
+    ``last_state`` is taken from the latest ``looked_at`` the log states for
+    this document, and where two lines share it, from the later of them in
+    file order. The time is read from the record rather than inferred from the
     file's order, for the reason ``history`` reads a retrieval date out of a
-    report rather than out of its filename.
+    report rather than out of its filename. ``looked_at`` is an ISO 8601 UTC
+    time, so comparing the strings compares the times.
     """
     seen: list[tuple[str, str]] = []
     for record in observations:
@@ -445,6 +484,7 @@ __all__ = [
     "looks_at",
     "manifest_with",
     "observation",
+    "observation_sentence",
     "project",
     "read_observations",
     "watch",

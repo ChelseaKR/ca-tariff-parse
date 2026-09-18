@@ -30,11 +30,11 @@ document: publisher, URL, retrieval date, page count, byte size and SHA-256.
 
 ## Consequences
 
-- CI exercises the full parser through labelled synthetic fixtures. The
+- CI exercises the full parser through labeled synthetic fixtures. The
   real-document path is covered locally and by the committed golden files, and
   is skipped rather than silently passed when the PDFs are absent.
 - A publisher revision breaks the digest check rather than being absorbed. That
-  is the intended behaviour: a revision is reviewed deliberately, and the
+  is the intended behavior: a revision is reviewed deliberately, and the
   manifest and golden files are updated together.
 - Contributors must run `make fetch` before `make golden`.
 - The repository stays small and carries no third-party binaries.
