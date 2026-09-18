@@ -19,3 +19,8 @@ htmlcov/
 coverage.xml
 
 .DS_Store
+
+# The scheduled watch keeps its observation log on the watch-log branch; a
+# local copy (make watch-log, or a local `watch` run) is not committed here.
+data/watch-log.jsonl
+data/watch-log.jsonl.tmp

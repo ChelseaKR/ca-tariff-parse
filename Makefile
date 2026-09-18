@@ -4,7 +4,7 @@ SOURCES_DIR ?= sources
 .DEFAULT_GOAL := help
 
 .PHONY: help install lint fmt typecheck test verify coverage coverage-real fetch verify-source \
-        golden watch watch-baseline clean
+        golden watch watch-log watch-baseline clean
 
 help: ## Show this help
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -71,6 +71,15 @@ coverage-real: ## Report parser coverage of each fetched source document
 # See docs/adr/0016.
 watch: ## Download each pinned document and diff any publisher revision (networked)
 	$(UV) run ca-tariff-parse watch
+
+watch-log: ## Copy the scheduled watch's observation log from the watch-log branch (networked)
+	git fetch -q origin watch-log
+	@mkdir -p data
+	@# Via a temporary file: a failed read must not leave an empty log behind,
+	@# because an empty log reads as a watch that never looked.
+	git show FETCH_HEAD:watch-log.jsonl > data/watch-log.jsonl.tmp
+	mv data/watch-log.jsonl.tmp data/watch-log.jsonl
+	@tail -n 1 data/watch-log.jsonl
 
 watch-baseline: ## Regenerate the watch baselines from the pinned documents (review every diff)
 	@test -f $(SOURCES_DIR)/1-R-TOD.pdf || { echo "run 'make fetch' first"; exit 1; }

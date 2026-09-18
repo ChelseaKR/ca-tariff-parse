@@ -14,6 +14,16 @@ output with the verbatim carriers removed (``notes`` and the samples under
 ``unparsed``). Facts read out of a public tariff, each with its citation, are
 this project's deliverable; a carrier of most of the document's prose is not
 (ADR 0003, ADR 0016).
+
+A run that finds nothing writes no report, and for a while that was the whole
+record: an unrevised corpus and a watch that had never run produced byte
+identical repositories. "No change" and "nobody looked" are different
+statements and this project's defining defect is publishing the second as the
+first, so every run now appends one line to an **observation log**
+(:data:`OBSERVATION_SCHEMA`) naming when it looked, what it looked at and what
+it found --- including, and especially, a run in which nothing moved. The
+scheduled workflow keeps that log on the ``watch-log`` branch rather than on
+``main``. See ADR 0019.
 """
 
 from __future__ import annotations
@@ -22,7 +32,7 @@ import dataclasses
 import json
 import re
 import tomllib
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -45,6 +55,14 @@ OMITTED_WHY = (
 UNCHANGED = "unchanged"
 CHANGED = "changed"
 ERROR = "error"
+
+#: The observation log's payload version. One line per run of the watch.
+OBSERVATION_SCHEMA = "ca-tariff-parse/watch-observation/v1"
+#: What :func:`looks_at` reports for a document the log has never named. A
+#: distinct string rather than a count of zero, because "looked, nothing
+#: changed" and "never looked" are the two things this log exists to separate
+#: and a bare ``0`` reads as the first.
+NEVER_LOOKED = "never looked"
 
 #: Puts a document at ``root`` and returns its path. The real one is
 #: :func:`ca_tariff_parse.sources.download`; tests pass something offline.
@@ -255,19 +273,220 @@ def manifest_with(
     return out
 
 
+class ObservationError(ValueError):
+    """Raised when the observation log cannot be read as one."""
+
+
+@dataclass(frozen=True, slots=True)
+class Look:
+    """What an observation log says about one document.
+
+    ``looks`` is a count of runs that named this document, not of revisions.
+    A document with ``looks == 0`` has never been examined by any run the log
+    records, and that is a different statement from a document
+    looked at eleven times that never moved. Keeping them apart is the whole
+    reason this record exists.
+    """
+
+    document_id: str
+    looks: int
+    first: str | None
+    last: str | None
+    last_state: str | None
+
+    @property
+    def ever(self) -> bool:
+        return self.looks > 0
+
+    def to_json(self) -> Json:
+        return {
+            "document_id": self.document_id,
+            "looks": self.looks,
+            "first_looked_at": self.first,
+            "last_looked_at": self.last,
+            "last_state": self.last_state if self.ever else NEVER_LOOKED,
+        }
+
+    def sentence(self) -> str:
+        """One sentence a reader can act on, never a bare zero."""
+        if not self.ever:
+            return (
+                f"The observation log read here records no look at {self.document_id}. "
+                "Nothing here says this document has ever been examined, so the "
+                "absence of a change report is not evidence that it has not changed. "
+                "The scheduled watch keeps its log on the watch-log branch; "
+                "`make watch-log` fetches it."
+            )
+        span = (
+            f"on {self.first}"
+            if self.first == self.last
+            else f"between {self.first} and {self.last}"
+        )
+        found = {
+            UNCHANGED: "found the bytes the manifest pins",
+            CHANGED: (
+                "found the publisher serving different bytes; the change report "
+                "for it is under the changes directory"
+            ),
+            ERROR: (
+                "could not be completed, so what the publisher serves now is "
+                "unknown rather than unchanged"
+            ),
+        }.get(self.last_state or "", f"recorded the state {self.last_state!r}")
+        return (
+            f"The observation log read here records {self.looks} look(s) at "
+            f"{self.document_id}, {span}. The most recent, on {self.last}, {found}."
+        )
+
+
+def _count(number: int, noun: str) -> str:
+    return f"{number} {noun}" if number == 1 else f"{number} {noun}s"
+
+
+def observation_sentence(looked_at: str, outcomes: Sequence[Outcome]) -> str:
+    """``looked at <time>, found <n> changes``, with what could not be read.
+
+    Written for every run, so that a quiet week is a line that says so and a
+    missed week is a line that is not there. A document the run could not
+    read is never counted as unchanged: it is named as unknown.
+    """
+    changes = sum(outcome.state == CHANGED for outcome in outcomes)
+    errors = sum(outcome.state == ERROR for outcome in outcomes)
+    sentence = (
+        f"looked at {looked_at}, found {_count(changes, 'change')} "
+        f"across {_count(len(outcomes), 'document')}"
+    )
+    if errors:
+        sentence += (
+            f"; {errors} could not be read, so whether "
+            f"{'it has' if errors == 1 else 'they have'} changed is unknown"
+        )
+    return sentence
+
+
+def observation(looked_at: str, outcomes: Iterable[Outcome], *, parser_version: str) -> Json:
+    """One run of the watch, as the line the log keeps.
+
+    ``looked_at`` is the UTC time the run looked, to the second. The counts
+    and the sentence are a convenience for a reader scanning the log. The
+    per-document list is the record: every document the run looked at is
+    named with what was found for it, so a run that examined six of seven
+    documents cannot read as a run that examined all seven.
+    """
+    looked = list(outcomes)
+    return {
+        "schema": OBSERVATION_SCHEMA,
+        "looked_at": looked_at,
+        "summary": observation_sentence(looked_at, looked),
+        "examined": len(looked),
+        "changes": sum(outcome.state == CHANGED for outcome in looked),
+        "errors": sum(outcome.state == ERROR for outcome in looked),
+        "parser_version": parser_version,
+        "documents": [
+            {
+                "id": outcome.id,
+                "state": outcome.state,
+                "detail": outcome.detail,
+                "sha256": outcome.sha256,
+                "bytes": outcome.bytes,
+            }
+            for outcome in looked
+        ],
+    }
+
+
+def append_observation(path: Path, record: Json) -> Path:
+    """Append one run to the log, creating it if this is the first run.
+
+    Append rather than rewrite: an earlier run's record is evidence of a look
+    that happened, and nothing here is entitled to restate it.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    line = json.dumps(record, ensure_ascii=False, sort_keys=False) + "\n"
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(line)
+    return path
+
+
+def read_observations(path: Path) -> list[Json]:
+    """Every run the log records, in the order the file states.
+
+    A log that does not exist is an empty record and not an error: a repository
+    whose watch has never run has nothing to read. A log that exists and cannot
+    be read *is* an error, because the alternative is reporting a damaged
+    record as an empty one, which is the confusion this file exists to end.
+    """
+    if not path.is_file():
+        return []
+    records: list[Json] = []
+    for number, text in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        if not text.strip():
+            continue
+        try:
+            record = json.loads(text)
+        except json.JSONDecodeError as error:
+            raise ObservationError(f"{path.name} line {number} is not JSON: {error}") from None
+        if not isinstance(record, dict):
+            raise ObservationError(f"{path.name} line {number} is not an observation record")
+        if record.get("schema") != OBSERVATION_SCHEMA:
+            raise ObservationError(
+                f"{path.name} line {number} states schema {record.get('schema')!r}, "
+                f"not {OBSERVATION_SCHEMA!r}"
+            )
+        if not isinstance(record.get("documents"), list):
+            raise ObservationError(f"{path.name} line {number} names no documents")
+        if not isinstance(record.get("looked_at"), str) or not record["looked_at"]:
+            raise ObservationError(f"{path.name} line {number} does not say when it looked")
+        records.append(record)
+    return records
+
+
+def looks_at(observations: Iterable[Json], document_id: str) -> Look:
+    """What the log records for one document.
+
+    ``last_state`` is taken from the latest ``looked_at`` the log states for
+    this document, and where two lines share it, from the later of them in
+    file order. The time is read from the record rather than inferred from the
+    file's order, for the reason ``history`` reads a retrieval date out of a
+    report rather than out of its filename. ``looked_at`` is an ISO 8601 UTC
+    time, so comparing the strings compares the times.
+    """
+    seen: list[tuple[str, str]] = []
+    for record in observations:
+        date = record.get("looked_at")
+        for document in record.get("documents") or ():
+            if isinstance(document, dict) and document.get("id") == document_id:
+                seen.append((str(date), str(document.get("state"))))
+    if not seen:
+        return Look(document_id, 0, None, None, None)
+    dates = [date for date, _ in seen]
+    last = max(dates)
+    last_state = next(state for date, state in reversed(seen) if date == last)
+    return Look(document_id, len(seen), min(dates), last, last_state)
+
+
 __all__ = [
     "BASELINE_SCHEMA",
     "CHANGED",
     "ERROR",
+    "NEVER_LOOKED",
+    "OBSERVATION_SCHEMA",
     "OMITTED",
     "UNCHANGED",
     "DiffError",
     "Downloader",
+    "Look",
+    "ObservationError",
     "Outcome",
+    "append_observation",
     "baseline_path",
     "dump",
+    "looks_at",
     "manifest_with",
+    "observation",
+    "observation_sentence",
     "project",
+    "read_observations",
     "watch",
     "watch_entry",
     "write_baseline",

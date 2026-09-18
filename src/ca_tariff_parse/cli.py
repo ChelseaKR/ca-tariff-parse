@@ -42,7 +42,18 @@ from .sources import (
     verify,
 )
 from .trace import recording
-from .watch import CHANGED, ERROR, manifest_with, watch, write_baseline
+from .watch import (
+    CHANGED,
+    ERROR,
+    Look,
+    append_observation,
+    looks_at,
+    manifest_with,
+    observation,
+    read_observations,
+    watch,
+    write_baseline,
+)
 
 EXIT_OK = 0
 EXIT_ERROR = 1
@@ -66,6 +77,18 @@ EXIT_NO_MATCH = 5
 
 DEFAULT_BASELINE_DIR = Path("data/parsed")
 DEFAULT_CHANGES_DIR = Path("data/changes")
+#: Where the watch records that it looked, whatever it found. A run that
+#: finds nothing writes no change report, so without this an unrevised
+#: corpus and a watch that has never run leave identical repositories. This
+#: is a local, ignored path: the scheduled workflow keeps the record on the
+#: ``watch-log`` branch, and ``make watch-log`` copies it here.
+DEFAULT_WATCH_LOG = Path("data/watch-log.jsonl")
+
+
+def _utc_now() -> str:
+    """The moment a run looked, as ISO 8601 UTC to the second."""
+    now = datetime.datetime.now(datetime.UTC).replace(microsecond=0)
+    return now.isoformat().replace("+00:00", "Z")
 
 
 def _load(args: argparse.Namespace) -> ParsedSchedule:
@@ -379,7 +402,8 @@ def _cmd_history(args: argparse.Namespace) -> int:
             f"{baseline_path}; there is nothing committed to build a timeline from"
         )
     built = timelines(legs, baseline, criteria)
-    text = history_jsonl(args.id, built) if args.jsonl else history_text(args.id, built)
+    look: Look = looks_at(read_observations(Path(args.watch_log)), args.id)
+    text = history_jsonl(args.id, built, look) if args.jsonl else history_text(args.id, built, look)
     if args.output:
         Path(args.output).write_text(text, encoding="utf-8")
     else:
@@ -394,7 +418,7 @@ def _cmd_history(args: argparse.Namespace) -> int:
         sys.stderr.write(
             f"{args.id}: no committed report under {args.changes_dir} mentions a "
             "record for this document. That is a statement about what has been "
-            "committed, not about whether the document has changed\n"
+            f"committed, not about whether the document has changed. {look.sentence()}\n"
         )
         return EXIT_OK
     sys.stderr.write(
@@ -474,6 +498,13 @@ def _cmd_watch(args: argparse.Namespace) -> int:
             + "\n",
             encoding="utf-8",
         )
+    if not args.no_log:
+        # Written for every run, including the run that found nothing. A watch
+        # that only leaves a trace when something moved cannot tell a reader
+        # whether it has ever looked.
+        record = observation(_utc_now(), outcomes, parser_version=PARSER_VERSION)
+        log = append_observation(Path(args.log), record)
+        sys.stdout.write(f"{record['summary']}; recorded in {log}\n")
     return EXIT_ERROR if any(outcome.state == ERROR for outcome in outcomes) else EXIT_OK
 
 
@@ -667,6 +698,15 @@ def build_parser() -> argparse.ArgumentParser:
     p_history.add_argument(
         "--baseline-dir", default=str(DEFAULT_BASELINE_DIR), help="default: data/parsed"
     )
+    p_history.add_argument(
+        "--watch-log",
+        default=str(DEFAULT_WATCH_LOG),
+        help=(
+            "the log of what the watch has looked at, whatever it found "
+            "(default: data/watch-log.jsonl; `make watch-log` fetches the "
+            "scheduled watch's log from the watch-log branch)"
+        ),
+    )
     p_history.add_argument("--jsonl", action="store_true", help="one JSON object per timeline")
     p_history.add_argument("-o", "--output", help="write here instead of stdout")
     p_history.set_defaults(func=_cmd_history)
@@ -738,6 +778,23 @@ def build_parser() -> argparse.ArgumentParser:
     p_watch.add_argument("--date", help="the retrieval date to record (default: today, UTC)")
     p_watch.add_argument("--timeout", type=float, default=60.0, help="seconds per request")
     p_watch.add_argument("--summary", help="write a JSON summary of every outcome here")
+    p_watch.add_argument(
+        "--log",
+        default=str(DEFAULT_WATCH_LOG),
+        help=(
+            "append one line recording when this run looked and what it found, "
+            "whatever it found (default: data/watch-log.jsonl)"
+        ),
+    )
+    p_watch.add_argument(
+        "--no-log",
+        action="store_true",
+        help=(
+            "do not record this run. For a second look at one document inside a "
+            "run already recorded, not for ordinary use: an unrecorded look is "
+            "indistinguishable afterwards from a look that never happened."
+        ),
+    )
     p_watch.set_defaults(func=_cmd_watch)
 
     return parser

@@ -25,12 +25,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Two fixtures written to trip fences: `SYNTHETIC-example-refused-rows.txt`
   and `SYNTHETIC-example-unclosed-bracket.txt`, the second carrying the ADR
   0014 case of a label that opens a bracket the publisher never closes.
+- **The watch records that it looked, whether or not anything moved.** Every
+  run appends one line (`ca-tariff-parse/watch-observation/v1`) that opens with
+  `looked at <time>, found <n> changes across <k> documents`, gives the counts
+  behind it and the parser version, and names every document it examined with
+  the state it was found in: `unchanged`, `changed` or `error`. The scheduled
+  workflow keeps that log on a dedicated `watch-log` branch, never on `main`,
+  so a quiet week is a line that says `found 0 changes` and a missed week is a
+  week with no line. Without it, a repository whose publishers revised nothing
+  was byte for byte a repository whose watch had never run: `tariff-watch.yml`
+  has run three times, every run found all seven pinned documents serving the
+  pinned bytes, and the repository had no way to say so. A document the log has
+  never named is reported as `never looked` in words rather than as a count of
+  zero. A document a run could not download is recorded as leaving the
+  publisher's current bytes *unknown*, which is neither changed nor unchanged.
+  See [ADR 0019](docs/adr/0019-a-look-is-recorded-even-when-nothing-moved.md).
+- `watch --log` / `--no-log`, `history --watch-log`, and `make watch-log`, which
+  copies the branch's log to the ignored `data/watch-log.jsonl`.
 
 ### Changed
 
 - Nothing in `parse`'s output. The engine now records which recognizer was
   offered each section, which claimed it, and which lines each consumed; none
   of it reaches the emitted document.
+- **`history` opens with the observation record.** "No committed report
+  mentions this record" and "nothing has ever examined this document" are
+  different answers, and the timeline gave them the same shape. `--jsonl`
+  writes that record as its first line under its own schema id
+  (`ca-tariff-parse/history-observation/v1`), including when no timeline
+  follows, because an empty file would state both answers in the same zero
+  bytes. A consumer reading `history --jsonl` should filter on `schema` rather
+  than count lines.
+- **The record never touches `main`.** `main` is protected by the
+  `protect-main` ruleset and the workflow's token cannot push to it. The
+  workflow fast-forwards the `watch-log` branch only. It refuses to commit
+  anything but one added line, and it fails rather than recreating the branch
+  if the branch has gone missing. The sentence and a per-document table go to
+  the run summary before the push, so a failed push still leaves the look
+  readable. `tests/test_watch.py` lints the workflow for a push to `main`, a
+  forced push and a `+` refspec.
+- The three runs that predate the log are backfilled on the branch from their
+  own workflow output, each carrying a `backfilled_from` block naming the run
+  id and URL, with `looked_at` read from the run's step timings. Their `sha256`
+  and `bytes` are `null`, because the runs printed neither and a derivation is
+  not an observation.
 
 ### Fixed
 

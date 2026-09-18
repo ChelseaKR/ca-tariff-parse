@@ -494,6 +494,56 @@ watch merges nothing: accepting a revision is the deliberate review the
 manifest's digest check asks for, and a person does it. PDFs are never
 committed, by the watch or by anyone.
 
+### Saying that it looked
+
+A run that finds nothing has nothing to propose, so for a while it left nothing
+behind -- and a repository whose publishers revised nothing was byte for byte a
+repository whose watch had never run. Those are different statements, and
+publishing the second as the first is this project's own defining defect
+pointed the other way.
+
+So **every run appends one line to `watch-log.jsonl` on the `watch-log`
+branch**, whether or not anything moved. Each line opens with a sentence of the
+form `looked at 2026-09-14T14:32:30Z, found 0 changes across 7 documents`. It
+then gives the counts behind the sentence, the parser version, and every
+document the run examined with the state it was found in: `unchanged`,
+`changed`, or `error`. A download that failed leaves what the publisher serves
+*unknown*, which is neither, and the sentence says so rather than counting it
+as unchanged. A run that examined six of seven documents cannot read as one
+that examined all seven, because every document is named in its own right.
+
+**A quiet week is a line that says `found 0 changes`. A missed week is a week
+with no line.** The branch's history has one commit per run, with that sentence
+as its message. The record lives on its own branch because `main` is protected
+and the workflow's token cannot push to it. The workflow only fast-forwards the
+branch, never force-pushes, and fails rather than recreating it if it has gone
+missing. `main` carries no copy. Read the record with
+
+```sh
+make watch-log        # copies it to data/watch-log.jsonl (ignored) and prints the last run
+git log --format='%cs %s' origin/watch-log
+```
+
+`history` opens with that record, and a document the log has never named is
+reported in words rather than as a count of zero:
+
+```
+## The observation record
+
+The observation log read here records no look at pge-e-tou-c. Nothing here
+says this document has ever been examined, so the absence of a change report
+is not evidence that it has not changed. The scheduled watch keeps its log on
+the watch-log branch; `make watch-log` fetches it.
+```
+
+As of the log's first three lines, all backfilled from the runs' own output,
+the watch has looked three times -- a manual run on 2026-09-02 and the scheduled
+runs on 2026-09-07 and 2026-09-14 -- and found every pinned document serving
+the pinned bytes each time. **It has opened no pull request because nothing has
+changed, not because nothing has run.** Three observations over twelve days are
+three observations: the log makes the count readable, it does not make it
+large. See [ADR 0019](docs/adr/0019-a-look-is-recorded-even-when-nothing-moved.md).
+
 `ca-tariff-parse diff old.json new.json` runs the same comparison on any two
 parses of one document, as Markdown or, with `--jsonl`, one object per change.
 
@@ -514,7 +564,7 @@ parses of one document, as Markdown or, with `--jsonl`, one object per change.
 | `reconcile <parsed.json> <urdb.json>` | Audit a URDB rate record you supply against the cited parse, field by field; exits 3 when anything contradicts |
 | `history --id <id>` | Rebuild a value's timeline from the committed watch reports, with the gaps in the record left in it |
 | `baseline` | Write the reviewed parse of each pinned document, for the watch to compare against |
-| `watch` | Download each pinned document and diff any publisher revision against its baseline (networked) |
+| `watch` | Download each pinned document and diff any publisher revision against its baseline, and record that it looked (networked) |
 
 `sources` reports each document as `not fetched`, `present`, or `mismatched`.
 `mismatched` means a file exists at the manifest's filename but its bytes do
@@ -635,7 +685,14 @@ walks the committed change reports under `data/changes/` and the reviewed
 baseline under `data/parsed/`, and prints every state a matching record has
 held, each with the retrieval date and the citation of the revision that set
 it, ending with the baseline. `--all` does every record the reports mention;
-`--jsonl` writes one object per timeline.
+`--jsonl` writes one object per timeline, headed by the observation record
+under its own schema id.
+
+Every timeline opens with what the observation log (`--watch-log`, default
+`data/watch-log.jsonl`, filled by `make watch-log`) says has been looked at,
+because "no report mentions this record" and "nothing has ever examined this
+document" are different answers, and a timeline that gave them the same shape
+would be the thing this command exists to avoid.
 
 Everything is built from what is committed. Nothing is fetched and nothing is
 interpolated. Three refusals are the substance of it:
