@@ -2090,7 +2090,272 @@
       }
     }
   ],
-  "tou_windows": [],
+  "tou_windows": [
+    {
+      "season": {
+        "value": "Summer (service from June 1 through September 30)",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 34,
+          "end_line": null,
+          "snippet": "Summer (service from June 1 through September 30): |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L34"
+        }
+      },
+      "period": {
+        "value": "Peak",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 36,
+          "end_line": null,
+          "snippet": "Peak: 4:00 p.m. to 9:00 p.m. All days |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L36"
+        }
+      },
+      "definition": {
+        "value": "4:00 p.m. to 9:00 p.m. All days",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 36,
+          "end_line": null,
+          "snippet": "Peak: 4:00 p.m. to 9:00 p.m. All days |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L36"
+        }
+      },
+      "residual": false,
+      "day_type": {
+        "value": "All days",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 36,
+          "end_line": null,
+          "snippet": "Peak: 4:00 p.m. to 9:00 p.m. All days |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L36"
+        }
+      },
+      "start": {
+        "value": "4:00 p.m.",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 36,
+          "end_line": null,
+          "snippet": "Peak: 4:00 p.m. to 9:00 p.m. All days |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L36"
+        }
+      },
+      "end": {
+        "value": "9:00 p.m.",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 36,
+          "end_line": null,
+          "snippet": "Peak: 4:00 p.m. to 9:00 p.m. All days |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L36"
+        }
+      }
+    },
+    {
+      "season": {
+        "value": "Summer (service from June 1 through September 30)",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 34,
+          "end_line": null,
+          "snippet": "Summer (service from June 1 through September 30): |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L34"
+        }
+      },
+      "period": {
+        "value": "Off-Peak",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 38,
+          "end_line": null,
+          "snippet": "Off-Peak: All other times |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L38"
+        }
+      },
+      "definition": {
+        "value": "All other times",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 38,
+          "end_line": null,
+          "snippet": "Off-Peak: All other times |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L38"
+        }
+      },
+      "residual": true
+    },
+    {
+      "season": {
+        "value": "Winter (service from October 1 through May 31)",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 40,
+          "end_line": null,
+          "snippet": "Winter (service from October 1 through May 31): |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L40"
+        }
+      },
+      "period": {
+        "value": "Peak",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 42,
+          "end_line": null,
+          "snippet": "Peak: 4:00 p.m. to 9:00 p.m. All days |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L42"
+        }
+      },
+      "definition": {
+        "value": "4:00 p.m. to 9:00 p.m. All days",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 42,
+          "end_line": null,
+          "snippet": "Peak: 4:00 p.m. to 9:00 p.m. All days |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L42"
+        }
+      },
+      "residual": false,
+      "day_type": {
+        "value": "All days",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 42,
+          "end_line": null,
+          "snippet": "Peak: 4:00 p.m. to 9:00 p.m. All days |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L42"
+        }
+      },
+      "start": {
+        "value": "4:00 p.m.",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 42,
+          "end_line": null,
+          "snippet": "Peak: 4:00 p.m. to 9:00 p.m. All days |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L42"
+        }
+      },
+      "end": {
+        "value": "9:00 p.m.",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 42,
+          "end_line": null,
+          "snippet": "Peak: 4:00 p.m. to 9:00 p.m. All days |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L42"
+        }
+      }
+    },
+    {
+      "season": {
+        "value": "Winter (service from October 1 through May 31)",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 40,
+          "end_line": null,
+          "snippet": "Winter (service from October 1 through May 31): |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L40"
+        }
+      },
+      "period": {
+        "value": "Off-Peak",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 44,
+          "end_line": null,
+          "snippet": "Off-Peak: All other times |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L44"
+        }
+      },
+      "definition": {
+        "value": "All other times",
+        "provenance": {
+          "document_id": "pge-e-tou-c",
+          "document_sha256": "053b572d9c86df2a0e05f583b171148f072ba870b6b846367b2d3c0d81b4a931",
+          "page": 5,
+          "sheet": "61128-E",
+          "section": "SPECIALCONDITIONS",
+          "line": 44,
+          "end_line": null,
+          "snippet": "Off-Peak: All other times |",
+          "locator": "pge-e-tou-c p.5 sheet 61128-E SPECIALCONDITIONS L44"
+        }
+      },
+      "residual": true
+    }
+  ],
   "holidays": [],
   "cross_references": [],
   "proration": [],
@@ -2144,20 +2409,20 @@
       "last_page": 10,
       "last_sheet": "61133-E",
       "last_line": 44,
-      "line_count": 203,
-      "reason": "203 of 208 lines in a recognized section matched no rule",
+      "line_count": 197,
+      "reason": "197 of 208 lines in a recognized section matched no rule",
       "span": "p.5 L6 to p.10 L44"
     }
   ],
   "coverage": {
     "content_lines": 346,
-    "recognized_lines": 53,
-    "unrecognized_lines": 293,
+    "recognized_lines": 59,
+    "unrecognized_lines": 287,
     "boilerplate_lines": 148,
     "sections_total": 5,
     "sections_recognized": 1,
     "sections_unrecognized": 4,
-    "line_ratio": 0.153179,
+    "line_ratio": 0.17052,
     "section_ratio": 0.2,
     "fully_recognized": false
   },

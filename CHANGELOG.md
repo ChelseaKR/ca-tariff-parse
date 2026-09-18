@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **`E-TOU-C` read zero time-of-use windows, and it is the schedule named after
+  them (#75).** The sheet states four -- Peak and Off-Peak under each of two
+  seasons -- as a list under a season heading rather than as the three-column
+  table the window reader recovers its columns from, so nothing looked. A
+  second recognizer reads the list: a season heading that states a part of the
+  year, and the `<period>: <definition>` lines under it, where the definition
+  has to say when the period runs. Coverage on that document goes from 53/346
+  (15.3%) to 59/346 (17.1%).
+- **A wrapped definition is no longer read as a finished one.** `B-1` prints a
+  list of the same shape whose definitions wrap onto a line set far right of
+  the rows; the first draft of the reader published one window defined as
+  `4:00 p.m. to 9:00 p.m. Every day, including weekends`, without its `and
+  holidays`. A group whose last row is followed by a line set further right
+  than the rows is refused whole. `B-1` reads no windows, as before, and now
+  for a stated reason.
+- `tests/test_realdoc.py` asserted `tou_windows == ()` for all three of the
+  second publisher's schedules. It is written per document now, each zero with
+  the reason it is zero. `E-TOU-C`'s zero holidays is pinned as a fact about
+  the document -- the word does not appear in it -- so a holiday list the
+  publisher adds later fails a test rather than leaving the count at zero.
+- The residual test now reads "All other times" as well as "All other hours".
+  What makes a period residual is the exclusion, not the noun.
+- `tests/test_period_list.py` reaches each of the new reader's refusals
+  directly. The real document exercises the happy path and none of them -- its
+  own introductory line is not followed by a period line, so the
+  season-must-name-a-part-of-the-year test never has to reject anything there --
+  and a refusal no fixture reaches is a refusal nothing checks.
+
+See [ADR 0020](docs/adr/0020-a-list-is-not-a-table-and-a-wrap-is-not-a-row.md).
+The other six pinned documents are untouched: every golden file and every other
+committed baseline is byte for byte unchanged.
+
 ## [0.3.0] - 2026-09-07
 
 Seventeen commits since `v0.2.0`, and six of them are verbs a reader can

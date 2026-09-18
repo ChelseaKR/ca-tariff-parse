@@ -24,6 +24,7 @@ from pathlib import Path
 
 import pytest
 
+from ca_tariff_parse.extract import layout_from_path
 from ca_tariff_parse.parser import parse_manifest_document
 from ca_tariff_parse.sources import find, load_manifest, verify
 
@@ -142,6 +143,31 @@ def _parse(document_id: str, filename: str):
     return parse_manifest_document(entry, path)
 
 
+#: How many time-of-use windows each of the second publisher's sheets states,
+#: and why. A single blanket ``== ()`` over all three read as an accounting
+#: rule and was in fact asserting a defect: ``E-TOU-C`` is a time-of-use
+#: schedule whose page states four windows and the parser read none of them
+#: (issue #75). The count is written per document now, with the reason, so that
+#: a zero has to be argued for rather than inherited.
+SECOND_PUBLISHER_WINDOWS = {
+    "pge-e-1": (
+        0,
+        "E-1 is not a time-of-use schedule; the document states no periods at all",
+    ),
+    "pge-e-tou-c": (
+        4,
+        "sheet 5 states Peak and Off-Peak under each of two seasons, as a flat list",
+    ),
+    "pge-b-1": (
+        0,
+        "B-1 states its periods in two columns with definitions that wrap onto a "
+        "line set far to the right, so the list reader refuses the block whole "
+        "rather than publishing 'Every day, including weekends' without its "
+        "'and holidays'",
+    ),
+}
+
+
 @pytest.mark.parametrize(("document_id", "filename"), SECOND_PUBLISHER_CASES)
 def test_a_second_publisher_is_accounted_for_line_by_line(document_id: str, filename: str) -> None:
     """Partly structured, and every line of the rest reported.
@@ -153,13 +179,91 @@ def test_a_second_publisher_is_accounted_for_line_by_line(document_id: str, file
     """
     parsed = _parse(document_id, filename)
 
-    assert parsed.tou_windows == ()
+    expected, why = SECOND_PUBLISHER_WINDOWS[document_id]
+    assert len(parsed.tou_windows) == expected, why
     assert parsed.holidays == ()
     assert 0.0 < parsed.coverage.line_ratio < 1.0
     assert parsed.coverage.fully_recognized is False
     unread = parsed.coverage.content_lines - parsed.coverage.recognized_lines
     assert len(parsed.notes) == unread
     assert sum(item.line_count for item in parsed.unparsed) == unread
+
+
+#: The four windows sheet 5 of ``E-TOU-C`` states, transcribed from the page:
+#: season, period, definition, and the three fields read out of a definition
+#: that is exactly a range. ``None`` where the page states nothing to read.
+E_TOU_C_WINDOWS = [
+    (
+        "Summer (service from June 1 through September 30)",
+        "Peak",
+        "4:00 p.m. to 9:00 p.m. All days",
+        ("All days", "4:00 p.m.", "9:00 p.m."),
+    ),
+    (
+        "Summer (service from June 1 through September 30)",
+        "Off-Peak",
+        "All other times",
+        None,
+    ),
+    (
+        "Winter (service from October 1 through May 31)",
+        "Peak",
+        "4:00 p.m. to 9:00 p.m. All days",
+        ("All days", "4:00 p.m.", "9:00 p.m."),
+    ),
+    ("Winter (service from October 1 through May 31)", "Off-Peak", "All other times", None),
+]
+
+
+def test_the_time_of_use_schedule_reads_its_time_of_use_periods() -> None:
+    """Issue #75: E-TOU-C stated four windows and the parse carried none.
+
+    Every value here is quoted from sheet 5 of the published document, the way
+    the spot-check prices below are, because no golden file can be committed
+    for this publisher.
+    """
+    parsed = _parse("pge-e-tou-c", "ELEC_SCHEDS_E-TOU-C.pdf")
+    read = [
+        (
+            window.season.value,
+            window.period.value,
+            window.definition.value,
+            None
+            if window.start is None
+            else (window.day_type.value, window.start.value, window.end.value),
+        )
+        for window in parsed.tou_windows
+    ]
+    assert read == E_TOU_C_WINDOWS
+
+    for window in parsed.tou_windows:
+        # Every window is cited to the sheet it was read from, and a residual
+        # period carries no clock: the page defines it by exclusion.
+        assert window.season.provenance.page == 5
+        assert window.season.provenance.sheet == "61128-E"
+        assert window.residual is (window.start is None)
+
+
+def test_e_tou_c_states_no_holidays_and_the_document_is_the_reason() -> None:
+    """The other half of #75, and the half that is not a parser gap.
+
+    E-TOU-C reads zero holidays because the document lists none: its peak
+    period runs "All days", and the word "holiday" does not appear anywhere in
+    it. That is a statement about the sheet, and it is pinned here so that the
+    day the publisher adds a holiday list this fails rather than the count
+    staying quietly at zero.
+    """
+    path = _require("pge-e-tou-c", "ELEC_SCHEDS_E-TOU-C.pdf")
+    entry = find(load_manifest(MANIFEST), "pge-e-tou-c")
+    verify(entry, path)
+    text = "\n".join(line.text for line in layout_from_path(path).all_lines())
+    assert "holiday" not in text.lower()
+
+    parsed = _parse("pge-e-tou-c", "ELEC_SCHEDS_E-TOU-C.pdf")
+    assert parsed.holidays == ()
+    assert {window.day_type.value for window in parsed.tou_windows if window.day_type} == {
+        "All days"
+    }
 
 
 #: Prices quoted from the second publisher's sheets, each with the unit and the
