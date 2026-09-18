@@ -2,7 +2,7 @@
 
 :class:`~ca_tariff_parse.model.Cited` already makes an uncited value impossible
 to construct. This module is the second, independent guard: it walks the
-serialised result and fails if it can reach a value-bearing leaf that is not
+serialized result and fails if it can reach a value-bearing leaf that is not
 inside a ``Cited`` envelope.
 
 The two mechanisms are deliberately unrelated. If a future recognizer bypasses
@@ -38,7 +38,7 @@ VOCABULARIES: dict[str, frozenset[str]] = {
     "disposition": frozenset({"included", "excluded", "required"}),
 }
 
-#: Keys inside a serialised Cited envelope.
+#: Keys inside a serialized Cited envelope.
 CITED_KEYS = frozenset({"value", "provenance"})
 
 

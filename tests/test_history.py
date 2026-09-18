@@ -2,7 +2,7 @@
 
 The watch writes a diff per revision and a reviewed baseline. `history` reads
 them back. The risk in a timeline is that it looks continuous: a missing
-revision joined to its neighbours, a retrieval order guessed from filenames, a
+revision joined to its neighbors, a retrieval order guessed from filenames, a
 run of reports presented as though one parser read them all. Each of those is
 a test here.
 """

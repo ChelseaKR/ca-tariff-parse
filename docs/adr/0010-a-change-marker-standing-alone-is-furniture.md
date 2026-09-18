@@ -26,7 +26,7 @@ extracts a change bar spanning several rows as its own line, at its own
 vertical position, and a marker beside a heading with no priced row of its
 own the same way. Such a line is not content in any sense the rest of this
 parser tries to structure -- it names no fact, prices nothing, states no
-eligibility -- and today it is reported as an unrecognised content line and
+eligibility -- and today it is reported as an unrecognized content line and
 carried into `notes` as the bare string `"(D)"` or `"|"`, which is not
 useful to a reader and drags down a coverage figure over content that was
 never there.

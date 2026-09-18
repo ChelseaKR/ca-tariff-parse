@@ -436,7 +436,7 @@ def _unit(row: Mapping[str, Any]) -> str:
 
 
 def _charge_label(row: Mapping[str, Any]) -> str:
-    parts = [_value(row.get("label")) or "(unlabelled)"]
+    parts = [_value(row.get("label")) or "(unlabeled)"]
     for name in ("season", "tou_period", "applies_to", "group"):
         found = _value(row.get(name))
         if found:

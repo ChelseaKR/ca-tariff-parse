@@ -59,7 +59,7 @@ def test_a_priced_row_with_an_unreadable_unit_is_not_emitted() -> None:
     assert any("furlong" in note.value for note in parsed.notes)
 
 
-def test_a_recognisable_unit_on_the_same_shape_is_emitted() -> None:
+def test_a_recognizable_unit_on_the_same_shape_is_emitted() -> None:
     """Control case: the refusal above is about the unit, not the layout."""
     parsed = parse(
         build(
@@ -882,7 +882,7 @@ def test_a_stray_closing_bracket_does_not_pull_the_line_above_into_the_heading()
     """The join is for a unit broken across a line ending, not for any bracket.
 
     A line can close a bracket it did not open and still state its own unit
-    whole. Joined to the line above it anyway, the block would be labelled with
+    whole. Joined to the line above it anyway, the block would be labeled with
     a line that is not part of its heading, and that line would be counted as
     one this parser understood.
     """

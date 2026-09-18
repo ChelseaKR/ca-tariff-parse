@@ -182,7 +182,7 @@ def test_manifest_with_replaces_the_four_pinned_facts_and_nothing_else() -> None
     for entry_id in before:
         if entry_id != "pge-b-1":
             assert after[entry_id] == before[entry_id]
-    # The comments the manifest carries survive, because nothing re-serialised it.
+    # The comments the manifest carries survive, because nothing re-serialized it.
     assert "A second publisher, added to find out" in out
     assert out.count("[[document]]") == text.count("[[document]]")
 

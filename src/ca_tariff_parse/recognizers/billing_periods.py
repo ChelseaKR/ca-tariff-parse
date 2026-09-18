@@ -1,6 +1,6 @@
 """Parse the time-of-use window table and the holiday table.
 
-The window table uses a vertically centred season cell that spans several
+The window table uses a vertically centered season cell that spans several
 period rows::
 
                     Peak        Weekdays between 5:00 p.m. and 8:00 p.m.
@@ -9,7 +9,7 @@ period rows::
     (Jun 1 - Sept 30)           during the Peak hours.
                     Off-Peak    All other hours, including weekends and holidays.
 
-Because the season label is centred rather than top aligned, seasons are
+Because the season label is centered rather than top aligned, seasons are
 recovered by treating the first fragment of each season label as the boundary
 between groups.
 
@@ -44,7 +44,7 @@ ALIGN_TOLERANCE = 1.5
 PERIOD_RE = re.compile(rf"\A(?:{PERIOD_ALTERNATION})\Z", re.IGNORECASE)
 PARENTHETICAL_RE = re.compile(r"\A\(.+\)\Z")
 _MONTH = r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?"
-#: A season's date range, written either parenthesised ("(Jun 1 - Sept 30)") or
+#: A season's date range, written either parenthesized ("(Jun 1 - Sept 30)") or
 #: bare ("October 1 -May 31"). Both forms are a continuation of the season name
 #: set above them, not a season of their own.
 DATE_RANGE_RE = re.compile(
@@ -162,8 +162,8 @@ def logical_rows(lines: list[Line]) -> list[list[Line]]:
     """Group wrapped text lines into the table rows a reader sees.
 
     A cell that wraps sets its lines close together, while separate rows are
-    spaced further apart, and a vertically centred cell can sit between the two
-    wrapped halves of its neighbour. Splitting on a threshold derived from the
+    spaced further apart, and a vertically centered cell can sit between the two
+    wrapped halves of its neighbor. Splitting on a threshold derived from the
     table's own median gap recovers the real rows instead of assuming one text
     line is one row.
     """
@@ -243,8 +243,8 @@ def _continues_a_season(text: str) -> bool:
     """True when this season-column fragment belongs to the label above it.
 
     A season is written as a name followed by its date range, and the two
-    halves are often set on separate rows of a vertically centred cell. One
-    sheet parenthesises the range, "(Jun 1 - Sept 30)", and another does not,
+    halves are often set on separate rows of a vertically centered cell. One
+    sheet parenthesizes the range, "(Jun 1 - Sept 30)", and another does not,
     "October 1 -May 31". Reading the bare form as a season of its own split
     "Summer" from its own dates and left half the windows unattributed.
     """
@@ -272,7 +272,7 @@ def _season_labels(rows: list[list[Line]], columns: WindowColumns) -> list[Seaso
 def _season_for(labels: list[SeasonLabel], position: int) -> tuple[list[Line], str] | None:
     """Find the season group a row belongs to, or ``None`` if it has no season.
 
-    The label is centred over its group rather than sitting at the top of it, so
+    The label is centered over its group rather than sitting at the top of it, so
     the group runs until the first row of the next label.
 
     A label that does not state a part of the year is not a season, and the

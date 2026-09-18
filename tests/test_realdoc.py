@@ -434,7 +434,7 @@ def test_a_row_whose_column_carries_no_price_prices_only_the_other() -> None:
     ]
 
 
-def test_no_citation_names_a_sheet_the_publisher_cancelled() -> None:
+def test_no_citation_names_a_sheet_the_publisher_canceled() -> None:
     """Each page prints its own sheet number over the one it supersedes.
 
     Reading the second of the two made every citation on the page point at a
@@ -545,13 +545,13 @@ def test_the_second_publisher_names_its_own_schedule() -> None:
         assert code in parsed.identity.schedule_code.provenance.snippet
 
 
-def test_a_title_is_read_only_where_one_neighbour_runs_and_the_other_does_not() -> None:
-    """Two of the second publisher's documents repeat both neighbours.
+def test_a_title_is_read_only_where_one_neighbor_runs_and_the_other_does_not() -> None:
+    """Two of the second publisher's documents repeat both neighbors.
 
     They print a regulatory identifier above the schedule line and the title
     below it, and both are the same on every sheet, so nothing on the page says
     which of them names the schedule. The third prints two different cities
-    above, so only one neighbour runs and that one is the title.
+    above, so only one neighbor runs and that one is the title.
     """
     assert _parse("pge-b-1", "ELEC_SCHEDS_B-1.pdf").identity.title is not None
     assert _parse("pge-b-1", "ELEC_SCHEDS_B-1.pdf").identity.title.value == "SMALL GENERAL SERVICE"

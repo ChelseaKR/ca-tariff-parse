@@ -54,7 +54,7 @@ def _line(index: int, top: float, *words: tuple[str, float, float]) -> Line:
 # A table shaped like the real one: two circumstances share one merged basis
 # cell (rows 1-2), a third circumstance has its own (row 3). Row bands are
 # generously spaced (30pt) so the fixture cannot pass by accident of
-# CELL_TOLERANCE reaching into a neighbouring band.
+# CELL_TOLERANCE reaching into a neighboring band.
 LINES = (
     _line(1, 5.0, ("Billing", 100.0, 140.0), ("Circumstance", 145.0, 200.0)),
     _line(1, 5.5, ("Basis", 260.0, 290.0), ("for", 295.0, 310.0), ("Proration", 315.0, 370.0)),

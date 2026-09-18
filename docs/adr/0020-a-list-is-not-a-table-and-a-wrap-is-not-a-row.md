@@ -43,7 +43,7 @@ shape the parser had never met.
 `tests/test_realdoc.py` asserted `parsed.tou_windows == ()` for all three of
 this publisher's schedules. That reads as an accounting rule — "no window is
 claimed from a shape the parser cannot follow" — and it was in fact **asserting
-the defect as intended behaviour** for the one schedule where windows are the
+the defect as intended behavior** for the one schedule where windows are the
 substance.
 
 ## Decision

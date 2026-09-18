@@ -6,7 +6,7 @@ Report privately through
 [GitHub Security Advisories](https://github.com/ChelseaKR/ca-tariff-parse/security/advisories/new).
 Please do not open a public issue for a security report.
 
-Expect an acknowledgement within 7 days.
+Expect an acknowledgment within 7 days.
 
 ## Supported versions
 

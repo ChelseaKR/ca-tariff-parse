@@ -26,7 +26,7 @@ concurrency:
   #
   # The discriminator below gives each pushed commit its own slot while leaving
   # pull-request runs grouped per PR, so a superseded PR commit is still
-  # cancelled. `cancel-in-progress` is deliberately unchanged.
+  # canceled. `cancel-in-progress` is deliberately unchanged.
   group: ci-${{ github.ref }}-${{ github.event_name == 'pull_request' && 'pr' || github.sha }}
   cancel-in-progress: true
 
@@ -121,7 +121,7 @@ jobs:
       - name: Dependency audit
         run: |
           set -euo pipefail
-          # Write with -o rather than a shell redirect: uv colourises stdout,
+          # Write with -o rather than a shell redirect: uv colorizes stdout,
           # and the escape codes make the file unparseable to pip-audit.
           uv export --locked --format requirements-txt --no-emit-project \
             -o requirements.audit.txt

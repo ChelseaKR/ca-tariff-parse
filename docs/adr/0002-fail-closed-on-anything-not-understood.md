@@ -6,7 +6,7 @@
 ## Context
 
 A parser over hand-set documents will always meet shapes it does not know. The
-tempting behaviours are both dangerous: guess at the value, or skip the line.
+tempting behaviors are both dangerous: guess at the value, or skip the line.
 Guessing fabricates a price. Skipping quietly produces output that looks
 complete, and gives a consumer no way to distinguish a document that was fully
 understood from one where half the table was dropped.
@@ -16,7 +16,7 @@ understood from one where half the table was dropped.
 Anything not understood with certainty is refused and reported.
 
 - A recognizer that cannot read a value emits nothing for it. Concretely: a
-  priced row whose unit is not a recognisable substring of its label; an amount
+  priced row whose unit is not a recognizable substring of its label; an amount
   that does not sit within tolerance of exactly one effective-date column; a
   time-of-use window that is defined by exclusion or carries an exception; a
   cell the publisher marked `n/a`; a holiday row missing a cell.
@@ -29,7 +29,7 @@ Anything not understood with certainty is refused and reported.
   counts and a `fully_recognized` flag that is true only when nothing was left
   over.
 
-A test asserts that a document containing an unrecognised section cannot
+A test asserts that a document containing an unrecognized section cannot
 produce output identical to one that is fully understood.
 
 ## Consequences

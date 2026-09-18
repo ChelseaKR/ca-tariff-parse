@@ -24,7 +24,7 @@ unrelated mechanisms.
    construction: a non-empty document id, a 64 character lowercase SHA-256, a
    1-based page and line, a well formed section id, and a non-empty verbatim
    snippet. A value without a citation cannot be built.
-2. `audit.assert_fully_cited` walks the serialised result and fails if it can
+2. `audit.assert_fully_cited` walks the serialized result and fails if it can
    reach any scalar that is not inside a `Cited` envelope. The small set of
    structural fields it tolerates (`kind`, `currency`, `disposition`,
    `residual`) is restricted to closed vocabularies that the walk also checks.

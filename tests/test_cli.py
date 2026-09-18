@@ -1,4 +1,4 @@
-"""Command line behaviour, including the coverage gate."""
+"""Command line behavior, including the coverage gate."""
 
 from __future__ import annotations
 
@@ -382,7 +382,7 @@ def test_the_reports_name_a_failed_read_rather_than_showing_a_clean_sweep(
     assert "no content lines were extracted from this document" in text
 
 
-def test_a_readable_document_is_not_labelled_a_failed_read(
+def test_a_readable_document_is_not_labeled_a_failed_read(
     complete_fixture: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     """Control: the failed-read line must not appear on a document that parsed."""

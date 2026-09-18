@@ -97,14 +97,14 @@ field is for; `diff.py` already documents that equal stamps are
   is now written down as the form it has to be typed into.** The publish
   workflow and `docs/ROADMAP.md` both said the project must be "registered on
   pypi.org with this repository, that workflow file and the `pypi` environment
-  named as its publisher", which is accurate and is not the five labelled
+  named as its publisher", which is accurate and is not the five labeled
   fields PyPI's *Add a pending publisher* form actually asks for. Both now
   carry the values verbatim, and both note that `Workflow name` is the
   filename rather than the workflow's `name:` field, because getting that one
   wrong produces a failure that reads like a permissions problem instead of a
   typo. The name was re-checked free on 2026-09-07, and the roadmap now says
   what free means here: nothing is reserved until the registration is made.
-  No workflow behaviour changes and nothing is published.
+  No workflow behavior changes and nothing is published.
 
 ### Fixed
 
@@ -242,7 +242,7 @@ field is for; `diff.py` already documents that equal stamps are
   row as the final tiebreak; two exports of one parse are byte identical. CSV
   cells a spreadsheet would evaluate are prefixed with an apostrophe, except a
   leading minus on a number, because a credit is printed as `-0.05` and
-  neutralising it would change what a reader sees. `--snippets` adds the
+  neutralizing it would change what a reader sees. `--snippets` adds the
   cited text and is off by default (ADR 0003).
 
 - **A parse can be read back into typed records, without a PDF stack.**
@@ -268,7 +268,7 @@ field is for; `diff.py` already documents that equal stamps are
   ADR 0016), and `load` reads that shape too without flattening the omission
   into an answer. Such a schedule reports `withheld == ("notes",
   "unparsed[].sample")`, its `notes` collection refuses to be queried rather
-  than returning nothing, and re-serialising it writes a baseline again — not
+  than returning nothing, and re-serializing it writes a baseline again — not
   a `parsed-schedule/v1` payload with `"notes": []`, which would state that the
   document has no prose.
 
@@ -305,7 +305,7 @@ field is for; `diff.py` already documents that equal stamps are
   carries the note for its state, the watch summary carries
   `parser_comparison`, and the tariff-watch pull request template carries the
   matching review item in all three cases instead of only the first.
-- **A `robots.txt` group naming this tool by name is now honoured.** Fetches
+- **A `robots.txt` group naming this tool by name is now honored.** Fetches
   sent a spoofed desktop Chrome `User-Agent`, which `urllib.robotparser`
   reduces to the token `mozilla` before matching a group. No plausible
   `User-agent:` line matches that, so no named group was ever selected and only
@@ -410,7 +410,7 @@ field is for; `diff.py` already documents that equal stamps are
   opening one pull request per revised document for a person to review.
   It merges nothing and never commits a PDF.
 - `download` in `sources.py`, split out of `fetch`: the half that touches
-  the network, without the digest check. `fetch` is unchanged in behaviour.
+  the network, without the digest check. `fetch` is unchanged in behavior.
   Only the watch calls `download` on its own, because looking at bytes that
   may not be the pinned bytes is its purpose.
 
@@ -424,7 +424,7 @@ The first signed tag from `main`. Everything below was on `main` before the tag 
   title. The line naming a schedule is the one that runs across the sheets,
   wherever the publisher sets it, which is what tells it from a body sentence
   ending in the word "schedule" that matches the same shape on one sheet. The
-  title is the neighbouring line that repeats, and only when exactly one of the
+  title is the neighboring line that repeats, and only when exactly one of the
   two does; where both repeat, none is read. See ADR 0015. Content lines
   recognized go from 135 to 157 on `pge-b-1`, 43 to 53 on `pge-e-tou-c` and 60
   to 67 on `pge-e-1`.
@@ -505,7 +505,7 @@ The first signed tag from `main`. Everything below was on `main` before the tag 
 - `change_markers` on the document profile: the single capital letters a
   publisher sets in brackets beside a revised line. A line carrying nothing
   but one such marker, or the literal change bar a whole changed paragraph is
-  flagged with, is now read as furniture rather than unrecognised content. A
+  flagged with, is now read as furniture rather than unrecognized content. A
   marker attached to real text is untouched, since stripping it would edit a
   quotation. `pge-tariff-book` names the six letters observed across its
   three schedules (`R`, `N`, `I`, `D`, `L`, `T`); the default names none. See
@@ -575,7 +575,7 @@ The first signed tag from `main`. Everything below was on `main` before the tag 
   `mismatched`.
 - `fetch` now actually checks the host's `robots.txt` before downloading a
   document, refusing a path the publisher has disallowed. The README already
-  documented this as retrieval's behaviour; the code did not do it — a
+  documented this as retrieval's behavior; the code did not do it — a
   manifest entry pointing at a newly disallowed path would have been fetched
   anyway. A host with no reachable `robots.txt` is still read as allowing
   everything, so this adds no new failure mode for the documents already in
@@ -616,7 +616,7 @@ endorsed by, or approved by SMUD or any other utility.
 - Recognizers for the effective-date rate tables, dated charge blocks, per-unit
   credits, time-of-use and holiday tables, cross references to sibling
   schedules, and applicability statements.
-- Labelled synthetic fixtures so the suite runs offline without redistributing
+- Labeled synthetic fixtures so the suite runs offline without redistributing
   a publisher's document, plus committed golden output for the real schedules.
 - Two further published schedules in the manifest, chosen to be unlike the two
   residential sheets the parser was written against: a commercial
@@ -652,11 +652,11 @@ endorsed by, or approved by SMUD or any other utility.
   sheets of one schedule different effective days, so a price is dated from the
   footer of the sheet it is printed on rather than from the document.
 - `group` on a charge, recording the heading of the block of rows a price was
-  read from. Without it a row labelled "Income Tier 1" would not say which of a
+  read from. Without it a row labeled "Income Tier 1" would not say which of a
   sheet's several tables it came from.
 - `--profile` on `parse` and `coverage`, for a document that is not in the
   manifest. Registered documents take theirs from the manifest.
-- A labelled synthetic fixture in a keyword outline with accounting-bracket
+- A labeled synthetic fixture in a keyword outline with accounting-bracket
   negatives and a supersession header, so the profile is exercised offline in
   CI and the same fixture read with no profile has to refuse all three.
 
@@ -673,7 +673,7 @@ endorsed by, or approved by SMUD or any other utility.
   schedule of future prices lines up in the same three columns as a window
   table, and one of its rows was emitted as a window whose definition was a
   price.
-- "Off-Peak Saver" is no longer labelled "Off-Peak". They are separate periods
+- "Off-Peak Saver" is no longer labeled "Off-Peak". They are separate periods
   with separate prices.
 - The holiday table's columns are read from its own three headings instead of
   fixed coordinates, which found no holidays at all on a sheet whose table sits
@@ -689,7 +689,7 @@ endorsed by, or approved by SMUD or any other utility.
   column "TIME PERIOD" and two windows were emitted under a season called
   "PERIOD". A season states a part of the year, and a window whose season
   cannot be read is not emitted.
-- A sheet number a page announces as cancelled is never cited as that page's
+- A sheet number a page announces as canceled is never cited as that page's
   own. A publisher that prints "Revised Cal. P.U.C. Sheet No. X" above
   "Cancelling Revised Cal. P.U.C. Sheet No. Y" had every citation on the page
   pointing at the withdrawn sheet. Which word announces the supersession now

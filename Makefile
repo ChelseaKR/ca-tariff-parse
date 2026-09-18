@@ -76,6 +76,6 @@ watch-baseline: ## Regenerate the watch baselines from the pinned documents (rev
 	@test -f $(SOURCES_DIR)/1-R-TOD.pdf || { echo "run 'make fetch' first"; exit 1; }
 	$(UV) run ca-tariff-parse baseline --dir $(SOURCES_DIR)
 
-clean: ## Remove build and test artefacts
+clean: ## Remove build and test artifacts
 	rm -rf .pytest_cache .ruff_cache .mypy_cache .coverage htmlcov dist build
 	find . -name __pycache__ -type d -prune -exec rm -rf {} +

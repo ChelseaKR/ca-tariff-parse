@@ -1,4 +1,4 @@
-"""End to end parse of the labelled synthetic fixture.
+"""End to end parse of the labeled synthetic fixture.
 
 Every expected value below is a value written into the fixture by hand. None of
 it comes from a real tariff, and the fixture says so in its own text.
