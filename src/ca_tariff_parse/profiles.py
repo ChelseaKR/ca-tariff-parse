@@ -98,7 +98,7 @@ class DocumentProfile:
     change bar in the right margin extracts as, carries no information of its
     own -- it is page furniture, the same category as a running header -- and
     is excluded from the coverage denominator rather than reported as
-    unrecognised content. A marker attached to an otherwise real line of text
+    unrecognized content. A marker attached to an otherwise real line of text
     is untouched by this: stripping it would edit a quotation, so it stays
     exactly as printed inside whatever citation quotes that line. The empty
     default means no line is ever read this way, which is the fail-closed

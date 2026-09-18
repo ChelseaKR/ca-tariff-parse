@@ -146,7 +146,7 @@ class Records[R](tuple[R, ...]):
 
     ``where`` exists so a caller can select without re-implementing the
     difference between a cited field and a structural one. It never
-    synthesises a record and never widens a match: an unknown field name is an
+    synthesizes a record and never widens a match: an unknown field name is an
     error rather than an empty result, because an empty result reads as "this
     schedule states nothing of the kind" and a typo is not that.
 
@@ -298,7 +298,7 @@ class Provenance:
 
     @classmethod
     def from_json(cls, node: object, path: str = "provenance") -> Self:
-        """Rebuild a citation from its serialised form.
+        """Rebuild a citation from its serialized form.
 
         ``locator`` is derived, so it is not read as data. It is compared
         against the locator this citation actually produces, and a payload
@@ -449,7 +449,7 @@ class Charge:
     group: Cited[str] | None = None
     """The heading of the block of rows this price was read from, when the
     document prices a run of rows under one heading that also states their
-    unit. Carried verbatim. Without it a row labelled "Income Tier 1" would not
+    unit. Carried verbatim. Without it a row labeled "Income Tier 1" would not
     say which of a sheet's several tables it came from."""
 
     def to_json(self) -> dict[str, object]:
@@ -616,7 +616,7 @@ class ProrationRule:
 
     Read from a ruled table's own cells rather than from line order, because a
     basis cell that spans more than one circumstance is a genuine merge the
-    publisher drew, not an artefact of how the words happen to wrap. Each
+    publisher drew, not an artifact of how the words happen to wrap. Each
     ``ProrationRule`` still carries its own citation, so a basis shared by two
     circumstances appears as two rules, each citing the same basis cell and
     its own circumstance cell.
@@ -660,7 +660,7 @@ class UnparsedSection:
     """A stretch of the source document the parser did not understand.
 
     Unparsed content is a first class output. It is never dropped, and it is
-    never quietly folded into a neighbouring section.
+    never quietly folded into a neighboring section.
 
     Line numbers are per page, and a section can run across a page break, so
     the span is reported as a page and line at each end rather than as a single
@@ -1012,7 +1012,7 @@ class ParsedSchedule:
     watch baseline omits the document's verbatim prose (ADR 0003, ADR 0016),
     and this names those fields so a reader is never left inferring "the
     document has none" from a collection that is empty because it was never
-    written. Not serialised: ``to_json`` emits ``parsed-schedule/v1``, and a
+    written. Not serialized: ``to_json`` emits ``parsed-schedule/v1``, and a
     payload that carries the fields has nothing to declare.
     """
 
@@ -1020,7 +1020,7 @@ class ParsedSchedule:
         # Present every collection as Records so `where` is available whether
         # the schedule was parsed from a PDF or loaded from a committed
         # payload. Records is a tuple subclass, so equality, ordering and
-        # serialisation are unchanged.
+        # serialization are unchanged.
         for name in (*RECORD_FIELDS, "notes", "unparsed"):
             held = getattr(self, name)
             if not isinstance(held, Records):
@@ -1053,7 +1053,7 @@ class ParsedSchedule:
 
     @classmethod
     def from_json(cls, node: object, path: str = "") -> Self:
-        """Rebuild a whole parse from its serialised form.
+        """Rebuild a whole parse from its serialized form.
 
         Reads either shape this project writes: a full
         ``parsed-schedule/v1`` payload, or the ``watch-baseline/v1``
@@ -1142,7 +1142,7 @@ class ParsedSchedule:
         )
 
     def to_json(self) -> dict[str, object]:
-        """Serialise back to the shape this schedule was read from.
+        """Serialize back to the shape this schedule was read from.
 
         A schedule loaded from a watch baseline re-emits as a watch baseline,
         not as a full parse. Emitting it as ``parsed-schedule/v1`` would write

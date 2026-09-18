@@ -129,7 +129,7 @@ emit:
 **Coverage is a published output, not an implicit claim.** Every parse reports
 how many content lines it accounted for, and everything it did not understand
 appears in `unparsed` with its location and reason. Nothing is ever silently
-dropped: unrecognised text is still carried verbatim in `notes`. A document
+dropped: unrecognized text is still carried verbatim in `notes`. A document
 containing a section the parser does not understand cannot produce the same
 output as one it fully understands, and there is a test that proves it.
 
@@ -346,8 +346,8 @@ Most of it, and each refusal is a case where a value could otherwise be wrong.
   that a running head runs: the line naming the schedule is the one that
   appears on every sheet, wherever the publisher sets it, and a sentence ending
   in the word "schedule" appears once. Both publishers' codes are read now, and
-  so is a title where the page settles which neighbouring line it is. Where
-  both neighbours repeat, no title is read. See
+  so is a title where the page settles which neighboring line it is. Where
+  both neighbors repeat, no title is read. See
   [ADR 0015](docs/adr/0015-a-running-head-runs.md). The remaining three
   identity fields are null for this publisher because the page states no
   value for them, not because one went unread: `Resolution` is printed as a
@@ -360,7 +360,7 @@ A **filing change marker** -- a bracketed capital such as `(R)` beside a
 revised line, or a change bar in the right margin -- is no longer one of
 these, when the marker is the only thing on the line: it is now read as
 furniture, the same category as a running header, rather than reported as
-unrecognised content. A marker attached to real text is untouched, exactly
+unrecognized content. A marker attached to real text is untouched, exactly
 as printed inside whatever citation quotes that line. See ADR 0010. On a row
 read across named columns the same markers fall between the cells as well as
 after them, and are skipped there for the same reason.
@@ -393,7 +393,7 @@ full account of that first pass is in
 turned out to be general was the machinery that made the failure legible rather
 than dangerous: the positional layout model, the citation and audit rules, the
 coverage accounting, and above all the refusals. A rate table whose shape is
-not recognised produces nothing rather than something plausible.
+not recognized produces nothing rather than something plausible.
 
 What is left unaccounted for on the four SMUD schedules is largely genuine
 narrative: critical peak pricing terms, service voltage definitions, metering
@@ -450,12 +450,12 @@ relax the check.
 `sources/sources.toml` records where a document came from. It is not a claim of
 permission, endorsement, or any relationship with the publisher.
 
-Retrieval honours `robots.txt` and is a handful of requests, never a crawl.
+Retrieval honors `robots.txt` and is a handful of requests, never a crawl.
 `robots.txt` for a host is read before anything is fetched from it, and a
 publisher that disallows the path is not fetched from at all.
 
 Requests identify themselves as `ca-tariff-parse/<version>` with a link back to
-this repository, so a publisher can recognise them in a log **and** refuse them
+this repository, so a publisher can recognize them in a log **and** refuse them
 by name:
 
 ```
@@ -463,7 +463,7 @@ User-agent: ca-tariff-parse
 Disallow: /
 ```
 
-That group is honoured. Until 2026-09-06 it was not: the tool sent a spoofed
+That group is honored. Until 2026-09-06 it was not: the tool sent a spoofed
 desktop Chrome header, which `urllib.robotparser` reduces to the token
 `mozilla`, so no named group was ever selected and only a `User-agent: *` group
 could refuse a fetch.
@@ -754,7 +754,7 @@ Four rules keep a table from saying more than the parse did.
 - **Nothing is dropped in the reshape.** Each table's row count is checked
   against the record count of the parse, and a mismatch raises rather than
   writing a short table.
-- **Nothing is computed.** There is no annualised price and no hours-per-window
+- **Nothing is computed.** There is no annualized price and no hours-per-window
   column. A derived number sitting in a table of cited ones is
   indistinguishable from them.
 - **An empty table is a file with a header.** `smud-ssr` prices nothing, so its
@@ -766,7 +766,7 @@ section and line rather than its rendered text, so page 10 follows page 9 — wi
 the whole row as the final tiebreak. Two exports of one parse are byte
 identical. CSV cells that a spreadsheet would evaluate as a formula are
 prefixed with an apostrophe; a leading minus is left alone when the cell is a
-number, because a credit is printed as `-0.05` and neutralising it would change
+number, because a credit is printed as `-0.05` and neutralizing it would change
 what a reader sees.
 
 `export` reads a full parse and a watch baseline alike. The projection removes
@@ -905,7 +905,7 @@ the outside instead of from the parser.
 **An omission is not an empty answer.** A watch baseline drops the document's
 verbatim prose on purpose (ADR 0003, ADR 0016). A schedule loaded from one
 carries `schedule.withheld == ("notes", "unparsed[].sample")`, its `notes`
-refuse to be queried at all rather than answering "none", and re-serialising it
+refuse to be queried at all rather than answering "none", and re-serializing it
 writes a baseline again — never a full parse with `"notes": []`, which would
 state that the document has no prose. It has prose; the projection dropped it.
 
@@ -944,7 +944,7 @@ the package without the PDF stack present and `load` still works; only
    publisher drew to span several rows is captured as the single merged cell
    it is rather than guessed at from spacing.
 2. **Segment.** Lines are grouped into the document's own outline, so every
-   value can cite a part and an unrecognised part can be named rather than
+   value can cite a part and an unrecognized part can be named rather than
    lost. Two outlines are known: statute-style numbering (roman parts, lettered
    subsections) and a keyword set in a column with the body beside it. Which
    one a document uses comes from its profile, because the page does not say.
@@ -954,7 +954,7 @@ the package without the PDF stack present and `load` still works; only
    a verbatim note.
 5. **Audit.** The provenance walk runs before anything is written.
 
-Tests run against clearly labelled synthetic fixtures, so the suite works
+Tests run against clearly labeled synthetic fixtures, so the suite works
 offline and without redistributing a publisher's document. One fixture is
 written in a keyword outline with accounting-bracket negatives and a
 supersession header, so the profile is exercised in CI too, and parsing it
@@ -1000,7 +1000,7 @@ make coverage-real # report parse coverage of every fetched document
 would have to prove before it lands, and what has already been decided
 against.
 
-## Licence
+## License
 
 Apache-2.0. See `LICENSE`.
 

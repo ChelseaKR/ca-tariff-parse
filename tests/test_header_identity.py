@@ -76,7 +76,7 @@ def test_the_title_below_the_schedule_line_is_read_when_it_runs() -> None:
     ) == ("SYN-X", "EXAMPLE GENERAL SERVICE")
 
 
-def test_when_both_neighbours_run_neither_is_read_as_the_title() -> None:
+def test_when_both_neighbors_run_neither_is_read_as_the_title() -> None:
     """Nothing on the page says which of two repeating lines names the schedule."""
     assert identity(
         page(

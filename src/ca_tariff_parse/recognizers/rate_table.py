@@ -113,7 +113,7 @@ class _TableState:
 
 
 def _read_context_row(line: Line, citer: Citer, state: _TableState) -> bool:
-    """Absorb a rate category, season, or group heading. False if unrecognised."""
+    """Absorb a rate category, season, or group heading. False if unrecognized."""
     code = category_code(line.text)
     if code is not None:
         state.category = citer.text(line, state.section, code)

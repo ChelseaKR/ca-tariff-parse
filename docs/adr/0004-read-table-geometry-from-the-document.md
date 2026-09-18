@@ -58,7 +58,7 @@ laid out like it. A time-of-use window definition must say when the period
 runs and must not contain a currency amount.
 
 Remaining fixed values are tolerances, not positions: how much clear space
-separates two headings, how far a value may sit from a column centre before
+separates two headings, how far a value may sit from a column center before
 the assignment is ambiguous. Those describe typesetting in general rather than
 one publisher's sheet.
 

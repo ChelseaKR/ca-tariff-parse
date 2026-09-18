@@ -14,7 +14,7 @@ Resolution No. 25-06-15 adopted June 19, 2025 Effective: June 20, 2025
 ```
 
 ADR 0015 read the second publisher's `schedule_code`, and its `title` where
-the page settles which neighbouring line it is. The roadmap's Phase 7 asked
+the page settles which neighboring line it is. The roadmap's Phase 7 asked
 what the other three fields are for this publisher, and said the answer had to
 be one of two things: a value read and cited from the furniture, or a null
 recorded as unstated rather than merely unread.

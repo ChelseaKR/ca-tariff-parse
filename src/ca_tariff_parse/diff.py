@@ -369,7 +369,7 @@ def _ordinal(number: int) -> str:
 
 def _key_text(key: tuple[str, ...]) -> str:
     parts = [part for part in key[:-1] if part]
-    label = " · ".join(_escape(part) for part in parts) or "(unlabelled)"
+    label = " · ".join(_escape(part) for part in parts) or "(unlabeled)"
     occurrence = key[-1]
     if occurrence == "#1":
         return label

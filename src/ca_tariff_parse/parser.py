@@ -43,7 +43,7 @@ from .trace import offer, place, took
 PARSER_VERSION = "0.3.0"
 
 #: Lines a recognizer left behind are sampled into the unparsed report, capped
-#: so a wholly unrecognised document does not produce an unbounded output.
+#: so a wholly unrecognized document does not produce an unbounded output.
 UNPARSED_SAMPLE = 4
 
 
@@ -142,7 +142,7 @@ def parse_document(
 
     # Segmentation itself understands a heading: it is what produced the
     # section id every citation in that section points at. Counting it as
-    # unrecognised would make the coverage figure measure the outline rather
+    # unrecognized would make the coverage figure measure the outline rather
     # than the body, which is the part a reader actually needs accounted for.
     # A heading set inline gets no such credit: the same line carries the body
     # of the part, and crediting it would count text nobody has read.
@@ -181,7 +181,7 @@ def parse_document(
                 sample=[line.text for line in missed[:UNPARSED_SAMPLE]],
             )
         )
-        # Nothing is dropped: unrecognised prose is still carried verbatim.
+        # Nothing is dropped: unrecognized prose is still carried verbatim.
         for line in missed:
             emission.notes.append(citer.text(line, section.section_id, line.text))
 

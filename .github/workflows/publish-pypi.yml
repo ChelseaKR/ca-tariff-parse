@@ -120,7 +120,7 @@ jobs:
           python-version: "3.12"
           enable-cache: false
 
-      - name: Build and confirm the artefacts carry the tag's version
+      - name: Build and confirm the artifacts carry the tag's version
         env:
           VERSION: ${{ needs.verify.outputs.version }}
         run: |

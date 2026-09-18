@@ -20,7 +20,7 @@ Possible, because `parse` already emits every value with the page, sheet,
 section and line it was read from, so two parses of one document can be
 compared value by value and each difference can point at both readings. And
 because the manifest already pins the digest, so "the publisher serves
-different bytes" is a fact the tool can establish without judgement.
+different bytes" is a fact the tool can establish without judgment.
 
 In the way: what to compare a revision *against*. The obvious answer is the
 last parse of the pinned bytes. For the four SMUD schedules that already sits
@@ -78,7 +78,7 @@ changes given the payloads, and does not pretend to in any of the three cases.
 pinned facts of one entry — digest, retrieval date, page count, byte size —
 in place, inside the one `[[document]]` block that names the entry, each
 exactly once, and refuses if it cannot. The comments explaining each publisher
-survive because nothing re-serialises the file. The result travels in a pull
+survive because nothing re-serializes the file. The result travels in a pull
 request with the report and the new baseline; merging it is the review ADR
 0003 asks for, and a person does it.
 

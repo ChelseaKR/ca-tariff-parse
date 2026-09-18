@@ -106,7 +106,7 @@ case where a value could otherwise be wrong:
   block stating no columns cannot. This costs most of the commercial schedule's
   prices and is the same refusal as the standby charge in ADR 0004;
 - a row that dates itself, which belongs to the dated-charge shape and would
-  otherwise be labelled with its own date and then dated again from the footer;
+  otherwise be labeled with its own date and then dated again from the footer;
 - a row carrying a cell the publisher marked with dashes, which prices a column
   this block does not name;
 - a row where anything but a right-margin change flag follows the amount, or
@@ -141,7 +141,7 @@ belongs in a profile. Closing them means finding the shape, not adding a field.
   the same form, so the profile is expected to fit theirs. It has not been
   tested against one, and the name is meant to keep that honest.
 - The `Charge` record gains an optional `group`, the heading of the block a
-  price was read from. Without it a row labelled "Income Tier 1" would not say
+  price was read from. Without it a row labeled "Income Tier 1" would not say
   which of a sheet's several tables it came from. It is absent from every
   charge the first publisher's schedules produce, which is why their output did
   not change.

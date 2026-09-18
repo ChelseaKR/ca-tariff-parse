@@ -36,7 +36,7 @@ What this refuses is most of what it sees, on purpose.
   off it and each amount is attributed to the column it sits under; see
   ADR 0012, and the refusals that come with it below.
 * **A row dating itself.** "Effective May 1, 2025 $8.597" is a dated row and
-  belongs to the dated-charge shape. Read here it would be labelled with its
+  belongs to the dated-charge shape. Read here it would be labeled with its
   own date and then dated a second time from the footer.
 * **Anything but an amount in the value area**, and any amount outside it. A
   row is committed whole or not at all.

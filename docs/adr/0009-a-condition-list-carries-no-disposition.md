@@ -28,14 +28,14 @@ Generation Options" beside it, so it was never seen.
 
 Reading it as an `Applicability` was tried first, and did not fit. An
 `Applicability` carries a `disposition` -- included, excluded or required --
-summarising what the text says about who the schedule applies to. One item
+summarizing what the text says about who the schedule applies to. One item
 of this list says nothing of the kind on its own: item 2 states a fact about
 the generator, not a fact about who is eligible for anything, and the only
 sentence that actually gates something is the intro line the four items
 share. Forcing a disposition onto item 2 would either invent one that does not fit
 ("included", as a default, would be simply wrong) or require reading four
-items as four separate coarse judgements about a schedule when they are one
-judgement, stated once, about a rate option.
+items as four separate coarse judgments about a schedule when they are one
+judgment, stated once, about a rate option.
 
 ## Decision
 
@@ -58,7 +58,7 @@ making exactly this shape of claim, in every document seen so far.
 Everything after the intro line must resolve to a strictly numbered,
 unbroken sequence -- 1, 2, 3, ... with no gap -- before anything is
 emitted, the same discipline `segment.py` already applies to a roman
-numeral heading running out of order. A wrapped item is recognised by its
+numeral heading running out of order. A wrapped item is recognized by its
 own indent and by whether the text read so far has reached a sentence's
 end, not by a fixed line count: item 4 above wraps onto a second line
 because it has not yet reached a period, and the line straight after it

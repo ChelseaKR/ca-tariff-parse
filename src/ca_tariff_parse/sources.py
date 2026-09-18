@@ -43,7 +43,7 @@ def _user_agent() -> str:
     ``User-agent: *`` group could refuse a fetch --- a publisher writing
     ``User-agent: ca-tariff-parse`` / ``Disallow: /`` was fetched anyway. And
     because the outgoing header claimed to be Chrome, that publisher had no
-    server-side way to recognise the request either. The by-name opt-out
+    server-side way to recognize the request either. The by-name opt-out
     channel the README promises did not exist at either end.
 
     The version is read from installed metadata rather than restated here, so
@@ -60,7 +60,7 @@ def _user_agent() -> str:
 
 
 #: Sent when fetching. Identifies the tool rather than disguising it, so a
-#: publisher can both recognise the request and refuse it by name.
+#: publisher can both recognize the request and refuse it by name.
 USER_AGENT = _user_agent()
 
 
@@ -92,7 +92,7 @@ class SourceEntry:
 
         A manifest entry names a document inside the sources directory, and
         the manifest is hand maintained, so this is a statement about what an
-        entry is allowed to mean rather than a defence against an attacker. An
+        entry is allowed to mean rather than a defense against an attacker. An
         entry whose filename climbs out of the root, or is absolute, names
         something that is not one of this project's documents, and the listing
         would go on to read its bytes to compute a digest that could never
@@ -264,7 +264,7 @@ def _robots_allowed(url: str, *, timeout: float) -> bool:
 def download(entry: SourceEntry, root: Path, *, timeout: float = 60.0) -> Path:
     """Download one document to ``root`` without checking it against the manifest.
 
-    Honours the host's own ``robots.txt`` first, as documented in the
+    Honors the host's own ``robots.txt`` first, as documented in the
     project README: a path the publisher has disallowed is never fetched,
     whatever the manifest says.
 

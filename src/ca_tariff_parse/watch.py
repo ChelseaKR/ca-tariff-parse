@@ -70,7 +70,7 @@ def project(payload: Json) -> Json:
 
 
 def dump(payload: Json) -> str:
-    """The one serialisation every baseline and report uses, so diffs are byte-stable."""
+    """The one serialization every baseline and report uses, so diffs are byte-stable."""
     return json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=False) + "\n"
 
 
@@ -233,7 +233,7 @@ def manifest_with(
     """The manifest text with one entry's four pinned facts replaced, and nothing else.
 
     The manifest is hand maintained and carries comments that explain each
-    publisher; rewriting it through a TOML serialiser would lose them. So the
+    publisher; rewriting it through a TOML serializer would lose them. So the
     four lines are substituted in place, inside the one ``[[document]]`` block
     that names ``entry_id``, each exactly once, and the result has to load as
     TOML before it is returned.

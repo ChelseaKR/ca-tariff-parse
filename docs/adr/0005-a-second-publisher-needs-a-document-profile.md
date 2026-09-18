@@ -47,7 +47,7 @@ this publisher writes `see Special Condition 8` and `in accordance with Rule
 1`. Applicability claims a section whose *heading* is Applicability, and here
 that word is a label in a column, not a heading.
 
-Nearly all of that produced nothing, which is the designed behaviour and the
+Nearly all of that produced nothing, which is the designed behavior and the
 reason two of the three documents emitted not one value. One thing did produce
 output, and it was wrong.
 
@@ -68,7 +68,7 @@ Two smaller defects were general rather than particular to either publisher.
   `Cancelling Revised Cal. P.U.C. Sheet No. 61247-E`. Sheet detection took the
   last match on the page, which was correct only because the first publisher
   prints exactly one. Every citation on such a page named the withdrawn sheet,
-  and the schedule's own list of sheets was half cancelled numbers.
+  and the schedule's own list of sheets was half canceled numbers.
 - Page furniture was decided by a fixed fraction of page height. This publisher
   runs body text a little further down the page, and three body lines fell past
   the band. A line marked as furniture is in no section, so it is neither
@@ -82,7 +82,7 @@ around, and no second special case is added.
 
 Fixed, because each is wrong for any publisher:
 
-- A sheet number a page announces as cancelled is never recorded as that page's
+- A sheet number a page announces as canceled is never recorded as that page's
   own, and a page asserting two numbers that disagree records none.
 - The footer band says where a footer may be; the page's own line spacing says
   where the body ends. A line in the band set at ordinary body spacing under

@@ -1,6 +1,6 @@
 """The document profile carries only what a document cannot state itself.
 
-Every test here runs against a labelled synthetic fixture written in the second
+Every test here runs against a labeled synthetic fixture written in the second
 publisher's shape: a keyword column instead of a numbered outline, negatives in
 accounting brackets, and a supersession header naming the sheet each page
 replaces. The same fixture parsed without a profile has to refuse all three,

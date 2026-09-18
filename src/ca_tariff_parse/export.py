@@ -25,7 +25,7 @@ listed here, so a field added to the model and the schema appears in the export
 without anyone remembering to add it, and a field added to only one of them is
 a loud failure instead of a silently missing column.
 
-Nothing is computed. There is no annualised price and no hours-per-window
+Nothing is computed. There is no annualized price and no hours-per-window
 column: the export reshapes what was read, and a derived number in a table of
 cited ones would be indistinguishable from them.
 """
@@ -324,12 +324,12 @@ def _is_number(text: str) -> bool:
     return True
 
 
-def neutralise(value: Any) -> str:
+def neutralize(value: Any) -> str:
     """Render a cell so a spreadsheet cannot read it as a formula.
 
     A leading minus is left alone when the cell is a number, because a credit
     is printed as ``-0.05`` and prefixing it would change what a reader sees.
-    A leading minus on anything else is neutralised.
+    A leading minus on anything else is neutralized.
     """
     if value is None:
         return ""
@@ -346,7 +346,7 @@ def render_csv(rendered: Iterable[Mapping[str, Any]], order: Sequence[str]) -> s
     writer = csv.writer(buffer, lineterminator="\n")
     writer.writerow(order)
     for row in rendered:
-        writer.writerow([neutralise(row.get(name)) for name in order])
+        writer.writerow([neutralize(row.get(name)) for name in order])
     return buffer.getvalue()
 
 

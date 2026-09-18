@@ -20,7 +20,7 @@ from ca_tariff_parse.cli import main
 from ca_tariff_parse.export import (
     ExportError,
     columns,
-    neutralise,
+    neutralize,
     render_csv,
     render_jsonl,
     rows,
@@ -311,20 +311,20 @@ def test_snippets_appear_only_when_asked_for(golden: dict[str, Any]) -> None:
 
 
 @pytest.mark.parametrize("cell", ["=1+1", "+A1", "@SUM(A1)", "\tfoo", "\rfoo", "-- twice"])
-def test_a_cell_a_spreadsheet_would_evaluate_is_neutralised(cell: str) -> None:
-    assert neutralise(cell).startswith("'")
+def test_a_cell_a_spreadsheet_would_evaluate_is_neutralized(cell: str) -> None:
+    assert neutralize(cell).startswith("'")
 
 
 @pytest.mark.parametrize("cell", ["-0.05", "-1", "0.32561", "Peak", ""])
 def test_a_value_a_spreadsheet_would_not_evaluate_is_left_alone(cell: str) -> None:
     """A credit is printed as -0.05. Prefixing it would change what a reader
-    sees, so a leading minus is neutralised only when the cell is not a
+    sees, so a leading minus is neutralized only when the cell is not a
     number."""
-    assert neutralise(cell) == cell
+    assert neutralize(cell) == cell
 
 
 def test_a_none_renders_as_an_empty_cell() -> None:
-    assert neutralise(None) == ""
+    assert neutralize(None) == ""
 
 
 def test_a_negative_price_survives_the_export_unchanged() -> None:
