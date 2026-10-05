@@ -82,8 +82,8 @@ title = "Residential Services"
 publisher = "Pacific Gas and Electric Company"
 url = "https://www.pge.com/tariffs/assets/pdf/tariffbook/ELEC_SCHEDS_E-1.pdf"
 filename = "ELEC_SCHEDS_E-1.pdf"
-sha256 = "39fbba73bbe0ee594705f52c1bbe1ab14d41ad9807742defc1dadcc39f577239"
-retrieved_at = "2026-08-17"
+sha256 = "ec38d13fec762d4a643569545a2054e09daf1debb618312967ff0037954ab23f"
+retrieved_at = "2026-10-05"
 pages = 7
 bytes = 656128
 
