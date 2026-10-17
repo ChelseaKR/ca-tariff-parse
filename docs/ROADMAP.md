@@ -341,6 +341,11 @@ it wrong produces a failure that reads like a permissions problem rather than a
 typo. Until that registration exists, the package is not on PyPI, the publish
 job fails closed at the upload, and the README says so.
 
+**Checked 2026-10-17.** The built wheel did not start when installed, so the
+`v0.3.0` tag must not be uploaded; the fix, a clean-environment check
+(`make dist-check`) and the publishing procedure are in
+[RELEASING.md](RELEASING.md). The next release is the first that can go to PyPI.
+
 **Done when.** A release is on PyPI under the project's name, or the README's
 install section records that the tag is the distribution and the workflow is
 removed. Either closes the phase honestly.

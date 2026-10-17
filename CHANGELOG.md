@@ -72,6 +72,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **An installed `ca-tariff-parse` failed on import.** `export.py` read the
+  published schema from the repository root, two directories above the module.
+  In a checkout that is the schema; in a wheel it is `lib/python3.x/`, so every
+  command, `--help` and `--version` included, died with `ExportError` before
+  printing anything. The wheel now carries a copy under
+  `ca_tariff_parse/_schemas/` and a checkout still reads the one published file
+  at `schemas/`. The `v0.3.0` tag predates the fix, so `uv tool install
+  "git+...@v0.3.0"` and a wheel built from that tag both have the defect; the
+  next release is the first that does not. Nothing had been uploaded to an
+  index, so no published release carries it.
+- The wheel's `[project.urls]` gains `Changelog`, `Documentation` and
+  `Security`, beside the existing `Homepage`, `Source` and `Issues`.
+- `make dist-check` (and a `dist` job in CI) builds the sdist and wheel, runs
+  `twine check --strict`, installs the wheel into an empty environment outside
+  the checkout, runs the CLI, and asserts the Project-URL metadata. Nothing is
+  uploaded.
+
 - **`E-TOU-C` read zero time-of-use windows, and it is the schedule named after
   them (#75).** The sheet states four -- Peak and Off-Peak under each of two
   seasons -- as a list under a season heading rather than as the three-column

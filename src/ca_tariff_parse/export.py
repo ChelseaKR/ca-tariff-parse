@@ -53,10 +53,17 @@ __all__ = [
 #: A row lifted out of its file still names the bytes it was read from.
 IDENTITY_COLUMNS = ("document_id", "document_sha256", "parser_version")
 
-#: Where the schema lives relative to the installed package. Read at import
-#: time from the repository checkout, and shipped beside the package when
-#: installed.
-SCHEMA_PATH = Path(__file__).resolve().parents[2] / "schemas" / "parsed-schedule-v1.schema.json"
+_SCHEMA_NAME = "parsed-schedule-v1.schema.json"
+_PACKAGE_SCHEMA = Path(__file__).resolve().parent / "_schemas" / _SCHEMA_NAME
+_CHECKOUT_SCHEMA = Path(__file__).resolve().parents[2] / "schemas" / _SCHEMA_NAME
+
+#: Where the schema is read from, at import time. An installed wheel carries a
+#: copy beside the package (``pyproject.toml`` force-includes it under
+#: ``_schemas/``); a repository checkout, including an editable install, reads
+#: the published file at the repository root, so there is one source of truth
+#: and the copy cannot drift from it. Without the copy an installed
+#: ``ca-tariff-parse`` failed on import, before it could print ``--help``.
+SCHEMA_PATH = _PACKAGE_SCHEMA if _PACKAGE_SCHEMA.is_file() else _CHECKOUT_SCHEMA
 
 #: ``$defs`` names that hold a cited scalar rather than a record.
 CITED_DEFS = frozenset({"citedString", "citedStringOrNull"})

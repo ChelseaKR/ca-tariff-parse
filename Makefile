@@ -4,7 +4,7 @@ SOURCES_DIR ?= sources
 .DEFAULT_GOAL := help
 
 .PHONY: help install lint fmt typecheck test verify coverage coverage-real fetch verify-source \
-        golden watch watch-log watch-baseline clean
+        golden watch watch-log watch-baseline dist-check clean
 
 help: ## Show this help
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -28,6 +28,9 @@ test: ## Run the test suite with the coverage floor
 	$(UV) run pytest
 
 verify: install lint typecheck test ## Everything CI runs
+
+dist-check: ## Build sdist and wheel, install the wheel in a clean venv, run it (uploads nothing)
+	scripts/dist-check.sh
 
 coverage: ## Report parser coverage of the synthetic fixtures
 	$(UV) run ca-tariff-parse coverage tests/fixtures/SYNTHETIC-example-schedule-complete.txt
