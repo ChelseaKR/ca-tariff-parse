@@ -92,6 +92,27 @@ jobs:
             exit 1
           fi
 
+  dist:
+    name: Build, install and run the distribution
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+          enable-cache: false
+
+      - name: Build, twine check, install the wheel in a clean environment, run it
+        # Uploads nothing. publish-pypi.yml is the only workflow that can.
+        run: make dist-check
+
   scan:
     name: Secret, static and dependency scanning
     runs-on: ubuntu-latest

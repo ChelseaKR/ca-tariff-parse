@@ -24,6 +24,9 @@ dependencies = [
 Homepage = "https://github.com/ChelseaKR/ca-tariff-parse"
 Source = "https://github.com/ChelseaKR/ca-tariff-parse"
 Issues = "https://github.com/ChelseaKR/ca-tariff-parse/issues"
+Changelog = "https://github.com/ChelseaKR/ca-tariff-parse/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/ChelseaKR/ca-tariff-parse#readme"
+Security = "https://github.com/ChelseaKR/ca-tariff-parse/blob/main/SECURITY.md"
 
 [project.scripts]
 ca-tariff-parse = "ca_tariff_parse.cli:main"
@@ -45,6 +48,12 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ca_tariff_parse"]
+
+# The published schema lives at the repository root so it can be linked and
+# versioned as a document. The installed `export` command also reads it, so the
+# wheel carries a copy under the package. See tests/test_distribution.py.
+[tool.hatch.build.targets.wheel.force-include]
+"schemas/parsed-schedule-v1.schema.json" = "ca_tariff_parse/_schemas/parsed-schedule-v1.schema.json"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
